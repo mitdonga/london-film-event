@@ -1,0 +1,25 @@
+<script type="text/javascript">
+  (function() {
+  var app = {
+    launchApp: function() { 
+      // App name to be set in values.yml file
+      window.location.replace("<%= ENV['DL_APP_NAME'].to_s&.split('-')[0].to_s %>/<%= @data %>");
+      this.timer = setTimeout(this.openWebApp, 1000);
+    },
+
+    openWebApp: function() {
+      // Playstore link and Appstore link to be set in values.yml file
+      if(navigator.userAgent.toLowerCase().indexOf("android") > -1){
+        window.location.href = "<%= ENV['DL_PLAYSTORE_LINK'] %>"
+      }else if(navigator.userAgent.toLowerCase().indexOf("iphone") > -1){
+        window.location.href = "<%= ENV['DL_APPSTORE_LINK'] %>"
+      }else{
+        // Web
+        window.location.href = "<%= ENV['DL_PLAYSTORE_LINK'] %>"
+      }
+    }
+  };
+
+  app.launchApp();
+})();
+</script>
