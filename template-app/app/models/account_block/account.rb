@@ -1,14 +1,17 @@
 module AccountBlock
   class Account < AccountBlock::ApplicationRecord
-    ActiveSupport.run_load_hooks(:account, self)
+    # ActiveSupport.run_load_hooks(:account, self)
     self.table_name = :accounts
 
     include Wisper::Publisher
+
+    validates :email, presence: true, format: { with: /\A[^@\s]+@[^@\s]+\z/ }
 
     has_secure_password
     before_validation :parse_full_phone_number
     before_create :generate_api_key
     has_one :blacklist_user, class_name: "AccountBlock::BlackListUser", dependent: :destroy
+    belongs_to :company, class_name: "BxBlockInvoice::Company"
     after_save :set_black_listed_user
 
     enum status: %i[regular suspended deleted]
