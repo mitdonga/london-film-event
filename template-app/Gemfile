@@ -90,3 +90,5 @@ gem 'activeadmin_json_editor'
 gem 'active_admin_datetimepicker'
 gem 'rack-cors'
 gem 'activestorage-validator'
+
+gem "country_select", "~> 5.1"

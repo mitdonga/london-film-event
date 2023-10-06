@@ -10,6 +10,7 @@ module AccountBlock
     has_secure_password
     before_validation :parse_full_phone_number
     before_create :generate_api_key
+    after_save :send_email
     has_one :blacklist_user, class_name: "AccountBlock::BlackListUser", dependent: :destroy
     belongs_to :company, class_name: "BxBlockInvoice::Company"
     after_save :set_black_listed_user
@@ -20,6 +21,12 @@ module AccountBlock
     scope :existing_accounts, -> { where(status: ["regular", "suspended"]) }
 
     private
+
+    def send_email
+      EmailValidationMailer
+            .with(account: self, host: "#{Rails.application.config.base_url}")
+            .activation_email.deliver
+    end 
 
     def parse_full_phone_number
       phone = Phonelib.parse(full_phone_number)

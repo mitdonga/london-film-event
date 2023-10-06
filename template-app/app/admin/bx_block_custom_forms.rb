@@ -3,6 +3,7 @@ module BxBlockCustomForms
 end
 
 ActiveAdmin.register BxBlockCustomForms::CustomForm, as: 'Form' do
+  menu false
   permit_params :id, :first_name, :last_name, :phone_number, :organization, :team_name, :i_am, :gender, :email, :address, :country, :state, :city, :stars_rating, :file
   actions :all, except: [ :new]
 
