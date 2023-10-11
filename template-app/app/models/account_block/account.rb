@@ -6,7 +6,7 @@ module AccountBlock
     include Wisper::Publisher
 
     validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: "Please enter valid email" }, uniqueness: { case_sensitive: false, message: "Account already exist with this email" }
-    validates :user_type, :first_name, :last_name, :full_phone_number, presence: true
+    validates :account_type, :first_name, :last_name, :full_phone_number, presence: true
     validates :full_phone_number, uniqueness: { message: "Account already exist with this phone number" }, presence: true
 
     has_secure_password
@@ -18,6 +18,7 @@ module AccountBlock
     after_save :set_black_listed_user
 
     enum status: %i[regular suspended deleted]
+    enum account_type: %i[venue corporate]
 
     scope :active, -> { where(activated: true) }
     scope :existing_accounts, -> { where(status: ["regular", "suspended"]) }
@@ -31,7 +32,7 @@ module AccountBlock
     end 
 
     def parse_full_phone_number
-      phone = Phonelib.parse(full_phone_number)
+      phone = Phonelib.parse("#{self.country_code}#{self.phone_number}")
       self.full_phone_number = phone.sanitized
       self.country_code = phone.country_code
       self.phone_number = phone.raw_national

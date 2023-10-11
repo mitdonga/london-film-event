@@ -17,7 +17,7 @@ module AdminUsers
 end
 
 unless AdminUsers::Load.is_loaded_from_gem
-  ActiveAdmin.register AdminUser do
+  ActiveAdmin.register AdminUser, as: "LF Admin" do
     permit_params :email, :password, :password_confirmation
     menu priority: 2
 

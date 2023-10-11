@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_11_074311) do
+ActiveRecord::Schema.define(version: 2023_10_11_125145) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 2023_10_11_074311) do
     t.integer "gender"
     t.date "date_of_birth"
     t.integer "age"
-    t.integer "account_type"
     t.bigint "company_id"
+    t.integer "account_type"
     t.index ["is_blacklisted"], name: "index_accounts_on_is_blacklisted"
   end
 
