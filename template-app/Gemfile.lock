@@ -1842,8 +1842,10 @@ GEM
       i18n_data (~> 0.10.0)
       sixarm_ruby_unaccent (~> 1.1)
       unicode_utils (~> 1.4)
+    country_select (5.1.0)
+      countries (~> 3.0)
+      sort_alphabetical (~> 1.1)
     crass (1.0.6)
-    date (3.3.3)
     devise (4.9.2)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -1943,7 +1945,6 @@ GEM
     multi_json (1.15.0)
     multi_xml (0.6.0)
     net-imap (0.3.7)
-      date
       net-protocol
     net-pop (0.1.2)
       net-protocol
@@ -2107,6 +2108,8 @@ GEM
     sniffer (0.5.0)
       anyway_config (>= 1.0)
       dry-initializer (~> 3)
+    sort_alphabetical (1.1.0)
+      unicode_utils (>= 1.2.2)
     sprockets (4.2.0)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -2216,6 +2219,7 @@ DEPENDENCIES
   bx_block_teambuilder (= 0.1.1)
   bx_block_terms_and_conditions (= 0.1.11)
   byebug
+  country_select (~> 5.1)
   devise
   mock_redis (= 0.34.0)
   pg (>= 0.18, < 2.0)
@@ -2238,4 +2242,4 @@ RUBY VERSION
    ruby 2.6.5p114
 
 BUNDLED WITH
-   2.3.6
+   2.4.18

@@ -27,7 +27,6 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
   end
 
   form do |f|
-    f.semantic_errors(*f.object.errors.keys)
     f.inputs do
       f.inputs :name
       f.inputs :address
