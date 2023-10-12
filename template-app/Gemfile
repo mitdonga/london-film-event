@@ -66,10 +66,17 @@ group :development, :test do
     gem 'rspec-sonarqube-formatter', '1.5.0'
     gem 'rspec-rails', '5.1.2'
     gem 'simplecov', '0.17.0'
+    gem 'faker'
+    gem 'factory_bot_rails'
+    gem 'shoulda-matchers'
+    gem 'shoulda-callback-matchers'
+    gem 'database_cleaner'
 end
 
 group :test do
   gem 'mock_redis', '0.34.0'
+  gem 'rspec-sidekiq'
+  gem 'capybara'
 end
 
 gem 'sidekiq_alive'

@@ -48,9 +48,13 @@ ActiveAdmin.register AccountBlock::Account, as: "Client Admin" do
       f.input :company, as: :select, prompt: "Select Company"
       f.input :country_code, as: :select, collection: Country.all.map { |c| [ "#{c.country_code} (#{c.name})", c.country_code.to_i] }, prompt: 'Select a country'
       f.input :phone_number, input_html: { placeholder: "Enter a valid phone number" }
-      f.input :account_type, prompt: "Select Company"
-      f.input :password
+      f.input :account_type, prompt: "Select Account Type"
+      # f.input :password
     end
     f.actions
   end
+
+  before_create do |account|
+    account.password = account.password_confirmation = account.generate_password
+  end  
 end
