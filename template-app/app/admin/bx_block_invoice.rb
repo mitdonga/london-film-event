@@ -2,7 +2,8 @@ module BxBlockInvoice
 end
 
 ActiveAdmin.register BxBlockInvoice::Invoice, as: "Invoice" do
-  menu parent: ["Building block invoice"]
+  menu false
+  # menu parent: ["Building block invoice"]
 
   actions :all, except: [:new, :edit]
 

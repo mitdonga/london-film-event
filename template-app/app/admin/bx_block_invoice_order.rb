@@ -2,7 +2,8 @@ module BxBlockInvoiceOrder
 end
 
 ActiveAdmin.register BxBlockInvoice::Order, as: "Order_invoice" do
-  menu parent: ["Building block invoice"]
+  menu false
+  # menu parent: ["Building block invoice"]
 
   permit_params :order_number, :order_date, :customer_name, :customer_address, :customer_phone_number, :email, :company_id, items_attributes: [:id, :_destroy, :order_id, :item_name, :item_unit_price], bill_to_addresses_attributes: [:name, :company_name, :address, :city, :zip_code, :phone_number, :email, :order_id]
 
