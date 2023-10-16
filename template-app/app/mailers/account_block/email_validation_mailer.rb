@@ -7,6 +7,7 @@ module AccountBlock
       token = encoded_token
 
       @url = "#{@host}/account/accounts/email_confirmation?token=#{token}"
+      @password = @account.generate_password
 
       mail(
         to: @account.email,

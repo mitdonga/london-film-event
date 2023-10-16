@@ -9,7 +9,7 @@ module AccountBlock
 
       def show
         begin
-          @account = EmailAccount.find(@token.id)
+          @account = Account.find(@token.id)
         rescue ActiveRecord::RecordNotFound => e
           return render json: {errors: [
             {account: "Account Not Found"}
