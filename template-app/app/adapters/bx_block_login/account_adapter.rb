@@ -12,7 +12,7 @@ module BxBlockLogin
       when 'email_account'
         email = account_params.email.downcase
 
-        account = AccountBlock::EmailAccount
+        account = AccountBlock::Account
           .where('LOWER(email) = ?', email)
           .where(:activated => true)
           .first
