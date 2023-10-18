@@ -6,4 +6,12 @@ Rails.application.routes.draw do
   namespace :bx_block_login do
     post "login", to: "logins#create"
   end
+
+  namespace :account_block do
+    resources :accounts do
+      collection do
+        put :change_password
+      end
+    end
+  end
 end
