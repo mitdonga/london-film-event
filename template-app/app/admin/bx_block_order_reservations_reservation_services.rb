@@ -1,3 +1,4 @@
+module BxBlockOrderReservationsReservationServices; end
 ActiveAdmin.register BxBlockOrderReservations::ReservationService, as: "ReservationServices" do
   menu false
 
