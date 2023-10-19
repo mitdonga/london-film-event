@@ -9,3 +9,6 @@
 unless AdminUser.find_by_email("admin@ai.com")
     AdminUser.create!(email: "admin@ai.com", password: "123456", password_confirmation: "123456")
 end
+
+BxBlockRolesPermissions::Role.find_or_create_by(id: 1, name: "Client Admin")
+BxBlockRolesPermissions::Role.find_or_create_by(id: 2, name: "Client User")
