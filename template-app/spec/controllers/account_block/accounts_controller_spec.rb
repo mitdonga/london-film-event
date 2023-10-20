@@ -39,6 +39,25 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
     end
   end
 
+  describe "#update" do
+    let(:params) do {
+      token: @token,
+      account: { first_name: "Updated First Name", last_name: "Updated Last Name" }
+    } end
+    it "should update account" do
+      put "update", params: params
+      expect(response).to have_http_status(200)
+    end
+
+    let(:error_params) do {
+      token: @token,
+      account: { email: "invalid@email" }
+    } end
+    it "should raise error" do
+      put "update", params: error_params
+      expect(response).to have_http_status(422)
+    end
+  end
  
 
 end
