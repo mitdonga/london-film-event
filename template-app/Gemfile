@@ -79,6 +79,10 @@ group :test do
   gem 'capybara'
 end
 
+group :development do
+  gem "letter_opener"
+end
+
 gem 'sidekiq_alive'
 gem 'sidekiq', '~> 6.1.0'
 

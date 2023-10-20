@@ -25,6 +25,7 @@ unless Dashboard::Load.is_loaded_from_gem
         span class: "blank_slate" do
           span I18n.t("active_admin.dashboard_welcome.welcome")
           small I18n.t("active_admin.dashboard_welcome.call_to_action")
+          small I18n.t("#{Rails.application.config.base_url}")
         end
       end
 

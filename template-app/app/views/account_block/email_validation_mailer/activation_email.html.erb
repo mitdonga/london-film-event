@@ -5,7 +5,10 @@
   </head>
   <body>
     <p>
-      To activate you account please follow this link: <%= @url %>
+      To activate you account please <a href="<%= @url %>">click here</a>
+    </p>
+    <p>
+      Once email is verified, login with your email and password <strong><%= @password %></strong>
     </p>
   </body>
 </html>
