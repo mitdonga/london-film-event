@@ -2,9 +2,12 @@ module AccountBlock
   class AccountsController < ApplicationController
     include BuilderJsonWebToken::JsonWebTokenValidation
 
-    before_action :validate_json_web_token, only: [:search, :change_email_address, :change_phone_number, :specific_account, :logged_user, :change_password, :update]
+    before_action :validate_json_web_token
+    before_action :current_user, except: [:create]
+    # before_action :validate_json_web_token, only: [:search, :change_email_address, :change_phone_number, :specific_account, :logged_user, :change_password, :update, :add_client_user]
 
-    before_action :current_user, only: [:change_password, :update]
+    # before_action :current_user, only: [:change_password, :update, :add_client_user]
+    before_action :validate_client_admin, only: [:add_client_user, :client_users]
 
     def create
       case params[:data][:type] #### rescue invalid API format
@@ -167,6 +170,27 @@ module AccountBlock
       end
     end
 
+    def add_client_user
+      client_user = ClientUser.new(account_params)
+      client_user.client_admin_id = @account.id
+      if client_user.save
+        return render json: { 
+          message: "Client user created successfully", 
+          client_user: AccountSerializer.new(client_user).serializable_hash
+        }, status: :created
+      else
+        return render json: { 
+          message: "Failed to create client user", 
+          errors: client_user.errors.full_messages 
+        }, status: :unprocessable_entity
+      end
+    end
+
+    def client_users
+      client_users = @account.client_users
+      render json: { message: "Found #{client_users.size} users", client_users: AccountSerializer.new(client_users).serializable_hash }, status: :ok
+    end
+
     def logged_user
       @account = Account.find(@token.id)
       if @account.present?
@@ -180,6 +204,10 @@ module AccountBlock
 
     def account_params
       params.require(:account).permit(:first_name, :last_name, :country_code, :email, :phone_number, :device_id, :account_type, :company_id)
+    end
+
+    def validate_client_admin
+      return render json: { errors: ["You're unauthorized to perform this action", "Only client admin can perform this action"] }, status: :unauthorized unless @account.type == "ClientAdmin"
     end
 
     def current_user
