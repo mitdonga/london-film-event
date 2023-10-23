@@ -1,5 +1,4 @@
 ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
-  # menu parent: ["Building block invoice"]
 
   permit_params :name, :address, :city, :zip_code, :phone_number, :email
 

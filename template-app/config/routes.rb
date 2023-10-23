@@ -12,6 +12,9 @@ Rails.application.routes.draw do
       collection do
         put :update
         put :change_password
+        get :specific_account
+        post :add_client_user
+        get :client_users
       end
     end
   end
