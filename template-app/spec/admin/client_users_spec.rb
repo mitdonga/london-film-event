@@ -4,13 +4,14 @@ require 'factory_bot'
 
 include Warden::Test::Helpers
 
-RSpec.describe Admin::ClientAdminsController, type: :controller do
+RSpec.describe Admin::ClientUsersController, type: :controller do
   render_views
   before(:each) do
     @admin = AdminUser.create!(email: 'test123@example.com', password: 'password', password_confirmation: 'password')
     @admin.save
     @company = FactoryBot.create(:company)
     @client_admin = FactoryBot.create(:admin_account, company_id: @company.id)
+    @client_user = FactoryBot.create(:user_account, client_admin_id: @client_admin.id, company_id: @company.id)
 
     sign_in @admin
   end
@@ -39,7 +40,7 @@ RSpec.describe Admin::ClientAdminsController, type: :controller do
   end
   describe "Get#show" do
     it "show client admin" do
-      get :show, params: {id: @client_admin.id}
+      get :show, params: {id: @client_user.id}
       expect(response).to have_http_status(200)
     end
   end
@@ -49,7 +50,7 @@ RSpec.describe Admin::ClientAdminsController, type: :controller do
     }
     end
     it "edit client admin account" do
-        put :update, params: {id: @client_admin.id, account: params}
+        put :update, params: {id: @client_user.id, account: params}
         expect(response).to have_http_status(302)
     end
   end

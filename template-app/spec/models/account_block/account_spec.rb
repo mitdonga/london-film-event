@@ -10,7 +10,6 @@ RSpec.describe AccountBlock::Account, type: :model do
                 first_name: "Rahul",
                 last_name: "Patel",
                 email: Faker::Internet.email,
-                password: 'Test@1234',
                 country_code: "91",
                 account_type: "venue",
                 phone_number: Faker::Base.numerify('89########'),
@@ -18,8 +17,8 @@ RSpec.describe AccountBlock::Account, type: :model do
             )
             user.save!
             password = user.generate_password
-            assert_equal user.authenticate(password), false
-            assert_equal user.authenticate('Test@1234'), user
+            assert_equal user.authenticate(password), user
+            assert_equal user.authenticate('Test@1234'), false
         end
     end
 end

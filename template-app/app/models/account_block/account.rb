@@ -6,11 +6,12 @@ module AccountBlock
     include Wisper::Publisher
 
     validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: "Please enter valid email" }, uniqueness: { case_sensitive: false, message: "Account already exist with this email" }
-    validates :account_type, :first_name, :last_name, :full_phone_number, presence: true
+    validates :account_type, :first_name, :last_name, :full_phone_number, :country_code, :phone_number, presence: true
     validates :full_phone_number, uniqueness: { message: "Account already exist with this phone number" }, presence: true
 
     has_secure_password
     before_validation :parse_full_phone_number
+    before_validation :set_password, on: :create
     before_create :generate_api_key
     after_create :send_email
     has_one :blacklist_user, class_name: "AccountBlock::BlackListUser", dependent: :destroy
@@ -24,10 +25,19 @@ module AccountBlock
     scope :existing_accounts, -> { where(status: ["regular", "suspended"]) }
 
     def generate_password
-      "BuilderAiLf#{self.email.slice(0, 5)}".gsub(" ", "")
+      pass = "#{email.to_s.slice(0,4)}#{phone_number.to_s.slice(0,4)}"
+      Base64.urlsafe_encode64(pass, padding: false)
+    end
+
+    def full_name
+      "#{first_name} #{last_name}"
     end
 
     private
+
+    def set_password
+      self.password = self.password_confirmation = self.generate_password
+    end
 
     def send_email
       EmailValidationMailer

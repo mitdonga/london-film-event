@@ -5,10 +5,13 @@ require 'factory_bot'
 RSpec.describe AccountBlock::AccountsController, type: :controller do
 
   before do 
-    @psw = "@123456Builder"
     @company = FactoryBot.create(:company)
-    @client_admin = FactoryBot.create(:client_admin, company_id: @company.id, password: @psw)
+    @client_admin = FactoryBot.create(:admin_account, company_id: @company.id)
+    @psw = @client_admin.generate_password
     @token = BuilderJsonWebToken.encode(@client_admin.id)
+    
+    @client_user = FactoryBot.create(:user_account, client_admin_id: @client_admin.id, company_id: @company.id)
+    @user_token = BuilderJsonWebToken.encode(@client_user.id)
   end
 
   describe '#change_password' do
@@ -58,6 +61,36 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
       expect(response).to have_http_status(422)
     end
   end
- 
+
+  describe "#add_client_user" do
+    let(:user_params) do {
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.first_name,
+      country_code: "44", 
+      email: Faker::Internet.email, 
+      phone_number: Faker::Base.numerify("54########"), 
+      account_type: "venue", 
+      company_id: @company.id
+    } end
+
+    it "should create new user" do
+      post "add_client_user", params: { token: @token, account: user_params }
+      expect(response).to have_http_status(:created)
+      expect(response.body).to include("Client user created successfully")
+    end
+
+    it "should raise unauthorized error" do
+      post "add_client_user", params: { token: @user_token, account: user_params }
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.body).to include("You're unauthorized to perform this action")
+      expect(response.body).to include("Only client admin can perform this action")
+    end
+
+    it "should raise error" do
+      post "add_client_user", params: { token: @token, account: user_params.except(:email) }
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include("Failed to create client user")
+    end
+  end
 
 end
