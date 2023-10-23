@@ -58,9 +58,5 @@ ActiveAdmin.register AccountBlock::ClientUser, as: "Client User" do
       end
       f.actions
     end
-  
-    # before_create do |account|
-    #   account.password = account.password_confirmation = account.generate_password
-    # end  
-  end
+end
   
