@@ -95,7 +95,7 @@ Rails.application.configure do
   # DatabaseSelector middleware is designed as such you can define your own
   # strategy for connection switching and pass that into the middleware through
   # these configuration options.
-  config.base_url = ENV['BASE_URL'] || "https://londonfilmedeventsfinalbuild-390988-ruby.b390988.dev.eastus.az.svc.builder.cafe"
+  config.base_url = ENV['BASE_URL'] || "http://localhost:3000"
   config.action_mailer.smtp_settings = {
     address:              'smtp.gmail.com',
     port:                 587,

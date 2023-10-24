@@ -170,6 +170,9 @@ ActiveAdmin.setup do |config|
   #
   config.localize_format = :long
 
+  config.register_javascript "https://unpkg.com/slim-select@latest/dist/slimselect.min.js"
+  config.register_stylesheet "https://unpkg.com/slim-select@latest/dist/slimselect.css"
+
   # == Setting a Favicon
   #
   # config.favicon = 'favicon.ico'
