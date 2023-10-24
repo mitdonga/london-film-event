@@ -103,3 +103,5 @@ gem 'rack-cors'
 gem 'activestorage-validator'
 
 gem "country_select", "~> 5.1"
+gem 'activeadmin_quill_editor'
+gem 'arctic_admin'

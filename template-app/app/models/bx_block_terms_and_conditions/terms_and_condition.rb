@@ -4,7 +4,9 @@ module BxBlockTermsAndConditions
       class_name: "BxBlockTermsAndConditions::UserTermAndCondition",
       dependent: :destroy, foreign_key: :terms_and_condition_id
 
-    validates :description, presence: true
+    validates :description, :for_whom, presence: true
+
+    enum for_whom: %i[client_admins client_users]
 
     def get_accepted_accounts
       BxBlockTermsAndConditions::UserTermAndCondition
