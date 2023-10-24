@@ -14,7 +14,7 @@ appExtConfig:
   SMTP_ADDRESS: "smtp.develmail.com"
   SMTP_PORT: "587"
   SMTP_USERNAME: "WE4CX23WXDSU33WDOAAEWAK6JU"
-  HOST_URL: "https://londonfilmedeventsfinalbuild-390988-ruby.b390988.dev.eastus.az.svc.builder.cafe"
+  BASE_URL: "https://londonfilmedeventsfinalbuild-390988-ruby.b390988.dev.eastus.az.svc.builder.cafe"
   RAILS_ENV: "production"
   RAILS_LOG_TO_STDOUT: "true"
   REDIS_URL : "redis://redis-master.redis.svc.cluster.local"
