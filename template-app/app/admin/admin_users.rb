@@ -19,7 +19,9 @@ end
 unless AdminUsers::Load.is_loaded_from_gem
   ActiveAdmin.register AdminUser, as: "LF Admin" do
     permit_params :email, :password, :password_confirmation
-    menu priority: 2
+    menu priority: 1, label: "LF Admins"
+    index title: "LF Admins"
+    show title: "LF Admin Details"
 
     index do
       selectable_column
@@ -43,6 +45,17 @@ unless AdminUsers::Load.is_loaded_from_gem
         f.input :password_confirmation
       end
       f.actions
+    end
+
+    controller do
+      def new
+        @page_title = "New LF Admin"
+        super
+      end
+      def edit
+        @page_title = "Edit LF Admin"
+        super
+      end
     end
   end
 end
