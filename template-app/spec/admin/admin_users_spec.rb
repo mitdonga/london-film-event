@@ -35,4 +35,12 @@ RSpec.feature "Admin Users", type: :feature do
     expect(page).to have_content("newadmin@example.com")
   end
 
+  scenario "Edit LF Admin" do
+    visit admin_lf_admins_path
+
+    click_link "Edit", match: :first
+
+    expect(page).to have_content("Edit LF Admin")
+  end
+
 end
