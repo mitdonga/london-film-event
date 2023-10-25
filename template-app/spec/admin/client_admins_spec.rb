@@ -13,6 +13,9 @@ RSpec.describe Admin::ClientAdminsController, type: :controller do
     @client_admin = FactoryBot.create(:admin_account, company_id: @company.id)
 
     sign_in @admin
+    redirect_to admin_lf_admins_path
+    sleep 1
+    redirect_to admin_client_admins_path
   end
   describe "Post#new" do
     let(:params) do {
