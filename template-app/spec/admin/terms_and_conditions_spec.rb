@@ -1,5 +1,6 @@
 require 'rails_helper'
 require 'spec_helper'
+require 'factory_bot'
 include Warden::Test::Helpers
 RSpec.describe Admin::TermsAndConditionsController, type: :controller do
   render_views

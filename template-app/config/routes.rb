@@ -17,4 +17,8 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  namespace :bx_block_terms_and_conditions do
+    resources :terms_and_conditions
+  end
 end
