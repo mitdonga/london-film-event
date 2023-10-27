@@ -7,3 +7,7 @@
 body.active_admin [data-aa-quill-editor] {
     width: 70% !important;
 }
+
+.inline-errors {
+    text-transform: capitalize;
+}
