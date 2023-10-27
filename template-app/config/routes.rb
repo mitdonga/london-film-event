@@ -14,6 +14,7 @@ Rails.application.routes.draw do
         get :specific_account
         post :add_client_user
         get :client_users
+        delete :remove_user
       end
     end
   end
