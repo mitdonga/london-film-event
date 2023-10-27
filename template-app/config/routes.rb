@@ -19,6 +19,10 @@ Rails.application.routes.draw do
   end
 
   namespace :bx_block_terms_and_conditions do
-    resources :terms_and_conditions
+    resources :terms_and_conditions do
+      collection do
+        put :accept_and_reject
+      end
+    end
   end
 end
