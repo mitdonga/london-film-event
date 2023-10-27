@@ -1,8 +1,9 @@
 module BxBlockTermsAndConditions
   class TermsAndConditionsController < ApplicationController
-    before_action :check_admin, only: [:create, :show]
-    before_action :check_basic, only: [:latest_record, :accept_and_reject, :terms_and_condition_status]
     before_action :validate_json_web_token, except: :index
+    before_action :current_user, except: :index
+    # before_action :check_admin, only: [:create, :show]
+    # before_action :check_basic, only: [:latest_record, :accept_and_reject, :terms_and_condition_status]
 
     def create
       term = BxBlockTermsAndConditions::TermsAndCondition.new(terms_and_condition_params
