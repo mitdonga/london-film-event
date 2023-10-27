@@ -16,6 +16,7 @@ appExtConfig:
   RAILS_ENV: "production"
   RAILS_LOG_TO_STDOUT: "true"
   REDIS_URL : "redis://redis-master.redis.svc.cluster.local"
+  BASE_URL : "https://londonfilmedeventsfinalbuild-390988-ruby.b390988.uat.eastus.az.svc.builder.ai"
   # A change to RAILS_MAX_THREADS might affect the 
   # resource limits set below so that needs to be taken into consideration
   RAILS_MAX_THREADS: "10"
