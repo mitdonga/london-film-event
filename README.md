@@ -11,7 +11,7 @@
 [Project WIKI](https://gitlab.builder.ai/devops/template-app/-/wikis/home)  
 
 
-## About  
+## About  :
 
 Provides a template for a rails application.  
 The template included a bare bones rails application that can be contanarised and deployed to kubernetes.
