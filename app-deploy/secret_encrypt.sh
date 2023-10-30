@@ -21,7 +21,7 @@ echo "OK"
 
 echo -n "Enter environment name to which secrets will apply (typically dev|stage|prod): "
 read ENVIRONMENT
-ENVIRONMENT=${ENVIRONMENT,,}
+ENVIRONMENT=${ENVIRONMENT}
 
 # defining constants
 GPG_KEY_PUB_FINGERPRINT="0139ACD57B1744B349802C6D061F3B887269AD43"
@@ -52,9 +52,6 @@ echo "Runnning on ${MACHINE}"
 # get sops tool if not present
 if [[ ! -x ${SOPS_CMD} ]]
 then
-    mkdir -p "${BIN_DIR}"
-    curl "${SOPS_DOWNLOAD_URL}" -o "${SOPS_CMD}.gz"
-    gunzip --force ${SOPS_CMD}.gz
     chmod +x ${SOPS_CMD}
 fi
 
