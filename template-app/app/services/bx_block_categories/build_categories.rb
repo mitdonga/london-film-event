@@ -53,17 +53,17 @@ module BxBlockCategories
       }.freeze
 
       def call(categories_and_sub_categories = CATEGORIES_AND_SUB_CATEGORIES_HASH)
-        categories_and_sub_categories.each do |key, value|
-          category = BxBlockCategories::Category.where(
-            "lower(name) = ?", key.downcase
-          ).first_or_create(name: key, identifier: category_identifier_hash[key])
-          category.update(identifier: category_identifier_hash[key])
-          value.each do |val|
-            category.sub_categories.where(
-              "lower(name) = ?", val.downcase
-            ).first_or_create(name: val, categories: [category])
-          end
-        end
+        # categories_and_sub_categories.each do |key, value|
+        #   category = BxBlockCategories::Category.where(
+        #     "lower(name) = ?", key.downcase
+        #   ).first_or_create(name: key, identifier: category_identifier_hash[key])
+        #   category.update(identifier: category_identifier_hash[key])
+        #   value.each do |val|
+        #     category.sub_categories.where(
+        #       "lower(name) = ?", val.downcase
+        #     ).first_or_create(name: val, categories: [category])
+        #   end
+        # end
       end
 
       private
