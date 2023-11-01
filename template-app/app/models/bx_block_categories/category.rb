@@ -28,5 +28,6 @@ module BxBlockCategories
     validates_uniqueness_of :identifier, allow_blank: true
 
     enum catalogue_type: %w[all_packages bespoke_packages]
+    enum status: %w[unarchived archived]
   end
 end

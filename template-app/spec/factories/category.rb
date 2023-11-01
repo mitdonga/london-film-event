@@ -4,5 +4,6 @@ FactoryBot.define do
         description { Faker::Lorem.paragraph(sentence_count: 200) }
         catalogue_type {"all_packages"}
         start_from {200}
+        status {"unarchived"}
     end
 end
