@@ -11,3 +11,40 @@ body.active_admin [data-aa-quill-editor] {
 .inline-errors {
     text-transform: capitalize;
 }
+
+.sub_categories_container {
+    // width: 200px;
+}
+
+// li.has_many_container.sub_categories fieldset {
+//     display: flex;
+//     justify-content: space-between;
+// }
+
+.sub_categories_container li {
+    // max-width: 50% !important;
+    display: inline-block;
+}
+
+fieldset.inputs.has_many_fields ol {
+    max-width: 90%;
+    margin: auto;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+li.has_many_delete.boolean.input.optional {
+    width: 100px;
+    margin: 0;
+}
+
+li.has_many_container.sub_categories {
+    width: 100%;
+}
+
+fieldset h3 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
