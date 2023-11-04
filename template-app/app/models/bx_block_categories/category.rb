@@ -14,11 +14,17 @@ module BxBlockCategories
 
     has_many :sub_categories, class_name: "BxBlockCategories::SubCategory", foreign_key: 'parent_id', dependent: :destroy
     accepts_nested_attributes_for :sub_categories, allow_destroy: true
+    
+    # has_and_belongs_to_many :companies, class_name: "BxBlockInvoice::Company", join_table: :companies_categories
+    # accepts_nested_attributes_for :companies, allow_destroy: true
+
+    # attr_accessible :company_ids
+    # attr_accessible :company_ids
     # has_and_belongs_to_many :sub_categories,
     #   join_table: :categories_sub_categories, dependent: :destroy
 
     # has_many :contents, class_name: "BxBlockContentmanagement::Content", dependent: :destroy
-    has_many :ctas, class_name: "BxBlockCategories::Cta", dependent: :nullify,  dependent: :destroy
+    has_many :ctas, class_name: "BxBlockCategories::Cta", dependent: :nullify
 
     has_many :user_categories, class_name: "BxBlockCategories::UserCategory",
       join_table: "user_categoeries", dependent: :destroy

@@ -1,3 +1,4 @@
+@import 'activeadmin_addons/all';
 @import "active_admin/mixins";
 @import "arctic_admin/base";
 
@@ -46,5 +47,9 @@ fieldset h3 {
     margin-top: 20px;
     margin-bottom: 20px;
     text-align: center;
+}
+
+#category_company_ids_input .selected-list-container {
+    width: 70%
 }
 
