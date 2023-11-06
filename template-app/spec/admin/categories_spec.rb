@@ -4,38 +4,35 @@ require 'factory_bot'
 
 include Warden::Test::Helpers
 
-RSpec.describe Admin::CategoriesController, type: :controller do
+RSpec.describe Admin::ServicesController, type: :controller do
   render_views
   before(:each) do
     @admin = AdminUser.create!(email: 'test123@example.com', password: 'password', password_confirmation: 'password')
     @admin.save
-    @category = FactoryBot.create(:category)
+    @service = FactoryBot.create(:service)
 
     sign_in @admin
   end
-  describe "Category#new" do
+  describe "Service#new" do
     let(:params) do {
         name: Faker::Lorem.sentence(word_count: 2),
-        description: Faker::Lorem.paragraph(sentence_count: 200),
-        catalogue_type: "all_packages",
-        start_from: 200,
-        status: "unarchived"
+        description: Faker::Lorem.paragraph(sentence_count: 200)
       }
     end
-    it "create category" do
+    it "create service" do
       post :new, params: params
       expect(response).to have_http_status(200)
     end
   end
   describe "Get#index" do
-    it "show all categories" do
+    it "show all services" do
       get :index
       expect(response).to have_http_status(200)
     end
   end
   describe "Get#show" do
-    it "show category" do
-      get :show, params: {id: @category.id}
+    it "show service" do
+      get :show, params: {id: @service.id}
       expect(response).to have_http_status(200)
     end
   end
@@ -44,8 +41,8 @@ RSpec.describe Admin::CategoriesController, type: :controller do
       name: Faker::Lorem.sentence(word_count: 2)
     }
     end
-    it "edit category" do
-        put :update, params: {id: @category.id, account: params}
+    it "edit service" do
+        put :update, params: {id: @service.id, account: params}
         expect(response).to have_http_status(302)
     end
   end

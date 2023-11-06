@@ -9,8 +9,8 @@ RSpec.describe Admin::SubCategoriesController, type: :controller do
   before(:each) do
     @admin = AdminUser.create!(email: 'test123@example.com', password: 'password', password_confirmation: 'password')
     @admin.save
-    @category = FactoryBot.create(:category)
-    @sub_category = FactoryBot.create(:sub_category, parent_id: @category.id)
+    @service = FactoryBot.create(:service)
+    @sub_category = FactoryBot.create(:sub_category, parent_id: @service.id)
 
     sign_in @admin
   end
@@ -20,7 +20,7 @@ RSpec.describe Admin::SubCategoriesController, type: :controller do
         description: Faker::Lorem.paragraph(sentence_count: 200),
         start_from: 2000,
         duration: 10,
-        parent_id: @category.id
+        parent_id: @service.id
       }
     end
     it "create sub_category" do

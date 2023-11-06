@@ -12,8 +12,8 @@ module BxBlockCategories
     # has_one_base64_attached :dark_icon_active
     # has_one_base64_attached :dark_icon_inactive
 
-    has_many :sub_categories, class_name: "BxBlockCategories::SubCategory", foreign_key: 'parent_id', dependent: :destroy
-    accepts_nested_attributes_for :sub_categories, allow_destroy: true
+    # has_many :sub_categories, class_name: "BxBlockCategories::SubCategory", foreign_key: 'parent_id', dependent: :destroy
+    # accepts_nested_attributes_for :sub_categories, allow_destroy: true
     
     # has_and_belongs_to_many :companies, class_name: "BxBlockInvoice::Company", join_table: :companies_categories
     # accepts_nested_attributes_for :companies, allow_destroy: true
