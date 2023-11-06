@@ -2,9 +2,19 @@ module BxBlockInvoice
   class Company < ApplicationRecord
     self.table_name = :bx_block_invoice_companies
 
-    # has_and_belongs_to_many :categories, class_name: "BxBlockCategories::Category", join_table: :companies_categories
+    after_create :add_company_sub_categories
 
+    has_many :company_sub_categories, class_name: "BxBlockInvoice::CompanySubCategory", foreign_key: "company_id", dependent: :destroy
+    has_many :sub_categories, through: :company_sub_categories
 
     validates :name, :email, presence: true
+
+    private
+
+    def add_company_sub_categories
+      sub_categories = BxBlockCategories::SubCategory.select(:id, :start_from)
+      data = sub_categories.map {|sc| { company_id: self.id, sub_category_id: sc[:id], price: sc[:start_from] }}
+      BxBlockInvoice::CompanySubCategory.create!(data)
+    end
   end
 end
