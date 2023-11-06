@@ -12,3 +12,4 @@ end
 
 BxBlockRolesPermissions::Role.find_or_create_by(id: 1, name: "Client Admin")
 BxBlockRolesPermissions::Role.find_or_create_by(id: 2, name: "Client User")
+ActiveRecord::Base.connection.execute('DELETE FROM categories_sub_categories')

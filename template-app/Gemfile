@@ -105,3 +105,6 @@ gem 'activestorage-validator'
 gem "country_select", "~> 5.1"
 gem 'activeadmin_quill_editor'
 gem 'arctic_admin'
+gem 'jquery-rails'
+gem 'select2-rails'
+gem 'activeadmin_addons'
