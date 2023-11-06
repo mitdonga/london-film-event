@@ -1,5 +1,5 @@
 ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
-    
+  NO_IMAGE = "No Image"
   permit_params :name, :description, :start_from, :catalogue_type, :status, :image, company_ids: [], sub_categories_attributes: [:id, :name, :start_from, :duration, :image, :_destroy]
 
   index do
@@ -8,7 +8,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
     column :name
     column :image do |c|
       c.image.present? ?
-      image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : "No Image"
+      image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : NO_IMAGE
     end
     column :sub_categories do |c|
       c.sub_categories.pluck(:name)
@@ -21,7 +21,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
       f.input :name
       f.input :description
       # f.input :company_ids, as: :selected_list, label: "Companies"
-      f.input :image, as: :file, hint: f.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(f.object.image, only_path: true), width: 200, controls: true) : "No Image"
+      f.input :image, as: :file, hint: f.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(f.object.image, only_path: true), width: 200, controls: true) : NO_IMAGE
       if f.object.persisted?
         f.inputs do
           f.has_many :sub_categories, 
@@ -32,7 +32,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
             s.input :name
             s.input :start_from, label: "Default Price"
             s.input :duration
-            s.input :image, as: :file, hint: s.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(s.object.image, only_path: true), width: 100, controls: true) : "No Image"
+            s.input :image, as: :file, hint: s.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(s.object.image, only_path: true), width: 100, controls: true) : NO_IMAGE
           end
         end
       end
@@ -46,7 +46,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
       row :description
       row :image do |c|
         c.image.present? ?
-        image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : "No Image"
+        image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : NO_IMAGE
       end
       row :sub_categories do |c|
         c.sub_categories.pluck(:name)

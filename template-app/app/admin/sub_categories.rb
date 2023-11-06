@@ -1,5 +1,5 @@
 ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
-    
+    NO_IMAGE = "No Image"
     permit_params :name, :parent_id, :start_from, :description, :duration, :image
 
     index do
@@ -11,7 +11,7 @@ ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
       column :parent
       column :image do |c|
         c.image.present? ?
-        image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : "No Image"
+        image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : NO_IMAGE
       end
       actions
     end
@@ -23,7 +23,7 @@ ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
         f.input :duration
         f.input :description
         f.input :parent
-        f.input :image, as: :file, hint: f.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(f.object.image, only_path: true), width: 200, controls: true) : "No Image"
+        f.input :image, as: :file, hint: f.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(f.object.image, only_path: true), width: 200, controls: true) : NO_IMAGE
       end
       f.actions
     end
@@ -37,7 +37,7 @@ ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
         row :description
         row :image do |c|
           c.image.present? ?
-          image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : "No Image"
+          image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : NO_IMAGE
         end
         row :created_at
         row :updated_at
