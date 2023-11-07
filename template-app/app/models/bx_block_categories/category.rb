@@ -32,6 +32,7 @@ module BxBlockCategories
       join_table: "user_categoeries",  dependent: :destroy
 
     validates :name, uniqueness: true, presence: true
+    validates :description, presence: true
     validates_uniqueness_of :identifier, allow_blank: true
 
     enum catalogue_type: %w[all_packages bespoke_packages]

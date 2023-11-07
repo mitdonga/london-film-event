@@ -7,7 +7,7 @@ module BxBlockInvoice
     has_many :company_sub_categories, class_name: "BxBlockInvoice::CompanySubCategory", foreign_key: "company_id", dependent: :destroy
     has_many :sub_categories, through: :company_sub_categories
 
-    validates :name, :email, presence: true
+    validates :name, :email, :phone_number, presence: true
 
     private
 
