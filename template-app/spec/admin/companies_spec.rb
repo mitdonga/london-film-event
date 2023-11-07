@@ -14,6 +14,7 @@ RSpec.describe Admin::CompaniesController, type: :controller do
     3.times do
       sub_category = FactoryBot.create(:sub_category, parent_id: @service.id)
     end
+    data = @company.sub_categories_with_service
     sign_in @admin
   end
   describe "Post#new" do
