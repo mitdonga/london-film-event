@@ -10,7 +10,11 @@ RSpec.describe Admin::CompaniesController, type: :controller do
     @admin = AdminUser.create!(email: 'test123@example.com', password: 'password', password_confirmation: 'password')
     @admin.save
     @company = FactoryBot.create(:company)
-
+    @service = FactoryBot.create(:service)
+    3.times do
+      sub_category = FactoryBot.create(:sub_category, parent_id: @service.id)
+    end
+    data = @company.sub_categories_with_service
     sign_in @admin
   end
   describe "Post#new" do

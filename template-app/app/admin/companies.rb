@@ -1,6 +1,7 @@
 ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
 
-  permit_params :name, :address, :city, :zip_code, :phone_number, :email
+  # permit_params :name, :address, :city, :zip_code, :phone_number, :email, company_sub_categories_attributes: [:id, :price]
+  permit_params :all
 
   index do
     selectable_column
@@ -33,7 +34,22 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
       f.inputs :zip_code
       f.inputs :phone_number
       f.inputs :email
+      if f.object.persisted?
+        f.inputs "Manage Sub Category Prices" do
+          tabs do
+            f.object.sub_categories_with_service.each do |service, sub_categories|
+              tab "#{service}" do
+                sub_categories.each do |sub_category_data|
+                  f.input "company_sub_categories[#{sub_category_data['id']}][id]",  input_html: { value: sub_category_data['id'] }, as: :hidden
+                  f.input "company_sub_categories[#{sub_category_data['id']}][price]", label: "#{sub_category_data['sub_category']} Price", input_html: { value: sub_category_data['price'], type: 'number', step: '1', min: '1', required: true  }
+                end
+              end
+            end
+          end
+        end
+      end
     end
+
     f.actions
   end
 end
