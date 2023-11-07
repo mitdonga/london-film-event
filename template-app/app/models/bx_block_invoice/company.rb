@@ -9,6 +9,11 @@ module BxBlockInvoice
 
     validates :name, :email, :phone_number, presence: true
 
+    def sub_categories_with_service
+      data = company_sub_categories.map {|csc| csc.attributes.merge({"sub_category"=> csc.sub_category.name, "service"=> csc.service.name})}
+      data.group_by {|sc| sc["service"]}
+    end
+
     private
 
     def add_company_sub_categories
