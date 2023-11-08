@@ -1,7 +1,6 @@
 ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
-
-  # permit_params :name, :address, :city, :zip_code, :phone_number, :email, company_sub_categories_attributes: [:id, :price]
-  permit_params :all
+  permit_params :name, :address, :city, :zip_code, :phone_number, :email, :company_sub_categories
+  # permit_params :all
 
   index do
     selectable_column
@@ -51,5 +50,18 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
     end
 
     f.actions
+  end
+
+  controller do
+    def update
+      company = find_resource
+      data = params.as_json["bx_block_invoice_company"]["company_sub_categories"].values rescue []
+      data.each do |e|
+        next unless e["id"].present? && e["price"].present?
+        csc = company.company_sub_categories.find_by_id(e["id"])
+        csc.update!(price: e["price"].to_i)
+      end
+      super
+    end
   end
 end
