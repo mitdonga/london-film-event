@@ -14,7 +14,8 @@ RSpec.describe Admin::CompaniesController, type: :controller do
     3.times do
       sub_category = FactoryBot.create(:sub_category, parent_id: @service.id)
     end
-    data = @company.sub_categories_with_service
+    @data = @company.sub_categories_with_service
+    @csc = @company.company_sub_categories
     sign_in @admin
   end
   describe "Post#new" do
@@ -46,11 +47,11 @@ RSpec.describe Admin::CompaniesController, type: :controller do
   end
   describe "Put#edit" do
     let(:params) do {
-      name: "Amazon Inc"
-    }
-    end
+      "name" => "Amazon Inc",
+      "company_sub_categories" => { "#{@csc[0].id.to_s}" => @csc[0].as_json }
+    }end
     it "edit company" do
-        put :update, params: {id: @company.id, account: params}
+        put :update, params: {id: @company.id, bx_block_invoice_company: params}
         expect(response).to have_http_status(302)
     end
   end
