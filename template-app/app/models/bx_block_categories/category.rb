@@ -31,6 +31,9 @@ module BxBlockCategories
     has_many :accounts, class_name: "AccountBlock::Account", through: :user_categories,
       join_table: "user_categoeries",  dependent: :destroy
 
+    has_many :company_categories, class_name: "BxBlockInvoice::CompanyCategory", foreign_key: "category_id", dependent: :destroy
+    has_many :companies, through: :company_categories
+
     validates :name, uniqueness: true, presence: true
     validates :description, presence: true
     validates_uniqueness_of :identifier, allow_blank: true
