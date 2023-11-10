@@ -31,6 +31,18 @@ module BxBlockInvoice
       end
     end
 
+    def available_services
+      BxBlockCategories::Category.joins(:company_categories)
+        .where('company_categories.has_access = true and company_categories.company_id = ? and categories.type = ?', self.id, "Service").distinct
+    end
+
+    def available_sub_categories
+      service_ids = available_services.pluck(:id)
+      BxBlockCategories::SubCategory.joins(company_sub_categories: :sub_category)
+        .select("sub_categories.*, company_sub_categories.price AS actual_price")
+        .where("sub_categories.parent_id IN (?) and company_sub_categories.company_id = ?", service_ids, self.id).distinct
+    end
+
     private
 
     def add_company_sub_categories

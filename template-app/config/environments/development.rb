@@ -1,3 +1,4 @@
+ActiveRecord::Base.logger = Logger.new(STDOUT)
 Rails.application.configure do
   config.hosts = nil 
   # Settings specified here will take precedence over those in config/application.rb.

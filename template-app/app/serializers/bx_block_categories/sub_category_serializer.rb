@@ -2,10 +2,13 @@
 
 module BxBlockCategories
   class SubCategorySerializer < BuilderBase::BaseSerializer
-    attributes :id, :name, :created_at, :updated_at
+    attributes :id, :name, :start_from, :duration, :parent_id
 
-    attribute :categories, if: proc { |_record, params|
-      params && params[:categories] == true
-    }
+    attribute :actual_price do |sc|
+      sc.actual_price rescue nil
+    end
+
+    attribute :category_id do |sc|; sc.parent_id; end
+    
   end
 end

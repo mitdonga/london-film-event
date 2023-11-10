@@ -33,6 +33,14 @@ module AccountBlock
       "#{first_name} #{last_name}"
     end
 
+    def available_services
+      company.available_services
+    end
+
+    def available_sub_categories
+      company.available_sub_categories
+    end
+
     private
 
     def set_password

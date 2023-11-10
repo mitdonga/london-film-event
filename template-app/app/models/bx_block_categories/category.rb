@@ -6,11 +6,6 @@ module BxBlockCategories
     self.table_name = :categories
 
     has_one_attached :image
-    # has_one_base64_attached :light_icon_active
-    # has_one_base64_attached :light_icon_inactive
-    # has_one_base64_attached :dark_icon
-    # has_one_base64_attached :dark_icon_active
-    # has_one_base64_attached :dark_icon_inactive
 
     # has_many :sub_categories, class_name: "BxBlockCategories::SubCategory", foreign_key: 'parent_id', dependent: :destroy
     # accepts_nested_attributes_for :sub_categories, allow_destroy: true
