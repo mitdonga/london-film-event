@@ -36,11 +36,13 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
       if f.object.persisted?
         f.inputs "Manage Sub Category Prices" do
           tabs do
-            f.object.sub_categories_with_service.each do |service, sub_categories|
-              tab "#{service}" do
-                sub_categories.each do |sub_category_data|
-                  f.input "company_sub_categories[#{sub_category_data['id']}][id]",  input_html: { value: sub_category_data['id'] }, as: :hidden
-                  f.input "company_sub_categories[#{sub_category_data['id']}][price]", label: "#{sub_category_data['sub_category']} Price", input_html: { value: sub_category_data['price'], type: 'number', step: '1', min: '1', required: true  }
+            f.object.services_sub_categories_data.each do |sr|
+              tab "#{sr[:service_name]}" do
+                f.input "company_categories[#{sr[:company_category_id]}][id]", input_html: { value: sr[:company_category_id] }, as: :hidden
+                f.input "company_categories[#{sr[:company_category_id]}][has_access]", collection: [['Yes', true], ['No', false]], selected: sr[:has_access], label: "Available"
+                sr[:company_sub_categories].each do |csc|
+                  f.input "company_sub_categories[#{csc[:company_sub_category_id]}][id]", input_html: { value: csc[:company_sub_category_id] }, as: :hidden
+                  f.input "company_sub_categories[#{csc[:company_sub_category_id]}][price]", as: :number, label: "#{csc[:sub_category_name]} Price", input_html: { value: csc[:price], step: '1', min: '1', required: true  }
                 end
               end
             end
@@ -55,11 +57,20 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
   controller do
     def update
       company = find_resource
-      data = params.as_json["bx_block_invoice_company"]["company_sub_categories"].values rescue []
-      data.each do |e|
+      company_sub_categories_data = params.as_json["bx_block_invoice_company"]["company_sub_categories"].values rescue []
+      company_sub_categories_data.each do |e|
         next unless e["id"].present? && e["price"].present?
         csc = company.company_sub_categories.find_by_id(e["id"])
         csc.update!(price: e["price"].to_i)
+      end
+      companies_categories_data = params.as_json["bx_block_invoice_company"]["company_categories"].values rescue []
+      companies_categories_data.each do |e|
+        next unless e["id"].present?
+        cc = company.company_categories.find_by_id(e["id"])
+        if cc.present?
+          has_access = e["has_access"] == "true" ? true : false
+          cc.update!(has_access: has_access)
+        end
       end
       super
     end
