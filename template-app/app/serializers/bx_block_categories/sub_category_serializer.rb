@@ -9,6 +9,11 @@ module BxBlockCategories
     end
 
     attribute :category_id do |sc|; sc.parent_id; end
+
+    attributes :image do |sc|
+      sc.image.attached? ?
+      Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(sc.image, only_path: true) : ""
+    end
     
   end
 end
