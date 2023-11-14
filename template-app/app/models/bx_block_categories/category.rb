@@ -6,7 +6,7 @@ module BxBlockCategories
     self.table_name = :categories
 
     has_one_attached :image
-
+    validates :image, :content_type => ["jpg", "png", "jpeg", "image/jpg", "image/jpeg", "image/png"]
     # has_many :sub_categories, class_name: "BxBlockCategories::SubCategory", foreign_key: 'parent_id', dependent: :destroy
     # accepts_nested_attributes_for :sub_categories, allow_destroy: true
     
