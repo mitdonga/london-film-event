@@ -26,4 +26,8 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  namespace :bx_block_categories do
+    resources :categories, only: [:index]
+  end
 end

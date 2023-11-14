@@ -6,12 +6,7 @@ module BxBlockCategories
     self.table_name = :categories
 
     has_one_attached :image
-    # has_one_base64_attached :light_icon_active
-    # has_one_base64_attached :light_icon_inactive
-    # has_one_base64_attached :dark_icon
-    # has_one_base64_attached :dark_icon_active
-    # has_one_base64_attached :dark_icon_inactive
-
+    validates :image, :content_type => ["jpg", "png", "jpeg", "image/jpg", "image/jpeg", "image/png"]
     # has_many :sub_categories, class_name: "BxBlockCategories::SubCategory", foreign_key: 'parent_id', dependent: :destroy
     # accepts_nested_attributes_for :sub_categories, allow_destroy: true
     
@@ -30,6 +25,9 @@ module BxBlockCategories
       join_table: "user_categoeries", dependent: :destroy
     has_many :accounts, class_name: "AccountBlock::Account", through: :user_categories,
       join_table: "user_categoeries",  dependent: :destroy
+
+    has_many :company_categories, class_name: "BxBlockInvoice::CompanyCategory", foreign_key: "category_id", dependent: :destroy
+    has_many :companies, through: :company_categories
 
     validates :name, uniqueness: true, presence: true
     validates :description, presence: true

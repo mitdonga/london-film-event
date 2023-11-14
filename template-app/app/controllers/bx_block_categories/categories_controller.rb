@@ -3,6 +3,7 @@
 module BxBlockCategories
   class CategoriesController < ApplicationController
     before_action :load_category, only: %i[show update destroy]
+    before_action :current_user
 
     def create
       err = []
@@ -39,15 +40,12 @@ module BxBlockCategories
     end
 
     def index
-      return render json: {message: "No data is present"}, status: :not_found unless Category.all.present?
-      serializer = if params[:sub_category_id].present?
-        categories = SubCategory.find(params[:sub_category_id])
-          .categories
-        CategorySerializer.new(categories)
+      services = @current_user.available_services
+      if services.size > 0
+        render json: BxBlockCategories::CategorySerializer.new(services, {params: {account: @current_user}, meta: { message: "Available services: #{services.size}"}}).serializable_hash, status: :ok
       else
-        CategorySerializer.new(Category.all, serialization_options)
+        render json: { message: "Unfortunately, there are no services available for you at the moment" }, status: 204
       end
-      render json: serializer, status: :ok
     end
 
     def destroy
