@@ -1,6 +1,6 @@
 ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
     NO_IMAGE = "No Image"
-    permit_params :name, :parent_id, :start_from, :description, :duration, :image
+    permit_params :name, :parent_id, :start_from, :description, :duration, :image, features_attributes: [:id, :name, :_destroy]
 
     index do
       selectable_column
@@ -24,6 +24,15 @@ ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
         f.input :description
         f.input :parent
         f.input :image, as: :file, hint: f.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(f.object.image, only_path: true), width: 200, controls: true) : NO_IMAGE
+        f.inputs do
+          f.has_many :features, 
+              heading: 'Manage Features',                    
+              allow_destroy: true,
+              new_record: true,
+              class: 'features_container' do |s|       
+            s.input :name
+          end
+        end
       end
       f.actions
     end
