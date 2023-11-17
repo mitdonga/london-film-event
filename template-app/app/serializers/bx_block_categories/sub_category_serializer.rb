@@ -14,6 +14,10 @@ module BxBlockCategories
       sc.image.attached? ?
       Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(sc.image, only_path: true) : ""
     end
-    
+
+    attributes :features do |sc|
+      BxBlockCategories::FeatureSerializer.new(sc.features)
+    end
+
   end
 end

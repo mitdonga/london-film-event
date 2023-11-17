@@ -19,7 +19,6 @@ RSpec.describe BxBlockCategories::CategoriesController, type: :controller do
       sub_category = FactoryBot.create(:sub_category, parent_id: service.id)
     end
 
-    @company_1.company_categories.update_all(has_access: true)
   end
 
 
@@ -31,6 +30,8 @@ RSpec.describe BxBlockCategories::CategoriesController, type: :controller do
     end
 
     it "should return not content" do
+      @company_2.company_categories.update_all(has_access: false)
+
       get "index", params: { token: @token_2 }
       expect(response).to have_http_status(204)
     end

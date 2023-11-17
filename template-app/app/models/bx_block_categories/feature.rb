@@ -6,7 +6,6 @@ module BxBlockCategories
         
         validates :name, presence: true
         validates :name, length: { in: 5..50 }
-        
 
     end
 end
