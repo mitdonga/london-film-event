@@ -13,5 +13,10 @@ module BxBlockCategories
       end
     end
 
+    attributes :image do |cat|
+      cat.image.attached? ?
+      Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(cat.image, only_path: true) : ""
+    end
+
   end
 end

@@ -11,7 +11,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
       image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : NO_IMAGE
     end
     column :sub_categories do |c|
-      c.sub_categories.pluck(:name)
+      c.sub_categories.each {|sc| link_to sc.name, admin_sub_category_path(sc)}
     end
     actions
   end
@@ -49,7 +49,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
         image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : NO_IMAGE
       end
       row :sub_categories do |c|
-        c.sub_categories.pluck(:name)
+        c.sub_categories.each {|sc| link_to sc.name, admin_sub_category_path(sc)}
       end
       row :created_at
       row :updated_at

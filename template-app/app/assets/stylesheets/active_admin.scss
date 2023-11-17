@@ -13,8 +13,12 @@ body.active_admin [data-aa-quill-editor] {
     text-transform: capitalize;
 }
 
-.sub_categories_container {
-    // width: 200px;
+input[name^="sub_category[features_attributes]"][name$="[name]"] {
+    width: 450px !important;
+}
+
+fieldset.features_container.inputs.has_many_fields li:first-child {
+    width: 40%;
 }
 
 // li.has_many_container.sub_categories fieldset {

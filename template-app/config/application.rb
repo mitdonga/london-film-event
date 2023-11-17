@@ -45,5 +45,6 @@ module App
     config.middleware.use ActionDispatch::Session::CookieStore, 
     config.session_options
     config.middleware.use Rack::MethodOverride
+    config.active_storage.service_urls_expire_in = 1.year
   end
 end
