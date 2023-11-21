@@ -93,4 +93,50 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
     end
   end
 
+  describe "#reset_password_email" do
+    it "should raise invalid email" do
+      put "reset_password_email", params: { email: "invalid.email.com" }
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include("Invalid Email")
+    end
+
+    it "should raise account not found" do
+      put "reset_password_email", params: { email: "invalid.account@gmail.com" }
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include("Account not found")
+    end
+
+    it "should succeed" do
+      put "reset_password_email", params: { email: @client_user.email }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Password reset link has been sent. Kindly check your email inbox for further instructions")
+    end
+  end
+
+  describe "#reset_password" do
+    it "should succeed" do
+      put "reset_password", params: { token: @token, password: "@!234232BuilderAi", confirm_password: "@!234232BuilderAi" }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Password updated successfully")
+    end
+
+    it "should raise invalid password" do
+      put "reset_password", params: { token: @token, password: "234232", confirm_password: "234232" }
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include("Please enter valid password")
+    end
+
+    it "should raise password mismatch" do
+      put "reset_password", params: { token: @token, password: "234232Builder", confirm_password: "234232" }
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include("Password and confirm password doesn't match")
+    end
+
+    it "should raise invalid token" do
+      put "reset_password", params: { token: "no token", password: "@!234232B", confirm_password: "@!234232B" }
+      expect(response).to have_http_status(:bad_request)
+      expect(response.body).to include("Invalid token")
+    end
+  end
+
 end
