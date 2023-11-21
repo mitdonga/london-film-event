@@ -176,7 +176,8 @@ module AccountBlock
     end
 
     def reset_password
-      password, confirm_password = params[:password], params[:confirm_password]
+      password = params[:password]
+      confirm_password = params[:confirm_password]
       return render json: { message: "Password and confirm password doesn't match" }, status: :unprocessable_entity if password != confirm_password
       password_validation = PasswordValidation.new(password)
       is_valid = password_validation.valid?
