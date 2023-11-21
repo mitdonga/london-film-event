@@ -30,6 +30,11 @@ module BxBlockLogin
 
       if account.authenticate(account_params.password)
         token, refresh_token = generate_tokens(account.id)
+        if account_params.password == account.generate_password && !account.should_reset_password
+          account.update(should_reset_password: true)
+        elsif account_params.password != account.generate_password && account.should_reset_password
+          account.update(should_reset_password: false)
+        end
         broadcast(:successful_login, account, token, refresh_token)
       else
         broadcast(:failed_login)

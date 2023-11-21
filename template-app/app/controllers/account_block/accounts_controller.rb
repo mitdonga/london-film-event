@@ -172,7 +172,7 @@ module AccountBlock
       
       frontend_host = request.headers['Origin'] || ENV['FRONTEND_URL'] || 'http://localhost:3001'
       EmailValidationMailer.with(account: account, frontend_host: frontend_host).reset_password_email.deliver
-      render json: { message: "Password reset link has been sent. Kindly check your email inbox for further instructions." }, status: :ok
+      render json: { message: "Password reset link has been sent. Kindly check your email inbox for further instructions" }, status: :ok
     end
 
     def reset_password
@@ -183,12 +183,12 @@ module AccountBlock
       error_message = password_validation.errors.full_messages.first
       if is_valid && error_message.nil?
         if @account.update(password: password, activated: true, should_reset_password: false)
-          render json: {message: "Password updated successfully"}, state: :ok
+          render json: {message: "Password updated successfully"}, status: :ok
         else
-          render json: {message: "Unable to update password. Something went wrong"}, state: :unprocessable_entity
+          render json: {message: "Unable to update password. Something went wrong"}, status: :unprocessable_entity
         end
       else
-        render json: {message: "Please enter valid password", errors: password_validation.errors.full_messages}, state: :unprocessable_entity
+        render json: {message: "Please enter valid password", errors: password_validation.errors.full_messages}, status: :unprocessable_entity
       end
     end
 
