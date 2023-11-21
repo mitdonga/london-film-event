@@ -28,7 +28,8 @@ module BxBlockLogin
           render json: {meta: {
             token: token,
             refresh_token: refresh_token,
-            id: account.id
+            id: account.id,
+            account: AccountBlock::AccountSerializer.new(account)
           }}
         end
 

@@ -2,8 +2,8 @@ module AccountBlock
   class AccountsController < ApplicationController
     include BuilderJsonWebToken::JsonWebTokenValidation
 
-    before_action :validate_json_web_token
-    before_action :current_user, except: [:create]
+    before_action :validate_json_web_token, except: [:reset_password_email]
+    before_action :current_user, except: [:create, :reset_password_email]
     # before_action :validate_json_web_token, only: [:search, :change_email_address, :change_phone_number, :specific_account, :logged_user, :change_password, :update, :add_client_user]
 
     # before_action :current_user, only: [:change_password, :update, :add_client_user]
@@ -159,6 +159,36 @@ module AccountBlock
         end
       else
         render json: {error: "Please enter valid password"}, status: :unprocessable_entity
+      end
+    end
+
+    def reset_password_email
+      email = params[:email].presence || ""
+      validator = EmailValidation.new(email)
+      return render json: { message: "Invalid Email" }, status: :unprocessable_entity unless validator.valid?
+
+      account = Account.find_by_email(email)
+      return render json: { message: "Account not found" }, status: :unprocessable_entity unless account.present?
+      
+      frontend_host = request.headers['Origin'] || ENV['FRONTEND_URL'] || 'http://localhost:3001'
+      EmailValidationMailer.with(account: account, frontend_host: frontend_host).reset_password_email.deliver
+      render json: { message: "Password reset link has been sent. Kindly check your email inbox for further instructions." }, status: :ok
+    end
+
+    def reset_password
+      password, confirm_password = params[:password], params[:confirm_password]
+      return render json: { message: "Password and confirm password doesn't match" }, status: :unprocessable_entity if password != confirm_password
+      password_validation = PasswordValidation.new(password)
+      is_valid = password_validation.valid?
+      error_message = password_validation.errors.full_messages.first
+      if is_valid && error_message.nil?
+        if @account.update(password: password, activated: true, should_reset_password: false)
+          render json: {message: "Password updated successfully"}, state: :ok
+        else
+          render json: {message: "Unable to update password. Something went wrong"}, state: :unprocessable_entity
+        end
+      else
+        render json: {message: "Please enter valid password", errors: password_validation.errors.full_messages}, state: :unprocessable_entity
       end
     end
 
