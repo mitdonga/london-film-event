@@ -97,6 +97,13 @@ module BxBlockCategories
       end
     end
 
+    def get_service
+      sub_category_id = params[:sub_category_id]
+      sub_category = SubCategory.find_by_id(sub_category_id)
+      return render json: { message: "Invalid sub category" }, status: :unprocessable_entity unless sub_category.present?
+      render json: { service: CategorySerializer.new(sub_category.parent, {params: {account: @current_user}}).serializable_hash }, status: :ok
+    end
+
     private
 
     def categories_params
