@@ -22,7 +22,7 @@ module AccountBlock
       @account = params[:account]
       @frontend_host = params[:frontend_host]
       token = encoded_token(10.minutes.from_now)
-      @url = "#{@frontend_host}/forgot-password?token=#{token}"
+      @url = "#{@frontend_host}/NewPassword?token=#{token}"
 
       mail(
         to: @account.email,
