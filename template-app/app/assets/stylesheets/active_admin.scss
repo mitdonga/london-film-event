@@ -14,11 +14,23 @@ body.active_admin [data-aa-quill-editor] {
 }
 
 input[name^="sub_category[features_attributes]"][name$="[name]"] {
-    width: 450px !important;
+    width: 500px !important;
+}
+
+input[name^="sub_category[default_coverages_attributes]"][name$="[title]"] {
+    width: 400px !important;
 }
 
 fieldset.features_container.inputs.has_many_fields li:first-child {
-    width: 40%;
+    width: 50%;
+}
+
+fieldset.default_coverages_container.inputs.has_many_fields li:first-child {
+    width: 50%;
+}
+
+fieldset.default_coverages_container.inputs.has_many_fields li:nth-child(2) {
+    width: 20%;
 }
 
 // li.has_many_container.sub_categories fieldset {
@@ -35,7 +47,8 @@ fieldset.inputs.has_many_fields ol {
     max-width: 90%;
     margin: auto;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
+    justify-self: stretch;
 }
 
 li.has_many_delete.boolean.input.optional {
