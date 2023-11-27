@@ -36,4 +36,18 @@ RSpec.describe BxBlockCategories::CategoriesController, type: :controller do
       expect(response).to have_http_status(204)
     end
   end
+
+  describe "#get_service" do
+
+    it "should show service" do
+      get "get_service", params: { token: @token_1, sub_category_id: @client_admin_1.available_sub_categories.first.id }
+      expect(response).to have_http_status(200)
+    end
+
+    it "should raise error" do
+      get "get_service", params: { token: @token_1 }
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("Invalid sub category")
+    end
+  end
 end

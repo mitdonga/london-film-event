@@ -30,6 +30,10 @@ Rails.application.routes.draw do
   end
 
   namespace :bx_block_categories do
-    resources :categories, only: [:index]
+    resources :categories, only: [:index] do
+      collection do
+        get :get_service
+      end
+    end
   end
 end

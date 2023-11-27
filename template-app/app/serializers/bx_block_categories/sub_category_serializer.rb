@@ -19,5 +19,9 @@ module BxBlockCategories
       BxBlockCategories::FeatureSerializer.new(sc.features)
     end
 
+    attributes :default_coverages do |sc|
+      BxBlockCategories::DefaultCoverageSerializer.new(sc.default_coverages)
+    end
+
   end
 end

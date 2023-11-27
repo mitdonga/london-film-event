@@ -19,8 +19,12 @@ module BxBlockCategories
 
     has_many :company_sub_categories, class_name: "BxBlockInvoice::CompanySubCategory", foreign_key: "sub_category_id", dependent: :destroy
     has_many :companies, through: :company_sub_categories
+    
     has_many :features, class_name: "BxBlockCategories::Feature", foreign_key: "sub_category_id", dependent: :destroy
     accepts_nested_attributes_for :features, allow_destroy: true
+
+    has_many :default_coverages, class_name: "BxBlockCategories::DefaultCoverage", foreign_key: "sub_category_id", dependent: :destroy
+    accepts_nested_attributes_for :default_coverages, allow_destroy: true
 
     validates :name, presence: true
     validate :check_parent_categories

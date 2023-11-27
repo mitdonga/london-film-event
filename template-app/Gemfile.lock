@@ -2298,7 +2298,7 @@ DEPENDENCIES
   country_select (~> 5.1)
   database_cleaner
   devise
-  factory_bot_rails
+  factory_bot_rails (= 6.2.0)
   faker
   jquery-rails
   letter_opener
@@ -2327,4 +2327,4 @@ RUBY VERSION
    ruby 2.6.5p114
 
 BUNDLED WITH
-   2.4.18
+   2.4.21
