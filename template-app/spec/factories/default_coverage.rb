@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :default_coverage do
+  factory :default_coverage, class: "BxBlockCategories::DefaultCoverage"  do
     title { "MyString" }
     rank { 1 }
     category { 1 }

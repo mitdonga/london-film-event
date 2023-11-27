@@ -13,6 +13,7 @@ RSpec.describe Admin::SubCategoriesController, type: :controller do
     @sub_category = FactoryBot.create(:sub_category, parent_id: @service.id)
     3.times do
       FactoryBot.create(:feature, sub_category_id: @sub_category.id)
+      FactoryBot.create(:default_coverage, sub_category_id: @sub_category.id)
     end
 
     sign_in @admin
