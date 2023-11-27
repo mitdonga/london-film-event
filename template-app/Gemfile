@@ -67,7 +67,7 @@ group :development, :test do
     gem 'rspec-rails', '5.1.2'
     gem 'simplecov', '0.17.0'
     gem 'faker'
-    gem 'factory_bot_rails'
+    gem 'factory_bot_rails','6.2.0'
     gem 'shoulda-matchers'
     gem 'shoulda-callback-matchers'
     gem 'database_cleaner'
