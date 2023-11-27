@@ -26,7 +26,7 @@ module AccountBlock
 
     def generate_password
       pass = "#{email.to_s.slice(0,4)}#{phone_number.to_s.slice(0,4)}"
-      Base64.urlsafe_encode64(pass, padding: false)
+      "@Lf#{Base64.urlsafe_encode64(pass, padding: false)}23#"
     end
 
     def full_name
