@@ -29,6 +29,9 @@ module BxBlockCategories
     has_many :company_categories, class_name: "BxBlockInvoice::CompanyCategory", foreign_key: "category_id", dependent: :destroy
     has_many :companies, through: :company_categories
 
+    has_many :input_fields, as: :inputable
+    accepts_nested_attributes_for :input_fields, allow_destroy: true
+
     validates :name, uniqueness: true, presence: true
     validates :description, presence: true
     validates_uniqueness_of :identifier, allow_blank: true

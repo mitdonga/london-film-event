@@ -24,29 +24,33 @@ ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
         f.input :description
         f.input :parent
         f.input :image, as: :file, hint: f.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(f.object.image, only_path: true), width: 200, controls: true) : NO_IMAGE
-        f.inputs do
+        # if f.object.persisted?
           tabs do
             tab "Manage Features" do
-              f.has_many :features, 
-                  heading: 'Manage Features',                    
-                  allow_destroy: true,
-                  new_record: true,
-                  class: 'features_container' do |s|       
-                s.input :name
+              f.inputs do
+                f.has_many :features, 
+                    heading: 'Manage Features',                    
+                    allow_destroy: true,
+                    new_record: true,
+                    class: 'features_container' do |s|       
+                  s.input :name
+                end
               end
             end
             tab "Manage Default Coverages" do
-              f.has_many :default_coverages, 
-                  heading: 'Manage Default Coverages',                    
-                  allow_destroy: true,
-                  new_record: true,
-                  class: 'default_coverages_container' do |s|       
-                s.input :title
-                s.input :category
+              f.inputs do
+                f.has_many :default_coverages, 
+                    heading: 'Manage Default Coverages',                    
+                    allow_destroy: true,
+                    new_record: true,
+                    class: 'default_coverages_container' do |s|       
+                  s.input :title
+                  s.input :category
+                end
               end
             end
           end
-        end
+        # end
       end
       f.actions
     end

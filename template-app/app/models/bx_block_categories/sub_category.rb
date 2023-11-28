@@ -26,6 +26,8 @@ module BxBlockCategories
     has_many :default_coverages, class_name: "BxBlockCategories::DefaultCoverage", foreign_key: "sub_category_id", dependent: :destroy
     accepts_nested_attributes_for :default_coverages, allow_destroy: true
 
+    has_many :input_fields, as: :inputable, dependent: :destroy
+
     validates :name, presence: true
     validate :check_parent_categories
 
