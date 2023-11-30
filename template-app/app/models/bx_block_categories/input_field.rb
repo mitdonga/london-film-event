@@ -3,7 +3,7 @@ module BxBlockCategories
         self.table_name = :input_fields
 
         validates :name, :field_type, presence: true
-        validates :name, uniqueness: { case_sensitive: false, scope: :inputable }
+        validates :name, uniqueness: { case_sensitive: false, scope: :inputable}
         validates :options, presence: true, if: -> { field_type == "multiple_options" }
         validates :options, :values, :multiplier, absence: true, if: -> { field_type == "text" }
         validate  :validate_edge_case
