@@ -47,6 +47,7 @@ fieldset.inputs.has_many_fields ol {
     max-width: 90%;
     margin: auto;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     justify-self: stretch;
 }
@@ -75,3 +76,6 @@ fieldset h3 {
     padding-bottom: 10px;
 }
 
+#manage-input-fields fieldset ol li {
+    min-width: 100%;
+}
