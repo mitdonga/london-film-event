@@ -104,6 +104,16 @@ module BxBlockCategories
       render json: { service: CategorySerializer.new(sub_category.parent, {params: {account: @current_user}}).serializable_hash }, status: :ok
     end
 
+    def form_fields
+      return render json: { message: "Provide valid service and sub category ids" }, status: :unprocessable_entity unless params[:service_id].present? && params[:sub_category_id].present?
+      service = @current_user.available_services.find_by(id: params[:service_id])
+      sub_category = @current_user.available_sub_categories.find_by(id: params[:sub_category_id], parent_id: service&.id)
+      return render json: { message: "Service or sub category not found" }, status: :unprocessable_entity unless service.present? && sub_category.present?
+      input_fields = service.input_fields
+      default_coverages = sub_category.default_coverages
+      render json: { input_fields: InputFieldSerializer.new(input_fields).serializable_hash, default_coverages: DefaultCoverageSerializer.new(default_coverages).serializable_hash }, status: :ok
+    end
+
     private
 
     def categories_params
