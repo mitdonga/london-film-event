@@ -50,4 +50,26 @@ RSpec.describe BxBlockCategories::CategoriesController, type: :controller do
       expect(response.body).to include("Invalid sub category")
     end
   end
+
+  describe "#form_fields" do
+    let(:sub_category) { @client_admin_1.available_sub_categories.first }
+    let(:service) { sub_category.parent }
+
+    it "should show default_coverage and input_fields" do
+      get "form_fields", params: { token: @token_1, sub_category_id: sub_category.id, service_id: service.id }
+      expect(response).to have_http_status(200)
+    end
+
+    it "should raise invalid params" do
+      get "form_fields", params: { token: @token_1 }
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("Provide valid service and sub category ids")
+    end
+
+    it "should raise service or sub_category not found" do
+      get "form_fields", params: { token: @token_1, sub_category_id: 10000, service_id: 2321 }
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("Service or sub category not found")
+    end
+  end
 end

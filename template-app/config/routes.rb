@@ -33,6 +33,7 @@ Rails.application.routes.draw do
     resources :categories, only: [:index] do
       collection do
         get :get_service
+        get :form_fields
       end
     end
   end
