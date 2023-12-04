@@ -15,16 +15,16 @@ RSpec.describe BxBlockCategories::InputField, type: :model do
         it "should raise error values or multiplier must be present" do
             @input_field.options = "10,22,33,44"
             @input_field.save
-            expect(@input_field.errors.messages.to_s).to include("Values or multiplier must be present for multiple options field")
-            expect(@input_field.errors.messages.to_s).to include("Multiplier or Values must be present for multiple options field")
+            expect(@input_field.errors.messages.to_s).to include("Values or multiplier must be present")
+            expect(@input_field.errors.messages.to_s).to include("Multiplier or Values must be present")
         end
         it "should raise error values and multiplier can't be present at a time" do
             @input_field.options = "11,12,13,24"
             @input_field.values = "101, 210, 302, 405"
             @input_field.multiplier = "1, 1.25, 1.51, 1.99"
             @input_field.save
-            expect(@input_field.errors.messages.to_s).to include("Values and multiplier can't be present at a time for multiple options field")
-            expect(@input_field.errors.messages.to_s).to include("Multiplier and values can't be present at a time for multiple options field")
+            expect(@input_field.errors.messages.to_s).to include("Values and multiplier can't be present at a time")
+            expect(@input_field.errors.messages.to_s).to include("Multiplier and values can't be present at a time")
         end
         it "should raise values and options mismatch count error" do
             @input_field.options = "14, 23, 36, 49"
@@ -42,13 +42,13 @@ RSpec.describe BxBlockCategories::InputField, type: :model do
             @input_field.options = "10, 21, 32, 44"
             @input_field.values = "103, 202, 307, NA"
             @input_field.save
-            expect(@input_field.errors.messages.to_s).to include("Invalid values, please enter comma separated numeric value")
+            expect(@input_field.errors.messages.to_s).to include("Invalid values, please enter comma separated numeric value or 'Speak to expert'")
         end
         it "should raise non numeric multiplier error" do
             @input_field.options = "10, 21, 32, 44"
             @input_field.multiplier = "1, 1.4, 1.8, NA"
             @input_field.save
-            expect(@input_field.errors.messages.to_s).to include("Invalid multiplier, please enter comma separated numeric multiplier")
+            expect(@input_field.errors.messages.to_s).to include("Invalid multiplier, please enter comma separated numeric multiplier or 'Speak to expert'")
         end
         it "should raise > 1 options error" do
             @input_field.options = "100"
@@ -64,6 +64,7 @@ RSpec.describe BxBlockCategories::InputField, type: :model do
         it "should save the record" do
             @input_field.options = "102, 112, 231, 345"
             @input_field.multiplier = "1.2, 2.1, 3.2, 4.0"
+            @input_field.default_value = 1000
             expect(@input_field.save).to eq(true)
         end
     end
