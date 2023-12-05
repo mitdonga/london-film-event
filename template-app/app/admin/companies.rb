@@ -1,5 +1,5 @@
 ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
-  permit_params :name, :address, :city, :zip_code, :phone_number, :email, :company_sub_categories
+  permit_params :name, :address, :city, :zip_code, :phone_number, :meeting_link, :email, :company_sub_categories
   # permit_params :all
 
   index do
@@ -22,6 +22,7 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
       row :zip_code
       row :phone_number
       row :email
+      row :meeting_link
     end
   end
 
@@ -33,6 +34,7 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
       f.inputs :zip_code
       f.inputs :phone_number
       f.inputs :email
+      f.inputs :meeting_link
       if f.object.persisted?
         f.inputs "Manage Sub Category Prices" do
           tabs do
