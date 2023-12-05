@@ -2,7 +2,7 @@ module BxBlockCategories
     class InputField < BxBlockCategories::ApplicationRecord
         self.table_name = :input_fields
 
-        validates :name, :field_type, presence: true
+        validates :name, :field_type, :section, presence: true
         validates :name, uniqueness: { case_sensitive: false, scope: :inputable}
         validates :options, presence: true, if: -> { field_type == "multiple_options" }
         validates :default_value, presence: true, if: -> { multiplier.present? }
@@ -14,6 +14,7 @@ module BxBlockCategories
         before_validation :sanitize_columns
 
         enum field_type: %i[text multiple_options calender_select]
+        enum section: %i[required_information addon]
 
         private
 
