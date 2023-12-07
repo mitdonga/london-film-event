@@ -16,6 +16,14 @@ module BxBlockInvoice
 
         enum status: %i[draft pending approved]
 
+        def base_service
+            additional_services.find_by(service_id: service.id)
+        end
+
+        def extra_services
+            additional_services.where.not(service_id: service.id)
+        end
+
         private 
 
         def check_service_and_sub_category
