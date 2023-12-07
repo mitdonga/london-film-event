@@ -7,6 +7,7 @@ module BxBlockCategories
         accepts_nested_attributes_for :sub_categories, allow_destroy: true
         
         has_many :inquiries, class_name: "BxBlockInvoice::Inquiry"
+        has_many :additional_services, class_name: "BxBlockCategories::AdditionalService"
 
         def add_company_categories
             company_ids = BxBlockInvoice::Company.ids
