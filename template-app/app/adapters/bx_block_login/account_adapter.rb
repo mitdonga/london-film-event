@@ -14,7 +14,6 @@ module BxBlockLogin
 
         account = AccountBlock::Account
           .where('LOWER(email) = ?', email)
-          .where(:activated => true)
           .first
       when 'social_account'
         account = AccountBlock::SocialAccount.find_by(
@@ -25,6 +24,11 @@ module BxBlockLogin
 
       unless account.present?
         broadcast(:account_not_found)
+        return
+      end
+
+      if account.present? && !account.activated
+        broadcast(:account_not_activated)
         return
       end
 

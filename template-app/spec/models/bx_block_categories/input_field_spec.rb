@@ -59,12 +59,14 @@ RSpec.describe BxBlockCategories::InputField, type: :model do
         it "should save the record" do
             @input_field.options = "102, 112, 231, 345"
             @input_field.values = "1300, 2400, 3700, 4200"
+            @input_field.section = "addon"
             expect(@input_field.save).to eq(true)
         end
         it "should save the record" do
             @input_field.options = "102, 112, 231, 345"
             @input_field.multiplier = "1.2, 2.1, 3.2, 4.0"
             @input_field.default_value = 1000
+            @input_field.section = "addon"
             expect(@input_field.save).to eq(true)
         end
     end

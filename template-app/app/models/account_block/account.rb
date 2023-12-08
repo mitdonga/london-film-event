@@ -18,6 +18,8 @@ module AccountBlock
     belongs_to :company, class_name: "BxBlockInvoice::Company"
     after_save :set_black_listed_user
 
+    has_many :inquiries, class_name: "BxBlockInvoice::Inquiry", foreign_key: "user_id"
+
     enum status: %i[regular suspended deleted]
     enum account_type: %i[venue corporate]
 

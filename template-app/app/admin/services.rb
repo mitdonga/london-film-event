@@ -2,7 +2,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
   NO_IMAGE = "No Image"
   permit_params :name, :description, :start_from, :catalogue_type, :status, :image, 
                 company_ids: [], sub_categories_attributes: [:id, :name, :start_from, :duration, :image, :_destroy],
-                input_fields_attributes: [:id, :name, :field_type, :options, :values, :multiplier, :default_value, :note, :_destroy]
+                input_fields_attributes: [:id, :name, :field_type, :options, :section, :values, :multiplier, :default_value, :note, :_destroy]
 
   index do
     selectable_column
@@ -34,6 +34,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
                   class: 'input_fields_container' do |s|       
                 s.input :name
                 s.input :field_type
+                s.input :section
                 s.input :options, placeholder: "Enter comma (,) separated options"
                 s.input :values, placeholder: "Enter comma (,) separated values"
                 s.input :multiplier, placeholder: "Enter comma (,) separated multiplier"
