@@ -11,7 +11,15 @@ module BxBlockLogin
         output.on(:account_not_found) do |account|
           render json: {
             errors: [{
-              failed_login: 'Account not found, or not activated',
+              failed_login: 'Account not found',
+            }],
+          }, status: :unprocessable_entity
+        end
+
+        output.on(:account_not_activated) do |account|
+          render json: {
+            errors: [{
+              failed_login: 'Account not activated',
             }],
           }, status: :unprocessable_entity
         end
@@ -19,7 +27,7 @@ module BxBlockLogin
         output.on(:failed_login) do |account|
           render json: {
             errors: [{
-              failed_login: 'Login Failed',
+              failed_login: 'Login failed, please enter correct password',
             }],
           }, status: :unauthorized
         end
