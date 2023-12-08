@@ -11,9 +11,7 @@ module BxBlockInvoice
         only_path: true)}"}
     end
 
-    def inquiry
-      return render json: { message: "Provide valid inquiry"}, status: :unprocessable_entity unless params[:id]
-      
+    def inquiry      
       inquiry = @current_user.inquiries.find_by_id params[:id]
       return render json: { message: "Inquiry not found"}, status: :unprocessable_entity unless inquiry.present?
       
