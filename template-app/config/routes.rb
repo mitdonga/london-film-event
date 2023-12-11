@@ -38,7 +38,8 @@ Rails.application.routes.draw do
     end
   end
 
-  get "/inquiry/:id", to: "bx_block_invoice/invoice#inquiry"
-  get "/inquiries", to: "bx_block_invoice/invoice#inquiries"
-  post "/create_inquiry", to: "bx_block_invoice/invoice#create_inquiry"
+  get "/inquiry/:id",                       to: "bx_block_invoice/invoice#inquiry"
+  get "/inquiries",                         to: "bx_block_invoice/invoice#inquiries"
+  post "/create_inquiry",                   to: "bx_block_invoice/invoice#create_inquiry"
+  put "/manage_additional_services",       to: "bx_block_invoice/invoice#manage_additional_services"
 end

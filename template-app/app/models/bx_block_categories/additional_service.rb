@@ -11,6 +11,8 @@ module BxBlockCategories
 
         validates :service_id, uniqueness: { scope: :inquiry_id, message: "This service is already attached with this inquiry"}
 
+        default_scope { where(is_valid: true) }
+        
         private
 
         def create_input_values
