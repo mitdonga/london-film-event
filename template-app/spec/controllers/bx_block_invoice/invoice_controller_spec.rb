@@ -21,6 +21,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
     end
     @service_1 = BxBlockCategories::Service.first
     @service_2 = BxBlockCategories::Service.last
+    @service_3 = BxBlockCategories::Service.second
 
     @client_admin_1 = FactoryBot.create(:admin_account, company_id: @company_1.id)
     @token_1 = BuilderJsonWebToken.encode(@client_admin_1.id)
@@ -68,6 +69,41 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       get "inquiry", params: { token: @token_1, id: 110 }
       expect(response).to have_http_status(422)
       expect(response.body).to include("Inquiry not found")
+    end
+  end
+
+  describe "#manage_additional_services" do
+    it "should success" do
+      FactoryBot.create(:additional_service, inquiry_id: @inquiry_1.id, service_id: @service_2.id)
+      put "manage_additional_services", params: { token: @token_1, inquiry_id: @inquiry_1.id, service_ids: [@service_1.id, @service_3.id] }
+      data = JSON.parse(response.body)
+      expect(response).to have_http_status(200)
+      expect(data["extra_services_detail"]["data"].size).to eq 1
+    end
+
+    it "should create two additional services" do
+      put "manage_additional_services", params: { token: @token_1, inquiry_id: @inquiry_1.id, service_ids: [@service_2.id, @service_3.id] }
+      data = JSON.parse(response.body)
+      expect(response).to have_http_status(200)
+      expect(data["extra_services_detail"]["data"].size).to eq 2
+    end
+
+    it "should raise invalid service_ids" do
+      put "manage_additional_services", params: { token: @token_1, inquiry_id: @inquiry_1.id, service_ids: ["Invalid service_ids"] }
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("service_ids should numeric array")
+    end
+
+    it "should raise inquiry not found" do
+      put "manage_additional_services", params: { token: @token_1, inquiry_id: 1011 }
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("Inquiry with ID 1011 not found")
+    end
+
+    it "should raise invalid inquiry" do
+      put "manage_additional_services", params: { token: @token_1, service_ids: ["wrong sub"] }
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("Please provide valid inquiry id")
     end
   end
 end
