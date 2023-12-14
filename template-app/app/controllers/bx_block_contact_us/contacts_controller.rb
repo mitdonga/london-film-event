@@ -64,7 +64,7 @@ module BxBlockContactUs
     end
 
     def contact_params
-      params.require(:data).permit(:name, :email, :phone_number, :description)
+      params.require(:data).permit(:first_name, :last_name, :email, :phone_number, :subject, :details)
     end
   end
 end
