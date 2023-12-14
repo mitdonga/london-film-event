@@ -37,8 +37,8 @@ module BxBlockInvoice
     end
 
     def manage_additional_services
-      service_ids = params[:service_ids]&.uniq
-      unless service_ids.present? && service_ids.is_a?(Array) && service_ids.all? { |element| element.is_a?(Numeric) }
+      service_ids = params[:service_ids].uniq.map {|e| e.to_s.match?(/^\d+$/) ? e.to_i : e} rescue nil
+      unless service_ids.present? && service_ids.is_a?(Array) && service_ids.all? { |element| element.is_a?(Numeric) && element > 0 }
         return render json: { message: "service_ids should numeric array"}, status: :unprocessable_entity
       end
       service_ids.delete(@inquiry.service_id)

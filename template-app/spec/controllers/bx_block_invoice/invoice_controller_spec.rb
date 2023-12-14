@@ -57,7 +57,6 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       FactoryBot.create(:additional_service, inquiry_id: @inquiry_1.id, service_id: @service_2.id)
       get "inquiry", params: { token: @token_1, id: @inquiry_1.id }
       data = JSON.parse(response.body)
-
       expect(response).to have_http_status(200)
       expect(response.body).to include("Success")
       expect(data["inquiry"]["data"]["attributes"]["base_service_detail"]["data"].present?).to eq true
@@ -96,7 +95,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
 
     it "should raise inquiry not found" do
       put "manage_additional_services", params: { token: @token_1, inquiry_id: 1011 }
-      expect(response).to have_http_status(422)
+      expect(response).to have_http_status(404)
       expect(response.body).to include("Inquiry with ID 1011 not found")
     end
 
