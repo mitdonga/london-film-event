@@ -24,6 +24,10 @@ module BxBlockInvoice
             additional_services.where.not(service_id: service.id)
         end
 
+        def all_extra_services  # Including discarded is_valid = false
+            additional_services.unscoped.where.not(service_id: service.id)
+        end
+
         private 
 
         def check_service_and_sub_category
