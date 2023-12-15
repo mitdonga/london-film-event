@@ -38,6 +38,13 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :bx_block_contact_us do
+    resources :contacts
+  end
+
+  get "/inquiry/:id", to: "bx_block_invoice/invoice#inquiry"
+  get "/inquiries", to: "bx_block_invoice/invoice#inquiries"
+  post "/create_inquiry", to: "bx_block_invoice/invoice#create_inquiry"
   get "/inquiry/:id",                       to: "bx_block_invoice/invoice#inquiry"
   get "/inquiries",                         to: "bx_block_invoice/invoice#inquiries"
   post "/create_inquiry",                   to: "bx_block_invoice/invoice#create_inquiry"
