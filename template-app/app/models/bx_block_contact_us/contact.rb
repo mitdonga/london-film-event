@@ -9,9 +9,9 @@ module BxBlockContactUs
     validates :phone_number, format: { with: /\A\d{10}\z/, message: 'must be a valid 10-digit phone number' }
     # validate :valid_phone_number, if: Proc.new { |c| c.phone_number.present? }
 
-    def self.filter(query_params)
-      ContactFilter.new(self, query_params).call
-    end
+    # def self.filter(query_params)
+    #   ContactFilter.new(self, query_params).call
+    # end
 
     private
 
