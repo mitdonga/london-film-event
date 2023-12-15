@@ -4,7 +4,7 @@ module AccountBlock
       @account = params[:account]
       @host = Rails.env.development? ? "http://localhost:3000" : params[:host]
 
-      token = encoded_token
+      token = encoded_token(2.days.from_now)
 
       @url = "#{@host}/account/accounts/email_confirmation?token=#{token}"
       @password = @account.generate_password
