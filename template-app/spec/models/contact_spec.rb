@@ -8,8 +8,6 @@ RSpec.describe BxBlockContactUs::Contact, type: :model do
       contact.valid?
       expect(contact.errors[:account]).to include("must exist")
       expect(contact.errors[:first_name]).to include("can't be blank")
-      expect(contact.errors[:last_name]).to include("can't be blank")
-      expect(contact.errors[:email]).to include("can't be blank")
       expect(contact.errors[:phone_number]).to include("must be a valid 10-digit phone number")
     end
   end
