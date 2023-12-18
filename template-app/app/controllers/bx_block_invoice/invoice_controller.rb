@@ -3,7 +3,7 @@ module BxBlockInvoice
     skip_before_action :validate_json_web_token, only: [:invoice_pdf, :generate_invoice_pdf]
     before_action :fetch_invoice, only: %i[generate_invoice_pdf invoice_pdf]
     before_action :current_user
-    before_action :set_inquiry, only: %i[manage_additional_services]
+    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry]
 
     def generate_invoice_pdf
       host = "#{request.protocol}#{request.host_with_port}"
@@ -63,6 +63,27 @@ module BxBlockInvoice
       render json: { extra_services_detail: BxBlockCategories::AdditionalServiceSerializer.new(@inquiry.extra_services, {params: {extra: true}}) }, status: :ok
     end
 
+    def save_inquiry
+      all_values = @inquiry.input_values
+      input_values = params[:input_values]
+      unless input_values.present? && input_values.is_a?(Array) && input_values.all? { |element| valid_input_value?(element) }
+        return render json: { message: "Invalid input_values"}, status: :unprocessable_entity
+      end
+      errors = []
+      input_values.each do |iv|
+        input_value, user_input = all_values.find_by_id(iv[:id]), iv[:user_input].to_s.strip
+        if input_value.present? && user_input.present?
+          unless input_value.update(user_input: user_input)
+            errors << input_value.errors.full_messages.first + " ID #{iv[:id]}"
+          end
+        elsif !input_value.present?
+          errors << "Input value with ID #{iv[:id]} not present"
+        end
+      end
+      return render json: { message: "Updated user inputs, got some errors", errors: errors }, status: :ok if errors.present?
+      render json: { message: "User inputs successfully updated", errors: []}, status: :ok
+    end
+
     private
 
     def inquiry_params
@@ -81,6 +102,13 @@ module BxBlockInvoice
       
       @inquiry = Inquiry.find_by(id: id, user: @current_user.id)
       return render json: { message: "Inquiry with ID #{id} not found" }, status: :not_found unless @inquiry.present?
+    end
+
+    def valid_input_value?(hash)
+      return false unless hash.key?(:id) && hash.key?(:user_input)
+      true
+    rescue
+      false
     end
 
   end
