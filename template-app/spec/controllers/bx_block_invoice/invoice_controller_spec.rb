@@ -105,4 +105,22 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       expect(response.body).to include("Please provide valid inquiry id")
     end
   end
+
+  describe "#save_inquiry" do
+    before do
+      FactoryBot.create(:additional_service, inquiry_id: @inquiry_1.id, service_id: @service_2.id)
+      FactoryBot.create(:additional_service, inquiry_id: @inquiry_1.id, service_id: @service_3.id)
+      @input_values = @inquiry_1.input_values
+    end
+    let(:input_values) do [
+          {id: @input_values[0].id, user_input: "4"},
+          {id: @input_values[1].id, user_input: "10"},
+          {id: @input_values[2].id, user_input: "100"},
+          {id: 1001, user_input: "120"},
+     ] end
+    it "should save inquiry" do
+      put "save_inquiry", params: { token: @token_1, inquiry_id:  @inquiry_1.id,  input_values: input_values }
+      expect(response).to have_http_status(200)
+    end
+  end
 end
