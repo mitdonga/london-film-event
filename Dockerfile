@@ -7,7 +7,7 @@ RUN apk add bash build-base libxml2-dev libxslt-dev postgresql postgresql-dev no
 RUN mkdir /app
 WORKDIR /app
 COPY template-app/Gemfile* ./
-RUN gem install bundler && bundle config https://gem.fury.io/engineerai/ nvHuX-OXxLY2OpiQkFVfgnYgd4CszdA
+RUN gem install bundler -v 2.4.22 && bundle config https://gem.fury.io/engineerai/ nvHuX-OXxLY2OpiQkFVfgnYgd4CszdA
 RUN bundle install
 COPY template-app/ .
 EXPOSE 3000
