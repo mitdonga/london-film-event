@@ -71,38 +71,56 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
     end
   end
 
-  # describe "#manage_additional_services" do
-  #   it "should success" do
-  #     FactoryBot.create(:additional_service, inquiry_id: @inquiry_1.id, service_id: @service_2.id)
-  #     put "manage_additional_services", params: { token: @token_1, inquiry_id: @inquiry_1.id, service_ids: [@service_1.id, @service_3.id] }
-  #     data = JSON.parse(response.body)
-  #     expect(response).to have_http_status(200)
-  #     expect(data["extra_services_detail"]["data"].size).to eq 1
-  #   end
+  describe "#manage_additional_services" do
+    it "should success" do
+      FactoryBot.create(:additional_service, inquiry_id: @inquiry_1.id, service_id: @service_2.id)
+      put "manage_additional_services", params: { token: @token_1, inquiry_id: @inquiry_1.id, service_ids: [@service_1.id, @service_3.id] }
+      data = JSON.parse(response.body)
+      expect(response).to have_http_status(200)
+      expect(data["extra_services_detail"]["data"].size).to eq 1
+    end
 
-  #   it "should create two additional services" do
-  #     put "manage_additional_services", params: { token: @token_1, inquiry_id: @inquiry_1.id, service_ids: [@service_2.id, @service_3.id] }
-  #     data = JSON.parse(response.body)
-  #     expect(response).to have_http_status(200)
-  #     expect(data["extra_services_detail"]["data"].size).to eq 2
-  #   end
+    it "should create two additional services" do
+      put "manage_additional_services", params: { token: @token_1, inquiry_id: @inquiry_1.id, service_ids: [@service_2.id, @service_3.id] }
+      data = JSON.parse(response.body)
+      expect(response).to have_http_status(200)
+      expect(data["extra_services_detail"]["data"].size).to eq 2
+    end
 
-  #   it "should raise invalid service_ids" do
-  #     put "manage_additional_services", params: { token: @token_1, inquiry_id: @inquiry_1.id, service_ids: ["Invalid service_ids"] }
-  #     expect(response).to have_http_status(422)
-  #     expect(response.body).to include("service_ids should numeric array")
-  #   end
+    it "should raise invalid service_ids" do
+      put "manage_additional_services", params: { token: @token_1, inquiry_id: @inquiry_1.id, service_ids: ["Invalid service_ids"] }
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("service_ids should numeric array")
+    end
 
-  #   it "should raise inquiry not found" do
-  #     put "manage_additional_services", params: { token: @token_1, inquiry_id: 1011 }
-  #     expect(response).to have_http_status(404)
-  #     expect(response.body).to include("Inquiry with ID 1011 not found")
-  #   end
+    it "should raise inquiry not found" do
+      put "manage_additional_services", params: { token: @token_1, inquiry_id: 1011 }
+      expect(response).to have_http_status(404)
+      expect(response.body).to include("Inquiry with ID 1011 not found")
+    end
 
-  #   it "should raise invalid inquiry" do
-  #     put "manage_additional_services", params: { token: @token_1, service_ids: ["wrong sub"] }
-  #     expect(response).to have_http_status(422)
-  #     expect(response.body).to include("Please provide valid inquiry id")
-  #   end
-  # end
+    it "should raise invalid inquiry" do
+      put "manage_additional_services", params: { token: @token_1, service_ids: ["wrong sub"] }
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("Please provide valid inquiry id")
+    end
+  end
+
+  describe "#save_inquiry" do
+    before do
+      FactoryBot.create(:additional_service, inquiry_id: @inquiry_1.id, service_id: @service_2.id)
+      FactoryBot.create(:additional_service, inquiry_id: @inquiry_1.id, service_id: @service_3.id)
+      @input_values = @inquiry_1.input_values
+    end
+    let(:input_values) do [
+          {id: @input_values[0].id, user_input: "4"},
+          {id: @input_values[1].id, user_input: "10"},
+          {id: @input_values[2].id, user_input: "100"},
+          {id: 1001, user_input: "120"},
+     ] end
+    it "should save inquiry" do
+      put "save_inquiry", params: { token: @token_1, inquiry_id:  @inquiry_1.id,  input_values: input_values }
+      expect(response).to have_http_status(200)
+    end
+  end
 end
