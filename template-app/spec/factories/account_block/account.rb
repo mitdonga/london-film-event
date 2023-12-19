@@ -1,4 +1,19 @@
 FactoryBot.define do
+
+    factory :account, class: "AccountBlock::Account" do
+        first_name {Faker::Name.first_name }
+        last_name { Faker::Name.last_name }
+        email { Faker::Internet.email }
+        password { Faker::Internet.password }
+        type {'ClientAdmin'}
+        country_code { "+91" }
+        phone_number { Faker::Base.numerify('54########') }
+        account_type { "venue" }
+        full_phone_number {Faker::Base.numerify('+916#########')}
+        activated {true}
+        company_id { FactoryBot.create(:company).id }
+    end
+
     factory :admin_account, class: "AccountBlock::ClientAdmin" do
         first_name {Faker::Name.first_name }
         last_name { Faker::Name.last_name }
@@ -6,9 +21,9 @@ FactoryBot.define do
         password { Faker::Internet.password }
         type {'ClientAdmin'}
         country_code { "+91" }
-        phone_number { Faker::Base.numerify('89########') }
+        phone_number { Faker::Base.numerify('85########') }
         account_type { "venue" }
-        full_phone_number {Faker::Base.numerify('+918#########')}
+        full_phone_number {Faker::Base.numerify('+917#########')}
         activated {true}
         company_id { FactoryBot.create(:company).id }
     end
@@ -20,7 +35,7 @@ FactoryBot.define do
         password { Faker::Internet.password }
         type {'ClientUser'}
         country_code { "+91" }
-        phone_number { Faker::Base.numerify('89########') }
+        phone_number { Faker::Base.numerify('81########') }
         account_type { "venue" }
         full_phone_number {Faker::Base.numerify('+918#########')}
         activated {true}
