@@ -1,11 +1,7 @@
-module BxBlockContactUs
-
-end
-
 ActiveAdmin.register BxBlockContactUs::Contact, as: 'Contact Requests' do
-  # menu false
+
   permit_params :id, :first_name, :last_name, :phone_number, :email, :subject, :details
-  actions :all, except: [ :new]
+  actions :all, except: [ :new,:show]
 
   index do
     selectable_column
@@ -17,19 +13,6 @@ ActiveAdmin.register BxBlockContactUs::Contact, as: 'Contact Requests' do
     column 'Subject', :subject
     column 'Description', :details
     actions
-  end
-
-
-  show do |data|
-    attributes_table do
-      row :id
-      row :first_name
-      row :last_name
-      row :phone_number
-      row :email
-      row :subject
-      row :details
-    end
   end
 
   form do |f|
