@@ -1,7 +1,7 @@
 ActiveAdmin.register BxBlockContactUs::Contact, as: 'Contact Requests' do
 
   permit_params :id, :first_name, :last_name, :phone_number, :email, :subject, :details
-  actions :all
+  actions :all, except: [:new]
 
   index do
     selectable_column
