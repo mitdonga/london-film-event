@@ -4,6 +4,9 @@ module BxBlockInvoice
 
     after_create :add_company_sub_categories
     after_create :add_company_categories
+    after_create :create_company_input_fields
+
+    has_many :company_input_fields, class_name: "BxBlockCategories::CompanyInputField", dependent: :destroy
 
     has_many :company_sub_categories, class_name: "BxBlockInvoice::CompanySubCategory", foreign_key: "company_id", dependent: :destroy
     has_many :sub_categories, through: :company_sub_categories
@@ -44,6 +47,12 @@ module BxBlockInvoice
     end
 
     private
+
+    def create_company_input_fields
+      BxBlockCategories::InputField.where(section: "addon").each do |input_field|
+        BxBlockCategories::CompanyInputField.create(company_id: self.id, input_field_id: input_field.id, values: input_field.values, multiplier: input_field.multiplier, default_value: input_field.default_value)
+      end
+    end
 
     def add_company_sub_categories
       sub_categories = BxBlockCategories::SubCategory.select(:id, :start_from)

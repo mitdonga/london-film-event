@@ -10,13 +10,23 @@ module BxBlockCategories
         validate  :validate_edge_case
 
         belongs_to :inputable, polymorphic: true
+        has_many :company_input_fields, class_name: "BxBlockCategories::CompanyInputField", dependent: :destroy
 
         before_validation :sanitize_columns
+        after_create :create_company_input_fields
 
         enum field_type: %i[text multiple_options calender_select]
         enum section: %i[required_information addon]
 
         private
+
+        def create_company_input_fields
+            if self.section == "addon"
+                BxBlockInvoice::Company.all.each do |company|
+                    CompanyInputField.create(company_id: company.id, input_field_id: self.id, values: self.values, multiplier: self.multiplier, default_value: self.default_value)
+                end
+            end
+        end
 
         def sanitize_columns
             self.options = sanitize_string(self.options) if self.options.present?
