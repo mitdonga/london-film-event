@@ -5,6 +5,7 @@ FactoryBot.define do
         subject { Faker::Lorem.paragraph(sentence_count: 200) }
         details { Faker::Lorem.paragraph(sentence_count: 200) }
         email { Faker::Internet.email }
-        phone_number { 8737367788 }
+        country_code { Faker::Address.country_code }
+        phone_number { Faker::PhoneNumber.cell_phone.gsub(/\D/, '') }
     end
 end
