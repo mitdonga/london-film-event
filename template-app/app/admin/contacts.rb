@@ -22,7 +22,7 @@ ActiveAdmin.register BxBlockContactUs::Contact, as: 'Contact Requests' do
 
   show do
     attributes_table do
-      row 'User Type' do |contact|
+      row 'User Account Type' do |contact|
         contact.account&.type
       end
       row :first_name
@@ -38,7 +38,7 @@ ActiveAdmin.register BxBlockContactUs::Contact, as: 'Contact Requests' do
   form do |f|
    f.semantic_errors(*f.object.errors.keys, class: 'error-block')
     f.inputs do
-      f.input :user_type, label: 'User Type', input_html: { value: f.object.account&.type, disabled: true }
+      f.input :user_type, label: 'Type Of User', input_html: { value: f.object.account&.type, disabled: true }
       f.input :first_name, label: 'First Name'
       f.input :last_name, label: 'Last Name'
       f.input :country_code, as: :select, collection: Country.all.sort_by(&:name).map { |c| [ "#{c.country_code} (#{c.name})", c.country_code.to_i] }, prompt: 'Select a country', input_html: { disabled: true }
