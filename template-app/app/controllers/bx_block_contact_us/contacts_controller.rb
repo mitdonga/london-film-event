@@ -65,7 +65,6 @@ module BxBlockContactUs
     #     ]}, status: 404
     #   end
     # end
-    private
     
     def verify_email
       @email = params[:data][:email]
