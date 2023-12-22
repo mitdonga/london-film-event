@@ -18,17 +18,19 @@ module BxBlockContactUs
     # end
 
     def create
+      unless verify_email
+        return render json: { errors: [{ message: flash[:alert] }] }, status: :unprocessable_entity
+      end
+    
       @contact = Contact.new(contact_params.merge(account_id: @token.id))
-
+    
       if @contact.save
         BxBlockContactUs::ContactMailer.send_mail(@contact).deliver_now
         render json: ContactSerializer
                          .new(@contact)
                          .serializable_hash, status: :created
       else
-        render json: {errors: [
-            {contact: @contact.errors.full_messages},
-        ]}, status: :unprocessable_entity
+        render json: { errors: [{ contact: @contact.errors.full_messages }] }, status: :unprocessable_entity
       end
     end
 
@@ -63,9 +65,22 @@ module BxBlockContactUs
     #     ]}, status: 404
     #   end
     # end
-
+    
+    def verify_email
+      @email = params[:data][:email]
+      client_admin_exists = AccountBlock::ClientAdmin.exists?(email: @email)
+      client_user_exists = AccountBlock::ClientUser.exists?(email: @email)
+  
+      if client_admin_exists || client_user_exists
+        return true
+      else
+        flash[:alert] = "Unauthorized user mail,Please provide correct email."
+        return false
+      end
+    end
+  
     def contact_params
-      params.require(:data).permit(:first_name, :last_name, :email, :phone_number, :subject, :details)
+      params.require(:data).permit(:first_name, :country_code, :last_name, :email, :phone_number, :subject, :details)
     end
   end
 end

@@ -4,6 +4,7 @@ module BxBlockContactUs
         :first_name,
         :last_name,
         :email,
+        :country_code,
         :phone_number,
         :subject,
         :details,
