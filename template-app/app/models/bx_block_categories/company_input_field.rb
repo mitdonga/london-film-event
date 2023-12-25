@@ -5,7 +5,7 @@ module BxBlockCategories
         before_validation :sanitize_columns
 
         validates :company_id, uniqueness: { scope: :input_field_id, message: "Input value already attached with this company"}
-        validate :validate_edge_case
+        validate :check_edge_case
 
         belongs_to :company, class_name: "BxBlockInvoice::Company"
         belongs_to :input_field, class_name: "BxBlockCategories::InputField"
@@ -28,20 +28,13 @@ module BxBlockCategories
 
         private
 
-        def validate_edge_case
-            if input_field.values.present? && inputs_size(input_field.values) != inputs_size(self.values)
-                errors.add(:values, "Invalid, should provide #{inputs_size(input_field.values)} values")
-            elsif input_field.multiplier.present? && inputs_size(input_field.values) != inputs_size(self.values)
-                errors.add(:multiplier, "Invalid, should provide #{inputs_size(input_field.multiplier)} multipliers")
-            elsif input_field.default_value.present? && !self.default_value.present?
-                errors.add(:default_value, "Must present")
-            elsif input_field.values.blank? && self.values.present?
-                errors.add(:values, "Must blank")
-            elsif input_field.multiplier.blank? && self.multiplier.present?
-                errors.add(:multiplier, "Must blank")
-            elsif input_field.default_value.blank? && self.default_value.present?
-                errors.add(:default_value, "Must blank")
-            end
+        def check_edge_case
+            errors.add(:values, "Invalid, should provide #{inputs_size(input_field.values)} values")                if input_field.values.present? && inputs_size(input_field.values) != inputs_size(self.values)
+            errors.add(:multiplier, "Invalid, should provide #{inputs_size(input_field.multiplier)} multipliers")   if input_field.multiplier.present? && inputs_size(input_field.values) != inputs_size(self.values)
+            errors.add(:default_value, "Must present")                                                              if input_field.default_value.present? && !self.default_value.present?
+            errors.add(:values, "Must blank")                                                                       if input_field.values.blank? && self.values.present?
+            errors.add(:multiplier, "Must blank")                                                                   if input_field.multiplier.blank? && self.multiplier.present?
+            errors.add(:default_value, "Must blank")                                                                if input_field.default_value.blank? && self.default_value.present?
         end
 
         def sanitize_columns

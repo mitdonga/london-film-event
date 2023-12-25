@@ -12,6 +12,8 @@ module BxBlockCategories
         belongs_to :company_input_field, class_name: "BxBlockCategories::CompanyInputField", optional: true
         belongs_to :additional_service, class_name: "BxBlockCategories::AdditionalService"
         
+        default_scope { order(created_at: :asc)}
+        
         private
 
         def check_input_field
@@ -23,8 +25,8 @@ module BxBlockCategories
         end
 
         def user_input_value
-            input = input_field
-            if input.multiple_options? && user_input.present?
+            input = input_field.presence || company_input_field
+            if input.field_type == "multiple_options" && user_input.present?
                 errors.add(:user_input, "invalid") unless input.options.split(", ").include? user_input
             end
         end
