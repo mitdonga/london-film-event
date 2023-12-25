@@ -4,7 +4,7 @@ module BxBlockCategories
 
         before_save :save_input_field_data, if: :user_input_changed?
 
-        validates :additional_service_id, uniqueness: { scope: :input_field_id, message: "Input value already attached with this service & inquiry"}
+        # validates :additional_service_id, uniqueness: { scope: :company_input_field_id, message: "Input value already attached with this service & inquiry"}
         validate :user_input_value, if: :user_input_changed?
         validate :check_input_field
 
@@ -12,10 +12,6 @@ module BxBlockCategories
         belongs_to :company_input_field, class_name: "BxBlockCategories::CompanyInputField", optional: true
         belongs_to :additional_service, class_name: "BxBlockCategories::AdditionalService"
         
-        def input_field
-            company_input_field.input_field
-        end
-
         private
 
         def check_input_field
