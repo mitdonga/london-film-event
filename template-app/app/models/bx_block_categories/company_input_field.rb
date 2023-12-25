@@ -10,6 +10,22 @@ module BxBlockCategories
         belongs_to :company, class_name: "BxBlockInvoice::Company"
         belongs_to :input_field, class_name: "BxBlockCategories::InputField"
 
+        def options
+            input_field.options
+        end
+
+        def name
+            input_field.name
+        end
+
+        def field_type
+            input_field.field_type
+        end
+
+        def section
+            input_field.section
+        end
+
         private
 
         def validate_edge_case

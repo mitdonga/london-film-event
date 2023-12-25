@@ -5,6 +5,8 @@ module BxBlockCategories
     include ActiveStorageSupport::SupportForBase64
     self.table_name = :categories
 
+    after_create :add_basic_input_fields
+
     has_one_attached :image
     validates :image, :content_type => ["jpg", "png", "jpeg", "image/jpg", "image/jpeg", "image/png"]
     # has_many :sub_categories, class_name: "BxBlockCategories::SubCategory", foreign_key: 'parent_id', dependent: :destroy
@@ -38,5 +40,13 @@ module BxBlockCategories
 
     enum catalogue_type: %w[all_packages bespoke_packages]
     enum status: %w[unarchived archived]
+
+    private
+
+    def add_basic_input_fields
+      ["Client Name", "Company Name", "Event Name"].each do |name|
+        input_fields.create(name: name, field_type: "text", section: "required_information")
+      end
+    end
   end
 end
