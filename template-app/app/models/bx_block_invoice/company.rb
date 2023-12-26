@@ -4,6 +4,10 @@ module BxBlockInvoice
 
     after_create :add_company_sub_categories
     after_create :add_company_categories
+    after_create :create_company_input_fields
+
+    has_many :company_input_fields, class_name: "BxBlockCategories::CompanyInputField", dependent: :destroy
+    accepts_nested_attributes_for :company_input_fields, allow_destroy: true
 
     has_many :company_sub_categories, class_name: "BxBlockInvoice::CompanySubCategory", foreign_key: "company_id", dependent: :destroy
     has_many :sub_categories, through: :company_sub_categories
@@ -23,11 +27,12 @@ module BxBlockInvoice
     end
 
     def services_sub_categories_data
-      services = company_categories.includes(:category).order(:id).map {|cc| {:company_category_id => cc.id, :service_id => cc.category.id, :service_name => cc.category.name, :has_access => cc.has_access}}
+      services = company_categories.includes(:category).order("categories.name").map {|cc| {:company_category_id => cc.id, :service_id => cc.category.id, :service_name => cc.category.name, :has_access => cc.has_access, :service => cc.category}}
       services.map do |s|
+        input_fields = company_input_fields.includes(:input_field).where(input_field_id: s[:service].input_fields.ids)
         data = company_sub_categories.joins(:sub_category => :parent).where("categories.id = ?", s[:service_id])
         filtered_data = data.map {|s| {:company_sub_category_id => s.id, :price => s.price, :sub_category_name => s.sub_category.name}}
-        s.merge({company_sub_categories: filtered_data})
+        s.merge({company_sub_categories: filtered_data, input_fields: input_fields})
       end
     end
 
@@ -44,6 +49,12 @@ module BxBlockInvoice
     end
 
     private
+
+    def create_company_input_fields
+      BxBlockCategories::InputField.where(section: "addon").each do |input_field|
+        BxBlockCategories::CompanyInputField.create(company_id: self.id, input_field_id: input_field.id, values: input_field.values, multiplier: input_field.multiplier, default_value: input_field.default_value)
+      end
+    end
 
     def add_company_sub_categories
       sub_categories = BxBlockCategories::SubCategory.select(:id, :start_from)

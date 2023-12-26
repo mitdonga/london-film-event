@@ -41,6 +41,7 @@ RSpec.describe Admin::CompaniesController, type: :controller do
       expect(response).to have_http_status(200)
     end
   end
+
   describe "Get#show" do
     it "show company" do
       get :show, params: {id: @company.id}
@@ -49,6 +50,7 @@ RSpec.describe Admin::CompaniesController, type: :controller do
       expect(@company.sub_categories_with_service.class).to eq(Hash)
     end
   end
+
   describe "Put#edit" do
     let(:params) do {
       "name" => "Amazon Inc",

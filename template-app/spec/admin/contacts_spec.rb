@@ -14,23 +14,16 @@ RSpec.describe Admin::ContactRequestsController, type: :controller do
     sign_in @admin
   end
   
-  describe "Post#new" do
-    let!(:params) do {
-        first_name: "Builder",
-        las_name: "AI",
-        email: "xyz@gmail.com",
-        phone_number: Faker::Base.numerify('+918#########')
-      }
-    end
-    it "create company" do
-      post :new, params: params
+  describe "Get#index" do
+    it "show all contact requests" do
+      get :index
       expect(response).to have_http_status(200)
     end
   end
 
-  describe "Get#index" do
-    it "show all contact requests" do
-      get :index
+  describe "Get#show" do
+    it "show contact requests" do
+      get :show, params: {id: @contact.id}
       expect(response).to have_http_status(200)
     end
   end

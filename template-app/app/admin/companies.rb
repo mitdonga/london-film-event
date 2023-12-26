@@ -35,7 +35,7 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
       f.inputs :phone_number
       f.inputs :email
       f.inputs :meeting_link
-      if f.object.persisted?
+      # if f.object.persisted?
         f.inputs "Manage Sub Category Prices" do
           tabs do
             f.object.services_sub_categories_data.each do |sr|
@@ -46,11 +46,21 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
                   f.input "company_sub_categories[#{csc[:company_sub_category_id]}][id]", input_html: { value: csc[:company_sub_category_id] }, as: :hidden
                   f.input "company_sub_categories[#{csc[:company_sub_category_id]}][price]", as: :number, label: "#{csc[:sub_category_name]} Price", input_html: { value: csc[:price], step: '1', min: '1', required: true  }
                 end
+                sr[:input_fields].each do |field|
+                  div class: "addons-container" do
+                    f.input "company_input_fields[#{field.id}][id]", input_html: { value: field.id }, as: :hidden
+                    f.input "company_input_fields[#{field.id}][input_field_name]", input_html: { value: field.input_field.name, disabled: true }, label: "Addon Name"
+                    f.input "company_input_fields[#{field.id}][input_field_options]", input_html: { value: field.input_field.options, disabled: true }, label: "Options"
+                    f.input "company_input_fields[#{field.id}][values]", input_html: { value: field.values }, label: "Values", as: field.input_field.values.present? ? :string : :hidden 
+                    f.input "company_input_fields[#{field.id}][multiplier]", input_html: { value: field.multiplier }, label: "Multiplier", as: field.input_field.multiplier.present? ? :string : :hidden
+                    f.input "company_input_fields[#{field.id}][default_value]", input_html: { value: field.default_value }, label: "Default value", as: field.input_field.default_value.present? ? :string : :hidden
+                  end
+                end
               end
             end
           end
         end
-      end
+      # end        
     end
 
     f.actions
@@ -73,6 +83,11 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
           has_access = e["has_access"] == "true" ? true : false
           cc.update!(has_access: has_access)
         end
+      end
+      company_inputs_data = params.as_json["bx_block_invoice_company"]["company_input_fields"].values rescue []
+      company_inputs_data.each do |e|
+        cif = company.company_input_fields.find_by_id(e["id"])
+        cif.update(e.except("id"))
       end
       super
     end
