@@ -13,6 +13,58 @@ module BxBlockCategories
         belongs_to :additional_service, class_name: "BxBlockCategories::AdditionalService"
         
         default_scope { order(created_at: :asc)}
+
+        def current_input_field
+            input_field.presence || company_input_field
+        end
+
+        def formatted_data
+            result = {}
+            field = current_input_field
+            if field.field_type == "multiple_options"
+                options = field.options.split(", ")
+                if field.values.present?
+                    values = field.values&.split(", ")
+                    options.each_with_index do |op, index|
+                        result[op] = values[index]
+                    end
+                elsif
+                    values = field.multiplier&.split(", ")
+                    options.each_with_index do |op, index|
+                        result[op] = values[index] =~ /\A[-+]?\d*\.?\d+\Z/ ? values[index].to_f : "Speak to expert"
+                    end
+                end
+            end
+            return result
+        end
+
+        def calculate_cost
+            unless self.user_input.present?
+                self.update(cost: 0, note: "User input is null")
+            end
+            field = current_input_field
+            data = field.input_field.attributes
+            data["user_input"] = self.user_input
+            self.update(input_field_data: data)
+            if field.field_type == "multiple_options"
+                options = field.options.split(", ")
+                input_index = options.index(self.user_input)
+                if field.values.present?
+                    values = field.values.split(", ")
+                    input_cost = values.at(input_index)
+                    errors.add(:cost, "invalid, Speak to expert") if input_cost.downcase.include?("expert")
+                    self.update(cost: input_cost.to_f)
+                elsif field.multiplier.present?
+                    multiplier = field.multiplier.split(", ")
+                    input_cost = multiplier.at(input_index)
+                    errors.add(:cost, "invalid, Speak to expert") if input_cost.downcase.include?("expert")
+                    input_cost = input_cost.to_f * field.default_value.to_f
+                    self.update(cost: input_cost.to_f)
+                end
+            elsif field.field_type == "calender_select"
+                options = field.options
+            end
+        end
         
         private
 
