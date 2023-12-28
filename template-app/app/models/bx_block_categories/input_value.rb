@@ -43,7 +43,7 @@ module BxBlockCategories
                 self.update(cost: 0, note: "User input is null")
             end
             field = current_input_field
-            data = field.input_field.attributes
+            data = field.attributes
             data["user_input"] = self.user_input
             self.update(input_field_data: data)
             if field.field_type == "multiple_options"
@@ -52,17 +52,61 @@ module BxBlockCategories
                 if field.values.present?
                     values = field.values.split(", ")
                     input_cost = values.at(input_index)
-                    errors.add(:cost, "invalid, Speak to expert") if input_cost.downcase.include?("expert")
-                    self.update(cost: input_cost.to_f)
+                    if input_cost.downcase.include?("expert")
+                        errors.add(:cost, "invalid, Speak to expert") 
+                    else
+                        self.update(cost: input_cost.to_f)
+                    end
                 elsif field.multiplier.present?
                     multiplier = field.multiplier.split(", ")
                     input_cost = multiplier.at(input_index)
-                    errors.add(:cost, "invalid, Speak to expert") if input_cost.downcase.include?("expert")
-                    input_cost = input_cost.to_f * field.default_value.to_f
-                    self.update(cost: input_cost.to_f)
+                    if input_cost.downcase.include?("expert")
+                        errors.add(:cost, "invalid, Speak to expert") 
+                    else
+                        input_cost = input_cost.to_f * field.default_value.to_f
+                        self.update(cost: input_cost.to_f)
+                    end
                 end
-            elsif field.field_type == "calender_select"
-                options = field.options
+            elsif field.field_type == "calender_select" && field.name.downcase == "event date"
+                options = field.options.split(", ")
+                event_date = self.user_input.to_date
+                days_left = (event_date - Date.today).to_i
+                final_index = nil
+                options.each_with_index do |option, index|
+                    match = option.match(/(\d+)\s?\+/)
+                    if match.present? && match[0].to_i <= days_left
+                        final_index = index 
+                        break
+                    end
+                    match = option.match(/<\s?(\d+)/)
+                    if match.present? && match[1].to_i >= days_left
+                        final_index = index 
+                        break
+                    end
+                    match = option.match(/(\d+)\s?-\s?(\d+)/)
+                    if match.present? && match[1].to_i <= days_left && match[2].to_i >= days_left
+                        final_index = index 
+                        break
+                    end
+                end
+                if field.values.present?
+                    values = field.values.split(", ")
+                    input_cost = values.at(final_index)
+                    if input_cost.downcase.include?("expert")
+                        errors.add(:cost, "invalid, Speak to expert") 
+                    else
+                        self.update(cost: input_cost.to_f)
+                    end
+                elsif field.multiplier.present?
+                    multiplier = field.multiplier.split(", ")
+                    input_cost = multiplier.at(final_index)
+                    if input_cost.downcase.include?("expert")
+                        errors.add(:cost, "invalid, Speak to expert") 
+                    else
+                        input_cost = input_cost.to_f * field.default_value.to_f
+                        self.update(cost: input_cost.to_f)
+                    end
+                end
             end
         end
         
