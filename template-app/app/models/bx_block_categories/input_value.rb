@@ -41,6 +41,7 @@ module BxBlockCategories
         def calculate_cost
             unless self.user_input.present?
                 self.update(cost: 0, note: "User input is null")
+                return
             end
             field = current_input_field
             data = field.attributes

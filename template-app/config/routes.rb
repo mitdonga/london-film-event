@@ -50,4 +50,5 @@ Rails.application.routes.draw do
   post "/create_inquiry",                   to: "bx_block_invoice/invoice#create_inquiry"
   put "/manage_additional_services",        to: "bx_block_invoice/invoice#manage_additional_services"
   put "/save_inquiry",                      to: "bx_block_invoice/invoice#save_inquiry"
+  put "/calculate_cost",                    to: "bx_block_invoice/invoice#calculate_cost"
 end

@@ -89,11 +89,15 @@ module BxBlockInvoice
       all_values.each do |input_value|
         input_value.calculate_cost
         if input_value.errors.full_messages.present?
-          errors << input_value.errors.full_messages.first
+          data = {}
+          data["input_value_id"] = input_value.id
+          data["name"] = input_value.current_input_field.name
+          data["error"] = input_value.errors.full_messages.first
+          errors << data
         end
       end
       return render json: {message: "Something went wrong!",errors: errors}, status: :unprocessable_entity if errors.present?
-      render json: { inquiry: InquirySerializer.new(inquiry, {params: {extra: true}}).serializable_hash, message: "Success" }, status: :ok
+      render json: { inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Success" }, status: :ok
     end
 
     private
