@@ -11,5 +11,9 @@ module BxBlockCategories
                 { id: ifd.id, name: ifd.name, field_type: ifd.field_type, section: ifd.section, options: ifd.options, values: ifd.values, multiplier: ifd.multiplier, default_value: ifd.default_value, note: ifd.note, type: "Company Input Field" }
             end
         end
+
+        attributes :formatted_data do |iv|
+            iv.formatted_data
+        end
     end
 end

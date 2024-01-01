@@ -97,6 +97,7 @@ module BxBlockInvoice
         end
       end
       return render json: {message: "Something went wrong!",errors: errors}, status: :unprocessable_entity if errors.present?
+      @inquiry.calculate_addon_cost
       render json: { inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Success" }, status: :ok
     end
 

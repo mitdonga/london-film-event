@@ -2,7 +2,7 @@
 
 module BxBlockInvoice
     class InquirySerializer < BuilderBase::BaseSerializer
-      attributes :id, :user_id, :service_id, :sub_category_id, :status
+      attributes :id, :user_id, :service_id, :sub_category_id, :status, :package_sub_total, :addon_sub_total, :extra_cost 
   
       attributes :base_service_detail do |inquiry, params|
         return [] unless inquiry.base_service.present?

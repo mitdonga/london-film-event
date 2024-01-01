@@ -11,7 +11,7 @@ FactoryBot.define do
     field_type { "multiple_options" }
     section { "addon" }
     options { Faker::Lorem.words(number: 4).join(", ") }
-    values { (100..200).to_a.sample(4).join(", ") }
+    values { (100..200).to_a.sample(3).join(", ") + ", Speak to expert" }
     inputable { FactoryBot.create(:category) }
   end
 
@@ -20,7 +20,27 @@ FactoryBot.define do
     field_type { 'multiple_options' }
     section { "addon" }
     options { Faker::Lorem.words(number: 4).join(", ") }
-    values { (1..10).to_a.sample(4).join(", ") }
+    multiplier { (1..10).to_a.sample(3).join(", ") + ", Speak to expert" }
+    default_value { 121 }
+    inputable { FactoryBot.create(:category) }
+  end
+
+  factory :input_field_date_values, class: "BxBlockCategories::InputField" do
+    name { "Event Date" }
+    field_type { 'calender_select' }
+    section { "required_information" }
+    options { "28+ days away, 14 - 28 days away, 7 - 14 days away, <7 days away" }
+    values { (100..200).to_a.sample(3).join(", ") + ", Speak to expert" }
+    default_value { 121 }
+    inputable { FactoryBot.create(:category) }
+  end
+
+  factory :input_field_date_multiplier, class: "BxBlockCategories::InputField" do
+    name { "Event Date" }
+    field_type { 'calender_select' }
+    section { "required_information" }
+    options { "28+ days away, 14 - 28 days away, 7 - 14 days away, <7 days away" }
+    multiplier { (1..10).to_a.sample(3).join(", ") + ", Speak to expert" }
     default_value { 121 }
     inputable { FactoryBot.create(:category) }
   end
