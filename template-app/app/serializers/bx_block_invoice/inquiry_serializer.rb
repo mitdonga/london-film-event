@@ -4,6 +4,14 @@ module BxBlockInvoice
     class InquirySerializer < BuilderBase::BaseSerializer
       attributes :id, :user_id, :service_id, :sub_category_id, :status, :package_sub_total, :addon_sub_total, :extra_cost 
   
+      attributes :sub_category_name do |inquiry| 
+        inquiry.sub_category.name
+      end
+      
+      attributes :service_name do |inquiry| 
+        inquiry.service.name 
+      end
+
       attributes :base_service_detail do |inquiry, params|
         return [] unless inquiry.base_service.present?
         additional_service = inquiry.base_service
@@ -13,6 +21,10 @@ module BxBlockInvoice
       attributes :extra_services_detail do |inquiry, params|
         additional_service = inquiry.extra_services
         BxBlockCategories::AdditionalServiceSerializer.new(additional_service, { params: {extra: params[:extra] || false }}).serializable_hash
+      end
+
+      attributes :default_coverages, if: proc { |inquiry, params| params[:extra]} do |inquiry|
+        inquiry.sub_category.default_coverages
       end
   
       attributes :attachment do |iq|
