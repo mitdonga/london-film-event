@@ -2,7 +2,7 @@
 
 module BxBlockCategories
   class SubCategorySerializer < BuilderBase::BaseSerializer
-    attributes :id, :name, :start_from, :duration, :parent_id
+    attributes :id, :name, :start_from, :duration, :color_theme, :parent_id
 
     attribute :actual_price do |sc|
       sc.actual_price rescue nil
