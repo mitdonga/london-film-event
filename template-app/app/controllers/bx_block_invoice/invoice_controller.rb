@@ -3,7 +3,7 @@ module BxBlockInvoice
     skip_before_action :validate_json_web_token, only: [:invoice_pdf, :generate_invoice_pdf]
     before_action :fetch_invoice, only: %i[generate_invoice_pdf invoice_pdf]
     before_action :current_user
-    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry]
+    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost]
 
     def generate_invoice_pdf
       host = "#{request.protocol}#{request.host_with_port}"
@@ -82,6 +82,23 @@ module BxBlockInvoice
       end
       return render json: { message: "Updated user inputs, got some errors", errors: errors }, status: :ok if errors.present?
       render json: { message: "User inputs successfully updated", errors: []}, status: :ok
+    end
+
+    def calculate_cost
+      all_values, errors = @inquiry.input_values, []
+      all_values.each do |input_value|
+        input_value.calculate_cost
+        if input_value.errors.full_messages.present?
+          data = {}
+          data["input_value_id"] = input_value.id
+          data["name"] = input_value.current_input_field.name
+          data["error"] = input_value.errors.full_messages.first
+          errors << data
+        end
+      end
+      return render json: {message: "Something went wrong!",errors: errors}, status: :unprocessable_entity if errors.present?
+      @inquiry.calculate_addon_cost
+      render json: { inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Success" }, status: :ok
     end
 
     private

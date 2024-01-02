@@ -28,6 +28,15 @@ module BxBlockInvoice
             additional_services.unscoped.where.not(service_id: service.id)
         end
 
+        def user_company
+            user.company
+        end
+
+        def calculate_addon_cost
+            addon_cost = self.input_values.pluck(:cost).map(&:to_f).inject(0.0, :+)
+            self.update(addon_sub_total: addon_cost)
+        end
+
         private 
 
         def check_service_and_sub_category
@@ -39,6 +48,8 @@ module BxBlockInvoice
         def create_additional_service
             record = additional_services.new(service_id: service.id)
             record.save!
+            sub_category_cost = CompanySubCategory.find_by(company: user_company, sub_category: sub_category)&.price
+            self.update(package_sub_total: sub_category_cost)
         end
     end
 end

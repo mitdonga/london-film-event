@@ -8,7 +8,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
     @company_1 = FactoryBot.create(:company)
     @company_2 = FactoryBot.create(:company)
 
-    3.times do
+    3.times do |index|
       service = FactoryBot.create(:service)
       3.times do
         FactoryBot.create(:sub_category, parent_id: service.id)
@@ -18,6 +18,9 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
         FactoryBot.create(:input_field_multi_option_value, inputable: service)
         FactoryBot.create(:input_field_multi_option_multiplier, inputable: service)
       end
+      index == 0 ?
+      FactoryBot.create(:input_field_date_values, inputable: service) :
+      FactoryBot.create(:input_field_date_multiplier, inputable: service)
     end
     @service_1 = BxBlockCategories::Service.first
     @service_2 = BxBlockCategories::Service.last
@@ -31,9 +34,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
     @token_2 = BuilderJsonWebToken.encode(@client_admin_2.id)
   end
 
-
   describe "#create_inquiry" do
-
     it "should create inquiry" do
       sub_category = @service_1.sub_categories.last
       post "create_inquiry", params: { token: @token_1, inquiry: {service_id: @service_1.id, sub_category_id: sub_category.id} }
@@ -113,14 +114,54 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       @input_values = @inquiry_1.input_values
     end
     let(:input_values) do [
-          {id: @input_values[0].id, user_input: "4"},
-          {id: @input_values[1].id, user_input: "10"},
-          {id: @input_values[2].id, user_input: "100"},
-          {id: 1001, user_input: "120"},
+      {id: @input_values[0].id, user_input: "4"},
+      {id: @input_values[1].id, user_input: "10"},
+      {id: @input_values[2].id, user_input: "100"},
+      {id: 1001, user_input: "120"},
      ] end
     it "should save inquiry" do
       put "save_inquiry", params: { token: @token_1, inquiry_id:  @inquiry_1.id,  input_values: input_values }
       expect(response).to have_http_status(200)
+    end
+  end
+
+  describe "#calculate_cost success" do
+    before do
+      @inquiry_1.input_values.each do |input_value|
+        input_field = input_value.current_input_field
+        if input_field.field_type == "multiple_options"
+          input_value.update(user_input: input_field.options.split(", ")[1])
+        elsif input_field.field_type == "calender_select"
+          input_value.update(user_input: Date.today + 10.days)
+        end 
+      end
+    end
+
+    it "should calculate cost" do
+      put "calculate_cost", params: { token: @token_1, inquiry_id:  @inquiry_1.id }
+      inquiry = JSON.parse(response.body)["inquiry"]
+      expect(response).to have_http_status(200)
+      expect(inquiry["data"]["attributes"]["package_sub_total"]).to be > 0
+      expect(inquiry["data"]["attributes"]["addon_sub_total"]).to be > 0
+    end
+  end
+
+  describe "#calculate_cost error" do
+    before do
+      @inquiry_1.input_values.each do |input_value|
+        input_field = input_value.current_input_field
+        if input_field.field_type == "multiple_options"
+          input_value.update(user_input: input_field.options.split(", ").last)
+        elsif input_field.field_type == "calender_select"
+          input_value.update(user_input: (Date.today + 3.days).to_s)
+        end 
+      end
+    end
+
+    it "should raise error" do
+      put "calculate_cost", params: { token: @token_1, inquiry_id:  @inquiry_1.id }
+      expect(response).to have_http_status(422)
+      expect(JSON.parse(response.body)["errors"].size).to eq 7
     end
   end
 end
