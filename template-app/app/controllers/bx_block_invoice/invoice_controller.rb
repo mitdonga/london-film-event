@@ -3,7 +3,7 @@ module BxBlockInvoice
     skip_before_action :validate_json_web_token, only: [:invoice_pdf, :generate_invoice_pdf]
     before_action :fetch_invoice, only: %i[generate_invoice_pdf invoice_pdf]
     before_action :current_user
-    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost]
+    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost upload_attachment]
 
     def generate_invoice_pdf
       host = "#{request.protocol}#{request.host_with_port}"
@@ -99,6 +99,17 @@ module BxBlockInvoice
       return render json: {message: "Something went wrong!",errors: errors}, status: :unprocessable_entity if errors.present?
       @inquiry.calculate_addon_cost
       render json: { inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Success" }, status: :ok
+    end
+
+    def upload_attachment
+      if params[:attachment].present?
+        @inquiry.attachment.attach(params[:attachment])
+        url = Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(@inquiry.attachment, only_path: true)
+        render json: {url: url, message: "File successfully uploaded"}, status: :ok
+      else
+        @inquiry.attachment.purge
+        render json: {url: "",message: "File successfully removed"}, status: :ok
+      end
     end
 
     private

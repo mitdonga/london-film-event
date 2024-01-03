@@ -71,21 +71,21 @@ module BxBlockCategories
             elsif field.field_type == "calender_select" && field.name.downcase == "event date"
                 options = field.options.split(", ")
                 event_date = self.user_input.to_date
-                days_left = (event_date - Date.today).to_i
+                week_left = (event_date - Date.today).to_i/7.0
                 final_index = nil
                 options.each_with_index do |option, index|
                     match = option.match(/(\d+)\s?\+/)
-                    if match.present? && match[0].to_i <= days_left
+                    if match.present? && match[0].to_i <= week_left
                         final_index = index 
                         break
                     end
                     match = option.match(/<\s?(\d+)/)
-                    if match.present? && match[1].to_i >= days_left
+                    if match.present? && match[1].to_i >= week_left
                         final_index = index 
                         break
                     end
                     match = option.match(/(\d+)\s?-\s?(\d+)/)
-                    if match.present? && match[1].to_i <= days_left && match[2].to_i >= days_left
+                    if match.present? && match[1].to_i <= week_left && match[2].to_i >= week_left
                         final_index = index 
                         break
                     end
