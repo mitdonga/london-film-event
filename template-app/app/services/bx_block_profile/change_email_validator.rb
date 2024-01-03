@@ -4,7 +4,7 @@ module BxBlockProfile
 
     attr_accessor(*[
       :account,
-      :new_email,
+      :email,
     ])
 
     validates :account, :presence => {:message => 'not found'}
@@ -25,7 +25,7 @@ module BxBlockProfile
 
     def validate_email
       return if AccountBlock::EmailValidation.new(@email).valid?
-      errors.add :new_email, 'is not valid'
+      errors[:email] << "You've entered an email from an external domain. Please confirm this is correct before saving."
     end
 
     def validate_account_type

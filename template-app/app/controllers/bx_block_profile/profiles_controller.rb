@@ -1,5 +1,6 @@
 module BxBlockProfile
   class ProfilesController < ApplicationController
+    before_action :current_user
 
     def create
       @profile = BxBlockProfile::Profile.new(profile_params.merge({account_id: current_user.id}))
@@ -100,15 +101,13 @@ module BxBlockProfile
     end
 
     def update
-      status, result = UpdateAccountCommand.execute(@token.id, update_params)
-
+      status, result = UpdateAccountCommand.execute(@token.id, account_params)
       if status == :ok
         serializer = AccountBlock::AccountSerializer.new(result)
         render :json => serializer.serializable_hash,
           :status => :ok
       else
-        render :json => {:errors => [{:profile => result.first}]},
-          :status => status
+        render json: { errors: result&.map { |message| message.sub(/\AEmail\s*/, '') }}, status: :unprocessable_entity
       end
     end
 
@@ -148,6 +147,10 @@ module BxBlockProfile
 
     def current_user
        @account = AccountBlock::Account.find_by(id: @token.id)
+    end
+
+    def account_params
+      params.require(:account).permit(:first_name, :last_name, :country_code, :email, :phone_number, :device_id, :account_type, :company_id)
     end
 
     # Added required params need to be updated

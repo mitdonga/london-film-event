@@ -3,6 +3,7 @@ module BxBlockProfile
     include ActiveModel::Validations
 
     ATTRIBUTES = [
+      [:email],
       [:first_name],
       [:last_name],
       [:full_name],
@@ -11,7 +12,7 @@ module BxBlockProfile
       [:date_of_birth],
       [:new_phone_number, :full_phone_number],
       [:new_password, :password],
-      [:new_email, :email],
+      [:new_email],
     ]
 
     attr_accessor(*ATTRIBUTES.map(&:first))
@@ -73,8 +74,8 @@ module BxBlockProfile
     end
 
     def validate_email
-      return unless new_email
-      validator = ChangeEmailValidator.new(@account_id, new_email)
+      return unless email
+      validator = ChangeEmailValidator.new(@account_id, email)
       validate_with_validator validator
     end
 
