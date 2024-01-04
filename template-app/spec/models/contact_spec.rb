@@ -19,7 +19,7 @@ RSpec.describe BxBlockContactUs::Contact, type: :model do
     describe '#valid_email' do
       context 'when email is valid' do
         it 'does not add errors' do
-          contact = build(:contact, email: 'valid@example.com')
+          contact = build(:contact, email: 'valid@gmail.com')
           contact.valid?
           expect(contact.errors[:email]).to be_empty
         end

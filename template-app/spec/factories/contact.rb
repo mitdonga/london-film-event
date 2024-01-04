@@ -4,7 +4,7 @@ FactoryBot.define do
     last_name { Faker::Lorem.sentence(word_count: 2) }
     subject { Faker::Lorem.paragraph(sentence_count: 200) }
     details { Faker::Lorem.paragraph(sentence_count: 200) }
-    email { Faker::Internet.email }
+    email { "#{Faker::Internet.user_name}@gmail.com" }
     country_code { Faker::Address.country_code }
     phone_number do
       Faker::Number.number(digits: 10)

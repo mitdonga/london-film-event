@@ -5,13 +5,16 @@ module BxBlockProfile
     ATTRIBUTES = [
       [:first_name],
       [:last_name],
+      [:email],
+      [:phone_number],
+      [:country_code],
       [:full_name],
       [:gender],
       [:user_name],
       [:date_of_birth],
       [:new_phone_number, :full_phone_number],
       [:new_password, :password],
-      [:new_email, :email],
+      [:new_email],
     ]
 
     attr_accessor(*ATTRIBUTES.map(&:first))
@@ -73,8 +76,8 @@ module BxBlockProfile
     end
 
     def validate_email
-      return unless new_email
-      validator = ChangeEmailValidator.new(@account_id, new_email)
+      return unless email
+      validator = ChangeEmailValidator.new(@account_id, email)
       validate_with_validator validator
     end
 
