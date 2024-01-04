@@ -181,4 +181,12 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       expect(response.body).to include("File successfully removed")
     end
   end
+
+  describe "#submit_inquiry" do
+    it "should submit inquiry" do
+      put "submit_inquiry", params: {token: @token_1, inquiry_id:  @inquiry_1.id}
+      expect(response).to have_http_status(200)
+      expect(response.body).to include("Inquiry successfully submitted")
+    end
+  end
 end

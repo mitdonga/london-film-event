@@ -52,4 +52,5 @@ Rails.application.routes.draw do
   put "/save_inquiry",                      to: "bx_block_invoice/invoice#save_inquiry"
   put "/calculate_cost",                    to: "bx_block_invoice/invoice#calculate_cost"
   put "/upload_attachment",                 to: "bx_block_invoice/invoice#upload_attachment"
+  put "/submit_inquiry",                    to: "bx_block_invoice/invoice#submit_inquiry"
 end
