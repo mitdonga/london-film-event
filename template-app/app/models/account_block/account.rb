@@ -4,10 +4,10 @@ module AccountBlock
     self.table_name = :accounts
 
     include Wisper::Publisher
-
     validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: "Please enter valid email" }, uniqueness: { case_sensitive: false, message: "Account already exist with this email" }
-    validates :account_type, :first_name, :last_name, :full_phone_number, :country_code, :phone_number, presence: true
+    validates :account_type, :first_name, :country_code, :last_name, :full_phone_number, :phone_number, presence: true
     validates :full_phone_number, uniqueness: { message: "Account already exist with this phone number" }, presence: true
+    validates :phone_number, format: { with: /\A\d{10}\z/, message: 'must be a valid 10-digit phone number' }
 
     has_secure_password
     before_validation :parse_full_phone_number
@@ -58,8 +58,7 @@ module AccountBlock
     def parse_full_phone_number
       phone = Phonelib.parse("#{self.country_code}#{self.phone_number}")
       self.full_phone_number = phone.sanitized
-      self.country_code = phone.country_code
-      self.phone_number = phone.raw_national
+      # self.phone_number = phone.raw_national
     end
 
     def valid_phone_number

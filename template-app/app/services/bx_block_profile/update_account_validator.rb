@@ -3,9 +3,11 @@ module BxBlockProfile
     include ActiveModel::Validations
 
     ATTRIBUTES = [
-      [:email],
       [:first_name],
       [:last_name],
+      [:email],
+      [:phone_number],
+      [:country_code],
       [:full_name],
       [:gender],
       [:user_name],
