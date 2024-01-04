@@ -14,16 +14,16 @@ module BxBlockProfile
     #   end
     # end
 
-    # def show
-    #   profile = BxBlockProfile::Profile.find(params[:id])
-    #   if profile.present?
-    #     render json: ProfileSerializer.new(profile).serializable_hash,status: :ok
-    #   else
-    #     render json: {
-    #       errors: format_activerecord_errors(profile.errors)
-    #     }, status: :unprocessable_entity
-    #   end
-    # end
+    def show
+      profile = AccountBlock::Account.find(params[:id])
+      if profile.present?
+        render json: ProfileSerializer.new(profile).serializable_hash,status: :ok
+      else
+        render json: {
+          errors: format_activerecord_errors(profile.errors)
+        }, status: :unprocessable_entity
+      end
+    end
 
     # def custom_user_profile_fields
     #    fields = BxBlockProfile::CustomUserProfileFields.all
