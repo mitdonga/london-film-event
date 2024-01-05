@@ -24,6 +24,40 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
       row :email
       row :meeting_link
     end
+
+    panel "Service Details" do
+      table_for company.company_categories.includes(:category) do
+        column :service do |company_category|
+          company_category.category.name
+        end
+        column :has_access
+      end
+    end
+
+    panel "Service Type Pricing" do
+      table_for company.company_sub_categories.includes(sub_category: :parent) do
+        column :service do |company_sub_category|
+          company_sub_category.sub_category.parent.name
+        end
+        column :service_type do |company_sub_category|
+          company_sub_category.sub_category.name
+        end
+        column :price
+      end
+    end
+
+    company.services_sub_categories_data.each do |data|
+      panel "#{data[:service_name]} Addons" do
+        table_for data[:input_fields] do
+          column(:input_field_name) { |field| field.input_field.name }
+          column(:type) { |field| field.input_field.field_type }
+          column(:options) { |field| field.input_field.options }  
+          column(:values) { |field| field.input_field.values }  
+          column(:multiplier) { |field| field.input_field.multiplier }  
+          column(:default_value) { |field| field.input_field.default_value }  
+        end
+      end
+    end
   end
 
   form do |f|
@@ -35,7 +69,7 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
       f.inputs :phone_number
       f.inputs :email
       f.inputs :meeting_link
-      # if f.object.persisted?
+      if f.object.persisted?
         f.inputs "Manage Sub Category Prices" do
           tabs do
             f.object.services_sub_categories_data.each do |sr|
@@ -60,7 +94,7 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
             end
           end
         end
-      # end        
+      end        
     end
 
     f.actions
