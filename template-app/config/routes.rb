@@ -43,7 +43,9 @@ Rails.application.routes.draw do
   end
 
   namespace :bx_block_profile do
-    resources :profiles
+    resources :profiles do
+      put 'popup_confirmation', on: :member
+    end
   end
 
   get "/inquiry/:id", to: "bx_block_invoice/invoice#inquiry"

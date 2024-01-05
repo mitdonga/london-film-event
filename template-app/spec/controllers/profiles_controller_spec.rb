@@ -10,6 +10,14 @@ RSpec.describe BxBlockProfile::ProfilesController, type: :controller do
     @client_user = FactoryBot.create(:user_account, client_admin_id: @client_admin.id, company_id: @company.id)
     @client_token = BuilderJsonWebToken.encode(@client_user.id)
   end
+  
+  describe 'GET #show' do
+
+    it 'returns a successful response' do
+      get :show, params: {  token: @client_token, id: @client_user.id }
+      expect(response).to have_http_status(:ok)
+    end
+  end
 
   describe 'PUT #update' do
     context 'with valid parameters' do
