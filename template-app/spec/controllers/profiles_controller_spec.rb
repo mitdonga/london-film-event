@@ -12,10 +12,16 @@ RSpec.describe BxBlockProfile::ProfilesController, type: :controller do
   end
   
   describe 'GET #show' do
-
     it 'returns a successful response' do
       get :show, params: {  token: @client_token, id: @client_user.id }
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'it gives error' do
+      get :show, params: { id: @client_user.id }
+      
+      json_response = JSON.parse(response.body)
+      expect(response).to have_http_status(400)
     end
   end
 
@@ -63,6 +69,31 @@ RSpec.describe BxBlockProfile::ProfilesController, type: :controller do
         expect(json_response['errors']).to eq(["You've entered an email from an external domain. Please confirm this is correct before saving."]
         )
       end
+    end
+  end
+
+  describe 'PUT#popup_confirmation' do
+
+    payload = {
+      first_name: "new name"
+    }
+    
+    it 'updates the user account' do
+      put :popup_confirmation, params: { token: @client_token,id: @client_user.id, email: 'test@test.com', first_name: 'new name', account: payload }     
+      
+      json_response = JSON.parse(response.body)
+      expect(response).to have_http_status(:ok)
+      expect(json_response["data"]["attributes"]["first_name"]).to eq(@client_user.first_name)
+      expect(json_response["data"]["attributes"]["email"]).to eq(@client_user.email)
+      mail = ActionMailer::Base.deliveries.last
+      expect(mail.from).to include(@client_user.email)
+    end
+
+    it 'updates the user account' do
+      put :popup_confirmation, params: { id: @client_user.id, email: 'test@test.com', first_name: 'new name', account: payload }     
+      
+      json_response = JSON.parse(response.body)
+      expect(response).to have_http_status(400)
     end
   end
 end
