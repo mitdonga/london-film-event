@@ -6,6 +6,8 @@ module BxBlockInvoice
     after_create :add_company_categories
     after_create :create_company_input_fields
 
+    has_many :accounts, class_name: "AccountBlock::Account"
+
     has_many :company_input_fields, class_name: "BxBlockCategories::CompanyInputField", dependent: :destroy
     accepts_nested_attributes_for :company_input_fields, allow_destroy: true
 

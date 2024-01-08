@@ -7,7 +7,7 @@ module AccountBlock
     # before_action :validate_json_web_token, only: [:search, :change_email_address, :change_phone_number, :specific_account, :logged_user, :change_password, :update, :add_client_user]
 
     # before_action :current_user, only: [:change_password, :update, :add_client_user]
-    before_action :validate_client_admin, only: [:add_client_user, :client_users, :remove_user]
+    before_action :validate_client_admin, only: [:add_client_user, :client_users, :remove_user, :company_users]
 
     def create
       case params[:data][:type] #### rescue invalid API format
@@ -204,6 +204,7 @@ module AccountBlock
     def add_client_user
       client_user = ClientUser.new(account_params)
       client_user.client_admin_id = @account.id
+      client_user.company_id = @account.company_id
       if client_user.save
         return render json: { 
           message: "Client user created successfully", 
@@ -220,6 +221,11 @@ module AccountBlock
     def client_users
       client_users = @account.client_users
       render json: { message: "Found #{client_users.size} users", client_users: AccountSerializer.new(client_users).serializable_hash }, status: :ok
+    end
+
+    def company_users
+      company_users = @account.company.accounts.where.not(id: @account.id)
+      render json: { message: "Found #{company_users.size} users", company_users: AccountSerializer.new(company_users).serializable_hash }, status: :ok
     end
 
     def remove_user
