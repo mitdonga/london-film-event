@@ -1,6 +1,6 @@
 module BxBlockProfile
   class ProfilesController < ApplicationController
-    before_action :current_user
+    before_action :current_user, on: :update
 
     # def create
     #   @profile = BxBlockProfile::Profile.new(profile_params.merge({account_id: current_user.id}))
@@ -14,16 +14,26 @@ module BxBlockProfile
     #   end
     # end
 
-    # def show
-    #   profile = BxBlockProfile::Profile.find(params[:id])
-    #   if profile.present?
-    #     render json: ProfileSerializer.new(profile).serializable_hash,status: :ok
-    #   else
-    #     render json: {
-    #       errors: format_activerecord_errors(profile.errors)
-    #     }, status: :unprocessable_entity
-    #   end
-    # end
+    def show
+      profile = AccountBlock::Account.find(params[:id])
+      if profile.present?
+        render json: ProfileSerializer.new(profile).serializable_hash,status: :ok
+      else
+        render json: {
+          errors: format_activerecord_errors(profile.errors)
+        }, status: :unprocessable_entity
+      end
+    end
+
+    def popup_confirmation
+      @user_account = AccountBlock::Account.find_by_id(params[:id])
+      if @user_account.update!(account_params)
+        render json: AccountBlock::AccountSerializer.new(@account).serializable_hash, status: :ok
+        BxBlockContactUs::ContactMailer.send_profile_mail(@account).deliver_now
+      else
+        render json: {errors: @account.errors.full_messages}, status: :unprocessable_entity
+      end
+    end
 
     # def custom_user_profile_fields
     #    fields = BxBlockProfile::CustomUserProfileFields.all
@@ -129,7 +139,7 @@ module BxBlockProfile
     end
 
     def account_params
-      params.require(:account).permit(:first_name, :last_name, :email, :phone_number, :country_code)
+      params.require(:account).permit(:first_name, :last_name, :email, :phone_number, :country_code, :location)
     end
 
     # Added required params need to be updated

@@ -9,6 +9,7 @@ module BxBlockProfile
       [:phone_number],
       [:country_code],
       [:full_name],
+      [:location],
       [:gender],
       [:user_name],
       [:date_of_birth],
