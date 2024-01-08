@@ -42,6 +42,10 @@ Rails.application.routes.draw do
     resources :contacts
   end
 
+  namespace :bx_block_profile do
+    resources :profiles
+  end
+
   get "/inquiry/:id", to: "bx_block_invoice/invoice#inquiry"
   get "/inquiries", to: "bx_block_invoice/invoice#inquiries"
   post "/create_inquiry", to: "bx_block_invoice/invoice#create_inquiry"

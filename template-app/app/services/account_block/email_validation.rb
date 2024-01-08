@@ -14,6 +14,8 @@ module AccountBlock
       end
     end
 
+    validate :validate_email_domain
+
     validates :email, format: {
       with: regex,
       multiline: true
@@ -21,6 +23,17 @@ module AccountBlock
 
     def initialize(email)
       @email = email
+    end
+
+    private
+
+    def validate_email_domain
+      return if email_domain == 'gmail.com'
+      errors[:email] << "You've entered an email from an external domain. Please confirm this is correct before saving."
+    end
+
+    def email_domain
+      email.to_s.split('@').last
     end
   end
 end
