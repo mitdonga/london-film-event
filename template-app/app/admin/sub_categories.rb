@@ -1,6 +1,6 @@
 ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
     NO_IMAGE = "No Image"
-    permit_params :name, :parent_id, :start_from, :description, :duration, :image, features_attributes: [:id, :name, :_destroy], default_coverages_attributes: [:id, :title, :category, :rank, :_destroy]
+    permit_params :name, :parent_id, :start_from, :description, :duration, :image, :color_theme, features_attributes: [:id, :name, :_destroy], default_coverages_attributes: [:id, :title, :category, :rank, :_destroy]
 
     index do
       selectable_column
@@ -9,6 +9,7 @@ ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
       column :start_from
       column :duration
       column :parent
+      column :color_theme
       column :image do |c|
         c.image.present? ?
         image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : NO_IMAGE
@@ -23,8 +24,9 @@ ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
         f.input :duration
         f.input :description
         f.input :parent
+        f.input :color_theme, as: :color_picker, palette: ["#594FF5", "#00BFBB", "#FFC500", "#FF5B74", "#BDB9FB", "#99E5E4", "#FFE899", "#FFBDC7", "#DEDCFD", "#CCF2F1", "#FFF4CE", "#FFDEE3"]
         f.input :image, as: :file, hint: f.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(f.object.image, only_path: true), width: 200, controls: true) : NO_IMAGE
-        # if f.object.persisted?
+        if f.object.persisted?
           tabs do
             tab "Manage Features" do
               f.inputs do
@@ -50,7 +52,7 @@ ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
               end
             end
           end
-        # end
+        end
       end
       f.actions
     end
@@ -62,6 +64,7 @@ ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
         row :start_from
         row :duration
         row :description
+        row :color_theme
         row :image do |c|
           c.image.present? ?
           image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : NO_IMAGE

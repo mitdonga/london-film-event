@@ -16,6 +16,8 @@ module BxBlockInvoice
 
         enum status: %i[draft pending approved]
 
+        has_one_attached :attachment
+
         def base_service
             additional_services.find_by(service_id: service.id)
         end

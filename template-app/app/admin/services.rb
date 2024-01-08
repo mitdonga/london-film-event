@@ -1,7 +1,7 @@
 ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
   NO_IMAGE = "No Image"
   permit_params :name, :description, :start_from, :catalogue_type, :status, :image, 
-                company_ids: [], sub_categories_attributes: [:id, :name, :start_from, :duration, :image, :_destroy],
+                company_ids: [], sub_categories_attributes: [:id, :name, :start_from, :duration, :color_theme, :image, :_destroy],
                 input_fields_attributes: [:id, :name, :field_type, :options, :section, :values, :multiplier, :default_value, :note, :_destroy]
 
   index do
@@ -23,7 +23,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
       f.input :name
       f.input :description
       f.input :image, as: :file, hint: f.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(f.object.image, only_path: true), width: 200, controls: true) : NO_IMAGE
-      # if f.object.persisted?
+      if f.object.persisted?
         tabs do
           tab "Manage Input Fields" do
             f.inputs do
@@ -58,7 +58,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
             end
           end
         end
-      # end
+      end
     end
     f.actions
   end
@@ -77,6 +77,34 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
       row :created_at
       row :updated_at
     end
+
+    panel "Sub Categories" do
+      table_for service.sub_categories do
+        column :name do |sc|
+          link_to sc.name, admin_sub_category_path(sc)
+        end
+        column :start_from, label: "Default Price"
+        column :duration
+        column :image do |sc|
+          sc.image.present? ?
+          image_tag(Rails.application.routes.url_helpers.rails_blob_url(sc.image, only_path: true), width: 100, controls: true) : NO_IMAGE
+        end
+      end
+    end
+
+    panel "Input Fields" do
+      table_for service.input_fields do
+        column :name
+        column :field_type
+        column :section
+        column :options
+        column :values
+        column :multiplier
+        column :default_value
+        column :note
+      end
+    end
+
   end
   
 end

@@ -43,7 +43,7 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
       f.input :first_name
       f.input :last_name
       f.input :email, input_html: { placeholder: "Enter a valid email" }
-      f.input :country_code, as: :select, collection: Country.all.sort_by(&:name).map { |c| [ "#{c.country_code} (#{c.name})", c.country_code.to_i] }, prompt: 'Select a country'
+      f.input :country_code, as: :select, collection: AccountBlock::AccountHelper.country_codes, prompt: 'Select a country'
       f.input :phone_number, input_html: { placeholder: "Enter a valid phone number" }
       f.input :company, as: :select, prompt: "Select Company"
       f.input :account_type, prompt: "Select Account Type"

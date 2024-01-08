@@ -10,7 +10,7 @@ module AccountBlock
     validates :phone_number, format: { with: /\A\d{10}\z/, message: 'must be a valid 10-digit phone number' }
 
     has_secure_password
-    before_validation :parse_full_phone_number
+    before_validation :parse_full_phone_number, on: [:create, :update]
     before_validation :set_password, on: :create
     before_create :generate_api_key
     after_create :send_email
@@ -56,9 +56,13 @@ module AccountBlock
     end 
 
     def parse_full_phone_number
-      phone = Phonelib.parse("#{self.country_code}#{self.phone_number}")
-      self.full_phone_number = phone.sanitized
+      # phone = Phonelib.parse("#{self.country_code.to_s}#{self.phone_number}")
+      # self.full_phone_number = phone.sanitized
+      # self.country_code = phone.country_code
       # self.phone_number = phone.raw_national
+      self.full_phone_number = "+#{self.country_code.to_s} #{self.phone_number}"
+      self.country_code = self.country_code.to_i
+
     end
 
     def valid_phone_number
