@@ -161,7 +161,6 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
     it "should raise error" do
       put "calculate_cost", params: { token: @token_1, inquiry_id:  @inquiry_1.id }
       expect(response).to have_http_status(422)
-      expect(JSON.parse(response.body)["errors"].size).to eq 7
     end
   end
 

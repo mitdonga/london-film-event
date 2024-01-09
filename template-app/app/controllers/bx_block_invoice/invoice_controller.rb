@@ -72,7 +72,7 @@ module BxBlockInvoice
       errors = []
       input_values.each do |iv|
         input_value, user_input = all_values.find_by_id(iv[:id]), iv[:user_input].to_s.strip
-        if input_value.present? && user_input.present?
+        if input_value.present?
           unless input_value.update(user_input: user_input)
             errors << input_value.errors.full_messages.first + " ID #{iv[:id]}"
           end

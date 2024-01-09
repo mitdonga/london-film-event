@@ -249,7 +249,7 @@ module AccountBlock
     private
 
     def account_params
-      params.require(:account).permit(:first_name, :last_name, :country_code, :email, :phone_number, :device_id, :account_type, :company_id)
+      params.require(:account).permit(:first_name, :last_name, :country_code, :email, :phone_number, :device_id, :job_title, :account_type, :company_id)
     end
 
     def validate_client_admin

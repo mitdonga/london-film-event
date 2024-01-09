@@ -10,7 +10,7 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
   filter :account_type
   filter :company
 
-  permit_params :first_name, :last_name, :full_phone_number, :country_code, :phone_number, :email, :activated, :device_id, :unique_auth_id, :password, :type, :user_name, :platform, :account_type, :app_language_id, :last_visit_at, :is_blacklisted, :suspend_until, :status, :role_id, :stripe_id, :stripe_subscription_id, :stripe_subscription_date, :gender, :date_of_birth, :age, :company_id
+  permit_params :first_name, :last_name, :full_phone_number, :country_code, :phone_number, :email, :activated, :device_id, :unique_auth_id, :can_create_accounts, :job_title, :password, :type, :user_name, :platform, :account_type, :app_language_id, :last_visit_at, :is_blacklisted, :suspend_until, :status, :role_id, :stripe_id, :stripe_subscription_id, :stripe_subscription_date, :gender, :date_of_birth, :age, :company_id
 
   index do 
     selectable_column
@@ -22,6 +22,7 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
     column :email
     column :full_phone_number
     column :account_type
+    column :can_create_accounts
     column :activated
     actions
   end
@@ -33,7 +34,9 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
       row :email
       row :full_phone_number
       row :company
+      row :job_title
       row :account_type
+      row :can_create_accounts
       row :activated
     end
   end
@@ -46,6 +49,8 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
       f.input :country_code, as: :select, collection: AccountBlock::AccountHelper.country_codes, prompt: 'Select a country'
       f.input :phone_number, input_html: { placeholder: "Enter a valid phone number" }
       f.input :company, as: :select, prompt: "Select Company"
+      f.input :job_title
+      f.input :can_create_accounts, prompt: "Account Creation Access"
       f.input :account_type, prompt: "Select Account Type"
     end
     f.actions

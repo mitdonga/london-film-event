@@ -11,7 +11,7 @@ ActiveAdmin.register AccountBlock::ClientUser, as: "Client User" do
     filter :company
     filter :client_admin, as: :select, collection: AccountBlock::ClientAdmin.all.pluck(:first_name, :id)
 
-    permit_params :first_name, :last_name, :full_phone_number, :country_code, :phone_number, :email, :client_admin_id, :activated, :device_id, :unique_auth_id, :password, :type, :user_name, :platform, :account_type, :app_language_id, :last_visit_at, :is_blacklisted, :suspend_until, :status, :role_id, :stripe_id, :stripe_subscription_id, :stripe_subscription_date, :gender, :date_of_birth, :age, :company_id
+    permit_params :first_name, :last_name, :full_phone_number, :job_title, :country_code, :phone_number, :email, :client_admin_id, :activated, :device_id, :unique_auth_id, :password, :type, :user_name, :platform, :account_type, :app_language_id, :last_visit_at, :is_blacklisted, :suspend_until, :status, :role_id, :stripe_id, :stripe_subscription_id, :stripe_subscription_date, :gender, :date_of_birth, :age, :company_id
   
     index do 
       selectable_column
@@ -38,6 +38,7 @@ ActiveAdmin.register AccountBlock::ClientUser, as: "Client User" do
         row :company
         row :account_type
         row :full_phone_number
+        row :job_title
         row :client_admin do |obj|
             obj.client_admin.full_name
         end
@@ -54,6 +55,7 @@ ActiveAdmin.register AccountBlock::ClientUser, as: "Client User" do
         f.input :country_code, as: :select, collection: AccountBlock::AccountHelper.country_codes, prompt: 'Select a country'
         f.input :phone_number, input_html: { placeholder: "Enter a valid phone number" }
         f.input :account_type, prompt: "Select Account Type"
+        f.input :job_title
         f.input :client_admin_id, as: :select, collection: AccountBlock::ClientAdmin.all.pluck(:first_name, :id)
       end
       f.actions
