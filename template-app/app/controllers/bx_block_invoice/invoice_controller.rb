@@ -64,6 +64,7 @@ module BxBlockInvoice
     end
 
     def save_inquiry
+      @inquiry.update(note: params[:note])
       all_values = @inquiry.input_values
       input_values = params[:input_values]
       unless input_values.present? && input_values.is_a?(Array) && input_values.all? { |element| valid_input_value?(element) }
@@ -72,7 +73,7 @@ module BxBlockInvoice
       errors = []
       input_values.each do |iv|
         input_value, user_input = all_values.find_by_id(iv[:id]), iv[:user_input].to_s.strip
-        if input_value.present? && user_input.present?
+        if input_value.present?
           unless input_value.update(user_input: user_input)
             errors << input_value.errors.full_messages.first + " ID #{iv[:id]}"
           end

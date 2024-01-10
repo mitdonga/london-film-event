@@ -5,7 +5,7 @@ module AccountBlock
 
     include Wisper::Publisher
     validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: "Please enter valid email" }, uniqueness: { case_sensitive: false, message: "Account already exist with this email" }
-    validates :account_type, :first_name, :country_code, :last_name, :full_phone_number, :phone_number, presence: true
+    validates :account_type, :first_name, :country_code, :last_name, :full_phone_number, :phone_number, :company_id, presence: true
     validates :full_phone_number, uniqueness: { message: "Account already exist with this phone number" }, presence: true
     validates :phone_number, format: { with: /\A\d{10}\z/, message: 'must be a valid 10-digit phone number' }
 

@@ -22,7 +22,7 @@ ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
         f.input :name
         f.input :start_from
         f.input :duration
-        f.input :description
+        f.input :description, as: :hidden
         f.input :parent
         f.input :color_theme, as: :color_picker, palette: ["#594FF5", "#00BFBB", "#FFC500", "#FF5B74", "#BDB9FB", "#99E5E4", "#FFE899", "#FFBDC7", "#DEDCFD", "#CCF2F1", "#FFF4CE", "#FFDEE3"]
         f.input :image, as: :file, hint: f.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(f.object.image, only_path: true), width: 200, controls: true) : NO_IMAGE

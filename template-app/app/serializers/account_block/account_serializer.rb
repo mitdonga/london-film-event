@@ -1,6 +1,6 @@
 module AccountBlock
   class AccountSerializer < BuilderBase::BaseSerializer
-    attributes(:activated, :location, :country_code, :email, :first_name, :full_phone_number, :country_code, :phone_number, :last_name, :phone_number, :type, :account_type, :client_admin_id, :device_id, :unique_auth_id, :should_reset_password)
+    attributes(:activated, :location, :country_code, :email, :first_name, :full_phone_number, :country_code, :phone_number, :last_name, :phone_number, :type, :job_title, :account_type, :client_admin_id, :device_id, :unique_auth_id, :should_reset_password)
 
     # attribute :country_code do |object|
     #   country_code_for object

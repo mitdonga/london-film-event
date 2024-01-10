@@ -8,11 +8,11 @@ local:
   
 minio:
   service: S3
-  access_key_id: <%= ENV['STORAGE_ACCESS_KEY'] %>
-  secret_access_key: <%= ENV['STORAGE_SECRET_ACCESS_KEY'] %>
-  region: <%= ENV['STORAGE_REGION'] %>
-  bucket: <%= ENV['STORAGE_BUCKET'] %>
-  endpoint: <%= ENV['STORAGE_ENDPOINT'] %>
+  access_key_id: <%= ENV.fetch("STORAGE_ACCESS_KEY", "hello") %>
+  secret_access_key: <%= ENV.fetch("STORAGE_SECRET_ACCESS_KEY", "builderai") %>
+  region: <%= ENV.fetch("STORAGE_REGION", "builder-1") %>
+  bucket: <%= ENV.fetch("STORAGE_BUCKET", "sbucket") %>
+  endpoint: <%= ENV.fetch("STORAGE_ENDPOINT", "https://minio.b187075.dev.eastus.az.svc.builder.cafe") %>
   force_path_style: true
 
 # Use rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
