@@ -93,13 +93,17 @@ module BxBlockProfile
     # end
 
     def update
-      status, result = UpdateAccountCommand.execute(@token.id, account_params)
-      if status == :ok
-        serializer = AccountBlock::AccountSerializer.new(result)
-        render :json => serializer.serializable_hash,
-          :status => :ok
+      if params["account"]["email"] == @account.email
+        status, result = UpdateAccountCommand.execute(@token.id, account_params)
+        if status == :ok
+          serializer = AccountBlock::AccountSerializer.new(result)
+          render :json => serializer.serializable_hash,
+            :status => :ok
+        else
+          render json: { errors: result&.map { |message| message.sub(/\AEmail\s*/, '') }}, status: :unprocessable_entity
+        end
       else
-        render json: { errors: result&.map { |message| message.sub(/\AEmail\s*/, '') }}, status: :unprocessable_entity
+        render json: { errors: "You've entered an email from an external domain. Please confirm this is correct before saving."}, status: :unprocessable_entity
       end
     end
 

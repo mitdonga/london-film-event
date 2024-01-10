@@ -29,13 +29,17 @@ RSpec.describe BxBlockProfile::ProfilesController, type: :controller do
     context 'with valid parameters' do
       payload = {
       first_name: "test first name",
-      last_name: "test last name"
+      last_name: "test last name",
       }
 
       it 'updates user profile' do
         put "update", params: {
             token: @client_token,
-            account: payload,
+            account: {
+              first_name: "test first name",
+              last_name: "test last name",
+              email: @client_user.email
+              },
             controller: "bx_block_profile/profiles",
             action: "update",
             id: @client_user.id,
@@ -66,8 +70,7 @@ RSpec.describe BxBlockProfile::ProfilesController, type: :controller do
 
         json_response = JSON.parse(response.body)
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(json_response['errors']).to eq(["You've entered an email from an external domain. Please confirm this is correct before saving."]
-        )
+        expect(json_response['errors']).to eq("You've entered an email from an external domain. Please confirm this is correct before saving.")
       end
     end
   end
