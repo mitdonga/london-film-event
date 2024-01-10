@@ -64,6 +64,7 @@ module BxBlockInvoice
     end
 
     def save_inquiry
+      @inquiry.update(note: params[:note])
       all_values = @inquiry.input_values
       input_values = params[:input_values]
       unless input_values.present? && input_values.is_a?(Array) && input_values.all? { |element| valid_input_value?(element) }
