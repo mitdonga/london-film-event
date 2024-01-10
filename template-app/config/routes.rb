@@ -13,6 +13,7 @@ Rails.application.routes.draw do
         put :change_password
         get :specific_account
         post :add_client_user
+        put :update_client_user
         get :client_users
         get :company_users
         get :all_company_users

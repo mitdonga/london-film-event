@@ -7,7 +7,7 @@ module AccountBlock
     # before_action :validate_json_web_token, only: [:search, :change_email_address, :change_phone_number, :specific_account, :logged_user, :change_password, :update, :add_client_user]
 
     # before_action :current_user, only: [:change_password, :update, :add_client_user]
-    before_action :validate_client_admin, only: [:add_client_user, :client_users, :remove_user, :company_users]
+    before_action :validate_client_admin, only: [:add_client_user, :update_client_user, :client_users, :remove_user, :company_users]
 
     def create
       case params[:data][:type] #### rescue invalid API format
@@ -215,6 +215,16 @@ module AccountBlock
           message: "Failed to create client user", 
           errors: client_user.errors.full_messages 
         }, status: :unprocessable_entity
+      end
+    end
+
+    def update_client_user
+      client_user = @account.company.accounts.find_by_id(params[:client_user_id]) rescue nil
+      return render json: {message: "User not present or you're not authorized to update this user"}, status: :unprocessable_entity unless client_user.present?
+      if client_user.update(account_params)
+        render json: {message: "User successfully updated", client_user: AccountSerializer.new(client_user).serializable_hash}, status: :ok
+      else
+        render json: {message: "Failed to update user details", errors: client_user.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
