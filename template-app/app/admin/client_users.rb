@@ -51,12 +51,12 @@ ActiveAdmin.register AccountBlock::ClientUser, as: "Client User" do
         f.input :first_name
         f.input :last_name
         f.input :email, input_html: { placeholder: "Enter a valid email" }
-        f.input :company, as: :select, prompt: "Select Company"
+        f.input :company, as: :select, prompt: "Select Company", input_html: {id: :company_select }
         f.input :country_code, as: :select, collection: AccountBlock::AccountHelper.country_codes, prompt: 'Select a country'
         f.input :phone_number, input_html: { placeholder: "Enter a valid phone number" }
         f.input :account_type, prompt: "Select Account Type"
         f.input :job_title
-        f.input :client_admin_id, as: :select, collection: AccountBlock::ClientAdmin.all.pluck(:first_name, :id)
+        f.input :client_admin_id, as: :select, collection: AccountBlock::ClientAdmin.all.map {|a| [a.full_name, a.id]}, input_html: {id: :client_admin_select, required: true }
       end
       f.actions
     end

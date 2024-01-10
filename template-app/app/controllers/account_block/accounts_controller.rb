@@ -2,8 +2,8 @@ module AccountBlock
   class AccountsController < ApplicationController
     include BuilderJsonWebToken::JsonWebTokenValidation
 
-    before_action :validate_json_web_token, except: [:reset_password_email]
-    before_action :current_user, except: [:create, :reset_password_email]
+    before_action :validate_json_web_token, except: [:reset_password_email, :all_company_users]
+    before_action :current_user, except: [:create, :reset_password_email, :all_company_users]
     # before_action :validate_json_web_token, only: [:search, :change_email_address, :change_phone_number, :specific_account, :logged_user, :change_password, :update, :add_client_user]
 
     # before_action :current_user, only: [:change_password, :update, :add_client_user]
@@ -244,6 +244,11 @@ module AccountBlock
       else
         render json: {errors: "account does not exist"}, status: :ok
       end
+    end
+
+    def all_company_users
+      data = BxBlockInvoice::Company.find(params[:company_id]).accounts.where(type: "ClientAdmin").map {|u| {name: u.full_name, id: u.id}} rescue []
+      render json: {data: data}
     end
 
     private
