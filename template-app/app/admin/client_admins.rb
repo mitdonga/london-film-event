@@ -22,7 +22,7 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
     column :email
     column :full_phone_number
     column :account_type
-    column :can_create_accounts
+    column("Account creation permission") {|f| f.can_create_accounts }
     column :activated
     actions
   end
@@ -36,7 +36,7 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
       row :company
       row :job_title
       row :account_type
-      row :can_create_accounts
+      row("Account creation permission") {|f| f.can_create_accounts }
       row :activated
     end
   end
@@ -50,7 +50,7 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
       f.input :phone_number, input_html: { placeholder: "Enter a valid phone number" }
       f.input :company, as: :select, prompt: "Select Company"
       f.input :job_title
-      f.input :can_create_accounts, prompt: "Account Creation Access"
+      f.input :can_create_accounts, label: "Account creation permission"
       f.input :account_type, prompt: "Select Account Type"
     end
     f.actions

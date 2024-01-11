@@ -8,6 +8,7 @@ module AccountBlock
 
     # before_action :current_user, only: [:change_password, :update, :add_client_user]
     before_action :validate_client_admin, only: [:add_client_user, :update_client_user, :client_users, :remove_user, :company_users]
+    before_action :validate_client_admin_permission, only: [:add_client_user, :update_client_user, :remove_user]
 
     def create
       case params[:data][:type] #### rescue invalid API format
@@ -269,6 +270,10 @@ module AccountBlock
 
     def validate_client_admin
       return render json: { errors: ["You're unauthorized to perform this action", "Only client admin can perform this action"] }, status: :unauthorized unless @account.type == "ClientAdmin"
+    end
+
+    def validate_client_admin_permission
+      return render json: { errors: ["You don't have permission to perform this action"] }, status: :unauthorized unless @account.type == "ClientAdmin" && @account.can_create_accounts
     end
 
     def current_user
