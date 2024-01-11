@@ -7,7 +7,7 @@ module BxBlockInvoice
     belongs_to :sub_category, class_name: "BxBlockCategories::SubCategory", foreign_key: "sub_category_id"
 
     validates :company_id, uniqueness: { scope: :sub_category_id, message: "This company and sub category already associated" }
-    validates :company_id, :sub_category_id, :price, presence: true
+    validates :company_id, :sub_category_id, presence: true
     
     def service
       sub_category.parent
