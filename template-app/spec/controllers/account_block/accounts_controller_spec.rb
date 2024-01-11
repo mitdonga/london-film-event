@@ -6,12 +6,18 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
 
   before do 
     @company = FactoryBot.create(:company)
+    @company_2 = FactoryBot.create(:company)
+
     @client_admin = FactoryBot.create(:admin_account, company_id: @company.id)
     @psw = @client_admin.generate_password
     @token = BuilderJsonWebToken.encode(@client_admin.id)
     
     @client_user = FactoryBot.create(:user_account, client_admin_id: @client_admin.id, company_id: @company.id)
     @user_token = BuilderJsonWebToken.encode(@client_user.id)
+
+    @client_admin_2 = FactoryBot.create(:admin_account, company_id: @company_2.id)
+    @client_user_2 = FactoryBot.create(:user_account, client_admin_id: @client_admin_2.id, company_id: @company_2.id)
+
   end
 
   describe '#change_password' do
@@ -90,6 +96,26 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
       post "add_client_user", params: { token: @token, account: user_params.except(:email) }
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body).to include("Failed to create client user")
+    end
+  end
+
+  describe "#update_client_user" do
+    let(:user_params) do {
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.first_name,
+      country_code: "44", 
+    } end
+
+    it "should update client user" do
+      put "update_client_user", params: { token: @token, client_user_id: @client_user.id, account: user_params }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("User successfully updated")
+    end
+
+    it "should raise error" do
+      put "update_client_user", params: { token: @token, client_user_id: @client_user_2.id, account: user_params }
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include("User not present or you're not authorized to update this user")
     end
   end
 

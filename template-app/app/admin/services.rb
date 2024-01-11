@@ -21,7 +21,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
   form do |f|
     f.inputs do
       f.input :name
-      f.input :description, as: :text
+      f.input :description, as: :text, input_html: { rows: 10 }
       f.input :image, as: :file, hint: f.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(f.object.image, only_path: true), width: 200, controls: true) : NO_IMAGE
       if f.object.persisted?
         tabs do
