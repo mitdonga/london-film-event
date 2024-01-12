@@ -72,7 +72,7 @@ module BxBlockCategories
                 options = field.options.split(", ")
                 event_date = self.user_input.to_date
 
-                if (event_date - Date.current).abs <= 3
+                if (event_date - Date.today).to_i/7.0
                     BxBlockInvoice::EventDateMailer.date_mail(event_date).deliver_now
                 end
 
