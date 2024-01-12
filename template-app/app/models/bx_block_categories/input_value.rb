@@ -71,6 +71,11 @@ module BxBlockCategories
             elsif field.field_type == "calender_select" && field.name.downcase == "event date"
                 options = field.options.split(", ")
                 event_date = self.user_input.to_date
+
+                if (event_date - Date.current).abs <= 3
+                    BxBlockInvoice::EventDateMailer.date_mail(event_date).deliver_now
+                end
+
                 week_left = (event_date - Date.today).to_i/7.0
                 final_index = nil
                 options.each_with_index do |option, index|
