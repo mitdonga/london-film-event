@@ -133,6 +133,20 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
     end
   end
 
+  describe "#send_account_activation_email" do
+    it "should send email" do
+      post "send_account_activation_email", params: { token: @token, user_id: @client_user.id }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Success")
+    end
+
+    it "should raise error" do
+      post "send_account_activation_email", params: { token: @token, user_id: @client_user_2.id }
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.body).to include("User not present or you're not authorized")
+    end
+  end
+
   describe "#reset_password_email" do
     it "should raise invalid email" do
       put "reset_password_email", params: { email: "invalid.email.com" }
