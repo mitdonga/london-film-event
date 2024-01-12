@@ -20,6 +20,7 @@ Rails.application.routes.draw do
         put :reset_password_email
         put :reset_password
         delete :remove_user
+        post :send_account_activation_email
       end
     end
   end

@@ -7,8 +7,8 @@ module AccountBlock
     # before_action :validate_json_web_token, only: [:search, :change_email_address, :change_phone_number, :specific_account, :logged_user, :change_password, :update, :add_client_user]
 
     # before_action :current_user, only: [:change_password, :update, :add_client_user]
-    before_action :validate_client_admin, only: [:add_client_user, :update_client_user, :client_users, :remove_user, :company_users]
-    before_action :validate_client_admin_permission, only: [:add_client_user, :update_client_user, :remove_user]
+    before_action :validate_client_admin, only: [:add_client_user, :update_client_user, :client_users, :remove_user, :company_users, :send_account_activation_email]
+    before_action :validate_client_admin_permission, only: [:add_client_user, :update_client_user, :remove_user, :send_account_activation_email]
 
     def create
       case params[:data][:type] #### rescue invalid API format
@@ -247,6 +247,13 @@ module AccountBlock
       else
         render json: { message: "Unable to remove client user" }, status: :unprocessable_entity
       end
+    end
+
+    def send_account_activation_email
+      client_user = @account.company.accounts.find_by_id(params[:user_id]) rescue nil
+      return render json: {message: "User not present or you're not authorized"}, status: :unauthorized unless client_user.present?
+      EmailValidationMailer.with(account: client_user, host: request.base_url).activation_email.deliver
+      render json: {message: "Success"}, status: :ok
     end
 
     def logged_user
