@@ -240,7 +240,8 @@ module AccountBlock
     end
 
     def remove_user
-      client_user = @account.client_users.find_by(id: params[:user_id])
+      client_user = @account.company.accounts.find_by_id(params[:user_id]) rescue nil
+      return render json: {message: "User not present or you're not authorized to delete this user"}, status: :unauthorized unless client_user.present?
       if client_user && client_user.destroy
         render json: { message: "Client user removed successfully" }, status: :ok
       else

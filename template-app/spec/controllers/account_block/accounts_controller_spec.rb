@@ -119,6 +119,20 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
     end
   end
 
+  describe "#remove_user" do
+    it "should delete client user" do
+      delete "remove_user", params: { token: @token, user_id: @client_user.id }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Client user removed successfully")
+    end
+
+    it "should raise error" do
+      delete "remove_user", params: { token: @token, user_id: @client_user_2.id }
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.body).to include("User not present or you're not authorized to delete this user")
+    end
+  end
+
   describe "#reset_password_email" do
     it "should raise invalid email" do
       put "reset_password_email", params: { email: "invalid.email.com" }
