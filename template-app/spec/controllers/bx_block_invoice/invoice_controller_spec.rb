@@ -188,4 +188,12 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       expect(response.body).to include("Inquiry successfully submitted")
     end
   end
+
+  describe "#inquiries" do
+    it "should return draft inquiries" do
+      get "inquiries", params: {token: @token_1, status: "draft"}
+      expect(response).to have_http_status(200)
+      expect(response.body).to include("1 inquiries found")
+    end
+  end
 end
