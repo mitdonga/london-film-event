@@ -30,6 +30,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
     @token_1 = BuilderJsonWebToken.encode(@client_admin_1.id)
     @inquiry_1 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_1.id, sub_category_id: @service_1.sub_categories.first.id)   
     @inquiry_2 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_2.id, sub_category_id: @service_2.sub_categories.first.id, status: "pending")   
+    @inquiry_3 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_2.id, sub_category_id: @service_2.sub_categories.last.id, approved_by_client_admin_id: @client_admin_1.id, status: "approved")   
 
     @client_admin_2 = FactoryBot.create(:admin_account, company_id: @company_2.id)
     @token_2 = BuilderJsonWebToken.encode(@client_admin_2.id)
@@ -202,13 +203,21 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
     it "should return all inquiries" do
       get "inquiries", params: {token: @token_1}
       expect(response).to have_http_status(200)
-      expect(response.body).to include("2 inquiries found")
+      expect(response.body).to include("3 inquiries found")
     end
   end
 
   describe "pending inquiries" do
     it "should return pending inquiries" do
       get "inquiries", params: {token: @token_1, status: "pending"}
+      expect(response).to have_http_status(200)
+      expect(response.body).to include("1 inquiries found")
+    end
+  end
+
+  describe "approved inquiries" do
+    it "should return approved inquiries" do
+      get "inquiries", params: {token: @token_1, status: "approved"}
       expect(response).to have_http_status(200)
       expect(response.body).to include("1 inquiries found")
     end

@@ -6,6 +6,9 @@ module BxBlockInvoice
         after_create :create_additional_service
 
         belongs_to :user, class_name: "AccountBlock::Account"
+        belongs_to :approved_by_client_admin, class_name: "AccountBlock::Account", optional: true
+        belongs_to :approved_by_lf_admin, class_name: "AccountBlock::Account", optional: true
+        belongs_to :user, class_name: "AccountBlock::Account"
         belongs_to :service, class_name: "BxBlockCategories::Service"
         belongs_to :sub_category, class_name: "BxBlockCategories::SubCategory"
         
@@ -14,9 +17,12 @@ module BxBlockInvoice
         
         has_one_attached :attachment
 
-        enum status: %i[draft pending approved]
+        enum status: %i[draft pending approved hold]
 
         has_one_attached :attachment
+
+        validates :approved_by_lf_admin, presence: true, if: -> { lf_admin_approval_required == true && status == "approved" }
+        validates :approved_by_client_admin, presence: true, if: -> { status == "approved" }
 
         def base_service
             additional_services.find_by(service_id: service.id)
