@@ -205,4 +205,12 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       expect(response.body).to include("2 inquiries found")
     end
   end
+
+  describe "pending inquiries" do
+    it "should return pending inquiries" do
+      get "inquiries", params: {token: @token_1, status: "pending"}
+      expect(response).to have_http_status(200)
+      expect(response.body).to include("1 inquiries found")
+    end
+  end
 end
