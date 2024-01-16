@@ -47,11 +47,9 @@ Rails.application.routes.draw do
   end
 
   namespace :bx_block_invoice do
-    resources :pending_reviews
+    resources :invoices
   end
-
   
-
   namespace :bx_block_profile do
     resources :profiles do
       put 'popup_confirmation', on: :member

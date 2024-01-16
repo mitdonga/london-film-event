@@ -4,6 +4,7 @@ module BxBlockInvoice
 
         before_validation :check_service_and_sub_category, on: :create
         after_create :create_additional_service
+        after_update :send_email_from_lf
 
         belongs_to :user, class_name: "AccountBlock::Account"
         belongs_to :service, class_name: "BxBlockCategories::Service"
@@ -14,9 +15,19 @@ module BxBlockInvoice
         
         has_one_attached :attachment
 
-        enum status: %i[draft pending approved]
+        enum status: %i[draft pending approved hold rejected]
 
         has_one_attached :attachment
+
+        def send_email_from_lf
+            user = self.user
+            if user&.type == "ClientUser"
+                client_admin_mail = user.client_admin.email
+                BxBlockContactUs::ContactMailer.email_from_lf(client_admin_mail, self.lf_admin_email).deliver_now
+            else
+                BxBlockContactUs::ContactMailer.email_from_lf(user.email, self.lf_admin_email).deliver_now
+            end
+        end
 
         def base_service
             additional_services.find_by(service_id: service.id)
