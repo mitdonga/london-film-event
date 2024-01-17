@@ -43,20 +43,11 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
         inquiry.user.type
       end
       row :status
-      row :user_email do |inquiry|
-        inquiry.user.email
-      end
-      row :service do |inquiry|
-        inquiry.service&.name
-      end
-      row :sub_category do |inquiry|
-        inquiry.sub_category&.name
-      end
+      row(:user_email) {|inquiry| inquiry.user.email }
+      row(:service) {|inquiry| inquiry.service&.name }
+      row(:sub_category) {|inquiry| inquiry.sub_category&.name }
       row :approved_by_lf_admin
-      row :approved_by_client_admin do |inquiry|
-        inquiry.approved_by_client_admin&.full_name
-      end
-
+      row(:approved_by_client_admin) {|inquiry| inquiry.approved_by_client_admin&.full_name }
     end
   end
 
