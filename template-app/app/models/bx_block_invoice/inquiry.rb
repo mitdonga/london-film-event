@@ -8,7 +8,7 @@ module BxBlockInvoice
 
         belongs_to :user, class_name: "AccountBlock::Account"
         belongs_to :approved_by_client_admin, class_name: "AccountBlock::Account", optional: true
-        belongs_to :approved_by_lf_admin, class_name: "AccountBlock::Account", optional: true
+        belongs_to :approved_by_lf_admin, class_name: "AdminUser", optional: true
         belongs_to :user, class_name: "AccountBlock::Account"
         belongs_to :service, class_name: "BxBlockCategories::Service"
         belongs_to :sub_category, class_name: "BxBlockCategories::SubCategory"

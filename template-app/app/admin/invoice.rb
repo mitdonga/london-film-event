@@ -23,10 +23,10 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       inq.status
     end
     column 'Service Name', :service do |inq|
-      inq.service.name
+      inq.service&.name
     end
     column 'SubCategory Name', :sub_category do |inq|
-      inq.sub_category.name
+      inq.sub_category&.name
     end
     actions
   end
@@ -47,10 +47,10 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
         inquiry.user.email
       end
       row :service do |inquiry|
-        inquiry.service.name
+        inquiry.service&.name
       end
       row :sub_category do |inquiry|
-        inquiry.sub_category.name
+        inquiry.sub_category&.name
       end
     end
   end
