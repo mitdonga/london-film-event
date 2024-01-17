@@ -23,7 +23,7 @@ module BxBlockInvoice
         has_one_attached :attachment
 
         validates :approved_by_lf_admin, presence: true, if: -> { lf_admin_approval_required == true && status == "approved" }
-        validates :approved_by_client_admin, presence: true, if: -> { status == "approved" }
+        validates :approved_by_client_admin, presence: true, if: -> { status == "approved" && approved_by_lf_admin_id.blank? }
 
         def send_email_from_lf
             user = self.user

@@ -42,7 +42,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       row :user_type do |inquiry|
         inquiry.user.type
       end
-      row STATUS,:status
+      row :status
       row :user_email do |inquiry|
         inquiry.user.email
       end
@@ -52,10 +52,16 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       row :sub_category do |inquiry|
         inquiry.sub_category&.name
       end
+      row :approved_by_lf_admin
+      row :approved_by_client_admin do |inquiry|
+        inquiry.approved_by_client_admin&.full_name
+      end
+
     end
   end
 
   form do |f|
+    f.semantic_errors *f.object.errors.keys
     f.inputs 'Pending Review' do
       
       if f.object.user.present?
@@ -81,5 +87,14 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       f.actions
     end
 
+  end
+
+  controller do
+    def update
+      status = params["bx_block_invoice_inquiry"]["status"] rescue ""
+      # params["bx_block_invoice_inquiry"]["approved_by_lf_admin_id"] = current_admin_user.id if find_resource.status != status && status == "approved"
+      find_resource.update(approved_by_lf_admin: current_admin_user)
+      super
+    end
   end
 end
