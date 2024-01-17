@@ -47,7 +47,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       expect(data["inquiry"]["data"]["attributes"]["extra_services_detail"]["data"].present?).to eq false
     end
 
-    it "should raise error" do
+    it "will raise error" do
       sub_category = @service_2.sub_categories.first
       post "create_inquiry", params: { token: @token_1, inquiry: {service_id: @service_1.id, sub_category_id: sub_category.id} }
       expect(response).to have_http_status(422)
@@ -188,6 +188,24 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       put "submit_inquiry", params: {token: @token_1, inquiry_id:  @inquiry_1.id}
       expect(response).to have_http_status(200)
       expect(response.body).to include("Inquiry successfully submitted")
+    end
+
+    context 'if errors present' do
+      before do
+        @inquiry_1.input_values.each do |input_value|
+          input_field = input_value.current_input_field
+          if input_field.field_type == "multiple_options"
+            input_value.update(user_input: input_field.options.split(", ").last)
+          elsif input_field.field_type == "calender_select"
+            input_value.update(user_input: (Date.today + 3.days).to_s)
+          end 
+        end
+      end
+      it "raise error" do
+        put "submit_inquiry", params: {token: @token_1, inquiry_id:  @inquiry_1.id}
+        expect(response).to have_http_status(422)
+        expect(response.body).to include("Invalid data entered")
+      end
     end
   end
 

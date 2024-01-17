@@ -26,6 +26,21 @@ module BxBlockContactUs
         from: @profile_user.email, 
         subject: "New Request is Submitted!") if clients_admins.any?
       end
-    end 
+    end
+
+    def date_mail_from_user(user)
+      @user = user
+      admin_emails = AdminUser.all
+
+      mail(to: admin_emails.map(&:email),
+      from: @user.email, 
+      subject: "New Request is Recieved!") if admin_emails.any?
+    end
+
+    def email_from_lf(filter_user,lf_admin_email)
+      mail(to: filter_user,
+      from: lf_admin_email,
+      subject: "Approval Review Status Has Been Updated") if filter_user.present? && lf_admin_email.present?
+    end
   end
 end

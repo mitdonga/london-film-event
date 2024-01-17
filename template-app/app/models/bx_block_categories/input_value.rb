@@ -62,7 +62,7 @@ module BxBlockCategories
                     multiplier = field.multiplier.split(", ")
                     input_cost = multiplier.at(input_index)
                     if input_cost.downcase.include?("expert")
-                        errors.add(:cost, "invalid, Speak to expert") 
+                        errors.add(:cost, "invalid, Speak to expert")
                     else
                         input_cost = input_cost.to_f * field.default_value.to_f
                         self.update(cost: input_cost.to_f)
@@ -71,11 +71,7 @@ module BxBlockCategories
             elsif field.field_type == "calender_select" && field.name.downcase == "event date"
                 options = field.options.split(", ")
                 event_date = self.user_input.to_date
-
-                if (event_date - Date.today).to_i/7.0
-                    BxBlockInvoice::EventDateMailer.date_mail(event_date).deliver_now
-                end
-
+               
                 week_left = (event_date - Date.today).to_i/7.0
                 final_index = nil
                 options.each_with_index do |option, index|
