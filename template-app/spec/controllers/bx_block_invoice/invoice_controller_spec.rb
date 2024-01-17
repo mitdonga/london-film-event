@@ -45,7 +45,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       expect(data["inquiry"]["data"]["attributes"]["extra_services_detail"]["data"].present?).to eq false
     end
 
-    it "should raise error" do
+    it "will raise error" do
       sub_category = @service_2.sub_categories.first
       post "create_inquiry", params: { token: @token_1, inquiry: {service_id: @service_1.id, sub_category_id: sub_category.id} }
       expect(response).to have_http_status(422)
@@ -199,7 +199,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
           end 
         end
       end
-      it "should raise error" do
+      it "raise error" do
         put "submit_inquiry", params: {token: @token_1, inquiry_id:  @inquiry_1.id}
         expect(response).to have_http_status(422)
         expect(response.body).to include("Invalid data entered")
