@@ -46,6 +46,10 @@ Rails.application.routes.draw do
     resources :contacts
   end
 
+  namespace :bx_block_invoice do
+    resources :invoices
+  end
+  
   namespace :bx_block_profile do
     resources :profiles do
       put 'popup_confirmation', on: :member

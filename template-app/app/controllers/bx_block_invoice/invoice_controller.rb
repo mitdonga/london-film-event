@@ -12,7 +12,7 @@ module BxBlockInvoice
         only_path: true)}"}
     end
 
-    def inquiry      
+    def inquiry   
       inquiry = @current_user.inquiries.find_by_id params[:id]
       return render json: { message: "Inquiry not found"}, status: :unprocessable_entity unless inquiry.present?
       
@@ -126,12 +126,21 @@ module BxBlockInvoice
           errors << data
         end
       end
-      return render json: {message: "Invalid data entered",errors: errors}, status: :unprocessable_entity if errors.present?
+      if errors.present?
+        if errors.any? { |error| error["error"].include?("Speak to expert") }
+          send_email_to_lf
+        end
+        return render json: {message: "Invalid data entered",errors: errors}, status: :unprocessable_entity
+      end
       @inquiry.update(status: "pending")
       render json: { inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Inquiry successfully submitted" }, status: :ok
     end
 
     private
+
+    def send_email_to_lf
+      BxBlockContactUs::ContactMailer.date_mail_from_user(@inquiry.user).deliver_now
+    end
 
     def inquiry_params
       params.require(:inquiry).permit(:service_id, :sub_category_id, :user_id)
