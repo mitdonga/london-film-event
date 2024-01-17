@@ -56,6 +56,7 @@ Rails.application.routes.draw do
     end
   end
 
+  get "/manage_users_inquiries/:id",        to: "bx_block_invoice/invoice#manage_users_inquiries"
   get "/inquiry/:id", to: "bx_block_invoice/invoice#inquiry"
   get "/inquiries", to: "bx_block_invoice/invoice#inquiries"
   post "/create_inquiry", to: "bx_block_invoice/invoice#create_inquiry"
