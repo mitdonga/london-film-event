@@ -2,6 +2,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
 
   permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service, :sub_category, :lf_admin_email
   actions :all, except: [:new]
+  STATUS = "Inquiry Status"
 
   index do
     selectable_column
@@ -18,7 +19,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
     column 'Email', :email do |inq|
       inq.user.email
     end
-    column 'Inquiry Status', :status do |inq|
+    column STATUS, :status do |inq|
       inq.status
     end
     column 'Service Name', :service do |inq|
@@ -41,7 +42,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       row :user_type do |inquiry|
         inquiry.user.type
       end
-      row 'Inquiry Status',:status
+      row STATUS,:status
       row :user_email do |inquiry|
         inquiry.user.email
       end
@@ -73,7 +74,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
         f.input :sub_categoy_name, input_html: { value: associated_sub_category.name, disabled:true }
       end
 
-      f.input :status, label: "Inquiry Status"
+      f.input :status, label: STATUS
       f.input :status_description, as: :string, input_html: { class: 'status-description' }
       f.input :lf_admin_email, label: "LF admin email", as: :select,  collection: AdminUser.all.map(&:email)
       
