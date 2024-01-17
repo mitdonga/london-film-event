@@ -187,5 +187,23 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       expect(response).to have_http_status(200)
       expect(response.body).to include("Inquiry successfully submitted")
     end
+
+    context 'if errors present' do
+      before do
+        @inquiry_1.input_values.each do |input_value|
+          input_field = input_value.current_input_field
+          if input_field.field_type == "multiple_options"
+            input_value.update(user_input: input_field.options.split(", ").last)
+          elsif input_field.field_type == "calender_select"
+            input_value.update(user_input: (Date.today + 3.days).to_s)
+          end 
+        end
+      end
+      it "should raise error" do
+        put "submit_inquiry", params: {token: @token_1, inquiry_id:  @inquiry_1.id}
+        expect(response).to have_http_status(422)
+        expect(response.body).to include("Invalid data entered")
+      end
+    end
   end
 end

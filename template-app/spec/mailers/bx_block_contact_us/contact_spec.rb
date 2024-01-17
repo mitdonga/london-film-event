@@ -9,7 +9,7 @@ RSpec.describe BxBlockContactUs::ContactMailer, type: :mailer do
 
     let(:mail) { BxBlockContactUs::ContactMailer.send_mail(user) }
 
-    it 'renders the headers' do
+    it 'should return user' do
       expect(user).not_to be_nil
     end
   end
@@ -22,7 +22,7 @@ RSpec.describe BxBlockContactUs::ContactMailer, type: :mailer do
 
     let(:mail) { BxBlockContactUs::ContactMailer.send_mail(user) }
 
-    it 'renders the headers' do
+    it 'renders user' do
       expect(user).not_to be_nil
     end
   end
