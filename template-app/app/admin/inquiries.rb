@@ -39,6 +39,9 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       row :fist_name do |inquiry|
         inquiry.user.first_name
       end
+      row :last_name do |inquiry|
+        inquiry.user.last_name
+      end
       row :user_type do |inquiry|
         inquiry.user.type
       end
@@ -52,29 +55,13 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
   end
 
   form do |f|
-    f.semantic_errors *f.object.errors.keys
     f.inputs 'Pending Review' do
-      
-      if f.object.user.present?
-        associated_user = f.object.user
-        f.input :first_name, input_html: { value: associated_user.first_name, disabled:true }
-        f.input :last_name, input_html: { value: associated_user.last_name, disabled:true }
-      end
-
-      if f.object.service.present?
-        associated_service = f.object.service
-        f.input :service_name, input_html: { value: associated_service.name, disabled:true }
-      end
-
-      if f.object.sub_category.present?
-        associated_sub_category= f.object.sub_category
-        f.input :sub_categoy_name, input_html: { value: associated_sub_category.name, disabled:true }
-      end
-
+      f.input :full_name, input_html: { value: f.object.user.full_name, disabled:true }
+      f.input :service_name, input_html: { value: f.object.service.name, disabled:true }
+      f.input :sub_categoy_name, input_html: { value: f.object.sub_category.name, disabled:true }
       f.input :status, label: STATUS
       f.input :status_description, as: :string, input_html: { class: 'status-description' }
       f.input :lf_admin_email, label: "LF admin email", as: :select,  collection: AdminUser.all.map(&:email)
-      
       f.actions
     end
 
