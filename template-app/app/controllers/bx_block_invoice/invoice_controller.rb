@@ -20,7 +20,13 @@ module BxBlockInvoice
     end
 
     def inquiries
-      inquiries = @current_user.inquiries
+      inquiries = params[:status] == "draft" ? 
+                  @current_user.inquiries.where(status: "draft") :
+                  params[:status] == "pending" ?
+                  @current_user.inquiries.where(status: "pending") :
+                  params[:status] == "approved" ?
+                  @current_user.inquiries.where(status: "approved") :
+                  @current_user.inquiries
       return render json: { inquiries: [], message: "Inquiry not found"}, status: :ok unless inquiries.present?
       render json: { inquiries: InquirySerializer.new(inquiries, {params: {extra: false}}).serializable_hash, message: "#{inquiries.size} inquiries found" }, status: :ok
     end

@@ -23,10 +23,10 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       inq.status
     end
     column 'Service Name', :service do |inq|
-      inq.service.name
+      inq.service&.name
     end
     column 'SubCategory Name', :sub_category do |inq|
-      inq.sub_category.name
+      inq.sub_category&.name
     end
     actions
   end
@@ -39,47 +39,40 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       row :fist_name do |inquiry|
         inquiry.user.first_name
       end
+      row :last_name do |inquiry|
+        inquiry.user.last_name
+      end
       row :user_type do |inquiry|
         inquiry.user.type
       end
-      row STATUS,:status
-      row :user_email do |inquiry|
-        inquiry.user.email
-      end
-      row :service do |inquiry|
-        inquiry.service.name
-      end
-      row :sub_category do |inquiry|
-        inquiry.sub_category.name
-      end
+      row :status
+      row(:user_email) {|inquiry| inquiry.user.email }
+      row(:service) {|inquiry| inquiry.service&.name }
+      row(:sub_category) {|inquiry| inquiry.sub_category&.name }
+      row :approved_by_lf_admin
+      row(:approved_by_client_admin) {|inquiry| inquiry.approved_by_client_admin&.full_name }
     end
   end
 
   form do |f|
     f.inputs 'Pending Review' do
-      
-      if f.object.user.present?
-        associated_user = f.object.user
-        f.input :first_name, input_html: { value: associated_user.first_name, disabled:true }
-        f.input :last_name, input_html: { value: associated_user.last_name, disabled:true }
-      end
-
-      if f.object.service.present?
-        associated_service = f.object.service
-        f.input :service_name, input_html: { value: associated_service.name, disabled:true }
-      end
-
-      if f.object.sub_category.present?
-        associated_sub_category= f.object.sub_category
-        f.input :sub_categoy_name, input_html: { value: associated_sub_category.name, disabled:true }
-      end
-
+      f.input :full_name, input_html: { value: f.object.user.full_name, disabled:true }
+      f.input :service_name, input_html: { value: f.object.service.name, disabled:true }
+      f.input :sub_categoy_name, input_html: { value: f.object.sub_category.name, disabled:true }
       f.input :status, label: STATUS
       f.input :status_description, as: :string, input_html: { class: 'status-description' }
       f.input :lf_admin_email, label: "LF admin email", as: :select,  collection: AdminUser.all.map(&:email)
-      
       f.actions
     end
 
+  end
+
+  controller do
+    def update
+      status = params["bx_block_invoice_inquiry"]["status"] rescue ""
+      # params["bx_block_invoice_inquiry"]["approved_by_lf_admin_id"] = current_admin_user.id if find_resource.status != status && status == "approved"
+      find_resource.update(approved_by_lf_admin: current_admin_user)
+      super
+    end
   end
 end

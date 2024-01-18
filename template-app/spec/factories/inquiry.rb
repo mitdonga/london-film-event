@@ -4,5 +4,6 @@ FactoryBot.define do
     service_id { FactoryBot.create(:service).id }
     sub_category_id { FactoryBot.create(:sub_category).id }
     note { Faker::Lorem.paragraph_by_chars }
+    status {"draft"}
   end
 end

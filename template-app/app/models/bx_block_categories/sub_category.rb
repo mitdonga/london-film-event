@@ -7,7 +7,7 @@ module BxBlockCategories
     after_create :add_company_sub_categories
 
     has_one_attached :image
-    validates :image, :content_type => ["jpg", "png", "jpeg", "image/jpg", "image/jpeg", "image/png"]
+    validates :image, :content_type => ["jpg", "png", "jpeg", "image/jpg", "image/jpeg", "image/png", "svg", "image/svg+xml"]
     
     has_and_belongs_to_many :categories, join_table: :categories_sub_categories, dependent: :destroy
     belongs_to :parent, class_name: "BxBlockCategories::Service"

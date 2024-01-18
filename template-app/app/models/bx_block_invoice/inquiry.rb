@@ -7,6 +7,9 @@ module BxBlockInvoice
         after_update :send_email_from_lf
 
         belongs_to :user, class_name: "AccountBlock::Account"
+        belongs_to :approved_by_client_admin, class_name: "AccountBlock::Account", optional: true
+        belongs_to :approved_by_lf_admin, class_name: "AdminUser", optional: true
+        belongs_to :user, class_name: "AccountBlock::Account"
         belongs_to :service, class_name: "BxBlockCategories::Service"
         belongs_to :sub_category, class_name: "BxBlockCategories::SubCategory"
         
@@ -18,6 +21,9 @@ module BxBlockInvoice
         enum status: %i[draft pending approved hold rejected]
 
         has_one_attached :attachment
+
+        validates :approved_by_lf_admin, presence: true, if: -> { lf_admin_approval_required == true && status == "approved" }
+        validates :approved_by_client_admin, presence: true, if: -> { status == "approved" && approved_by_lf_admin_id.blank? }
 
         def send_email_from_lf
             user = self.user
