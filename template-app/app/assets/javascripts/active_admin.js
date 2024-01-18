@@ -8,8 +8,8 @@ $(document).ready(function(){function a(a){var c=$("#client_admin_select"),n=$("
 
 document.addEventListener('DOMContentLoaded', function() {
   function updateStatusDescriptionField() {
-    var status = $('#inquiry_status').val();
-    var statusDescriptionField = $('#inquiry_status_description');
+    const status = $('#inquiry_status').val();
+    const statusDescriptionField = $('#inquiry_status_description');
 
     if (status === 'hold' || status === 'rejected') {
       statusDescriptionField.prop('disabled', false);
