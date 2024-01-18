@@ -8,8 +8,12 @@ module BxBlockContactUs
         :phone_number,
         :subject,
         :details,
-        :created_at,
     ]
+
+    attribute :file do |obj|
+      obj.file.attached? ?
+      Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(obj.file, only_path: true) : "No File Attached"
+    end
 
     # attribute :user do |object|
     #   user_for object
