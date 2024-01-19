@@ -248,10 +248,5 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       get "manage_users_inquiries", params: {token: @token_1}
       expect(response).to have_http_status(200)
     end
-
-    it "should return client users themselves inquiries" do
-      get "manage_users_inquiries", params: {token: @token_3}
-      expect(response).to have_http_status(200)
-    end
   end
 end

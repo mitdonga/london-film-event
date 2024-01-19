@@ -26,8 +26,6 @@ module BxBlockInvoice
           client_admin_inq: @current_user.inquiries
         }
         render json: response_data, serializer: BxBlockInvoice::InquirySerializer
-      else
-        render json: @current_user.inquiries, each_serializer: BxBlockInvoice::InquirySerializer
       end
     end
 
