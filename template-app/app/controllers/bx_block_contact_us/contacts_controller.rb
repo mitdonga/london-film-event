@@ -67,7 +67,7 @@ module BxBlockContactUs
     # end
     
     def verify_email
-      @email = params[:data][:email]
+      @email = params[:email]
       client_admin_exists = AccountBlock::ClientAdmin.exists?(email: @email)
       client_user_exists = AccountBlock::ClientUser.exists?(email: @email)
   
@@ -80,7 +80,7 @@ module BxBlockContactUs
     end
   
     def contact_params
-      params.require(:data).permit(:first_name, :country_code, :last_name, :email, :phone_number, :subject, :details)
+      params.permit(:first_name, :country_code, :last_name, :email, :phone_number, :subject, :details, :file)
     end
   end
 end

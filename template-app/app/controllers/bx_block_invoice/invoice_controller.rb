@@ -12,11 +12,21 @@ module BxBlockInvoice
         only_path: true)}"}
     end
 
-    def inquiry   
+    def inquiry
       inquiry = @current_user.inquiries.find_by_id params[:id]
       return render json: { message: "Inquiry not found"}, status: :unprocessable_entity unless inquiry.present?
       
       render json: { inquiry: InquirySerializer.new(inquiry, {params: {extra: true}}).serializable_hash, message: "Success" }, status: :ok
+    end
+  
+    def manage_users_inquiries
+      if @current_user.type == "ClientAdmin"
+        response_data = {
+          client_user_inq: @current_user.client_users.map { |cui| cui.inquiries },
+          client_admin_inq: @current_user.inquiries
+        }
+        render json: response_data, serializer: BxBlockInvoice::InquirySerializer
+      end
     end
 
     def inquiries

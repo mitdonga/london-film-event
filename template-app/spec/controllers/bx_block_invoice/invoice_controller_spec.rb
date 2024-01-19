@@ -27,7 +27,9 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
     @service_3 = BxBlockCategories::Service.second
 
     @client_admin_1 = FactoryBot.create(:admin_account, company_id: @company_1.id)
+    @client_user_1 = FactoryBot.create(:user_account, client_admin_id: @client_admin_1.id)
     @token_1 = BuilderJsonWebToken.encode(@client_admin_1.id)
+    @token_3 = BuilderJsonWebToken.encode(@client_user_1.id)
     @inquiry_1 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_1.id, sub_category_id: @service_1.sub_categories.first.id)   
     @inquiry_2 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_2.id, sub_category_id: @service_2.sub_categories.first.id, status: "pending")   
     @inquiry_3 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_2.id, sub_category_id: @service_2.sub_categories.last.id, approved_by_client_admin_id: @client_admin_1.id, status: "approved")   
@@ -238,6 +240,13 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       get "inquiries", params: {token: @token_1, status: "approved"}
       expect(response).to have_http_status(200)
       expect(response.body).to include("1 inquiries found")
+    end
+  end
+
+  describe "manage users inquiries" do
+    it "should return client admin and associated users inquiries" do
+      get "manage_users_inquiries", params: {token: @token_1}
+      expect(response).to have_http_status(200)
     end
   end
 end

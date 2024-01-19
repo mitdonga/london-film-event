@@ -16,12 +16,12 @@ RSpec.describe BxBlockContactUs::ContactsController, type: :controller do
     
     context 'with valid parameters' do
       it 'creates a new contact' do
-        post :create, params: { token: @client_token, data: @contact.attributes}
+        post :create, params: { token: @client_token,email: @client_user.email, first_name: "test", last_name: "testing"}
         expect(response).to have_http_status(:created)
       end
 
       it 'returns the created contact as JSON' do
-        post :create, params: { token: @client_token, data: @contact.attributes }
+        post :create, params: { token: @client_token,email: @client_user.email, first_name: "john", last_name: "doe" }
         expect(response).to have_http_status(:created)
 
         json_response = JSON.parse(response.body)

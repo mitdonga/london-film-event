@@ -9,5 +9,6 @@ FactoryBot.define do
     phone_number do
       Faker::Number.number(digits: 10)
     end
+    file { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'sample.pdf'), 'application/pdf') }
   end
 end

@@ -1,6 +1,6 @@
 ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
 
-  permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service, :sub_category, :lf_admin_email
+  permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service, :sub_category
   actions :all, except: [:new]
   STATUS = "Inquiry Status"
 
@@ -59,19 +59,16 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       f.input :full_name, input_html: { value: f.object.user.full_name, disabled:true }
       f.input :service_name, input_html: { value: f.object.service.name, disabled:true }
       f.input :sub_categoy_name, input_html: { value: f.object.sub_category.name, disabled:true }
-      f.input :status, label: STATUS
-      f.input :status_description, as: :string, input_html: { class: 'status-description' }
-      f.input :lf_admin_email, label: "LF admin email", as: :select,  collection: AdminUser.all.map(&:email)
-      f.actions
+      f.input :status, label: STATUS, input_html: { id: 'inquiry_status' }
+      f.input :status_description, as: :string, input_html: { class: 'status-description', id: 'inquiry_status_description' }
     end
-
+    f.actions
   end
 
   controller do
     def update
-      status = params["bx_block_invoice_inquiry"]["status"] rescue ""
-      # params["bx_block_invoice_inquiry"]["approved_by_lf_admin_id"] = current_admin_user.id if find_resource.status != status && status == "approved"
-      find_resource.update(approved_by_lf_admin: current_admin_user)
+      status = params["inquiry"]["status"] rescue ""
+      find_resource.update(approved_by_lf_admin: current_admin_user) if find_resource.status != status && status == "approved"
       super
     end
   end
