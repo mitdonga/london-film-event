@@ -7,7 +7,7 @@ ActiveAdmin.register BxBlockEmailNotifications::EmailTemplate, as: 'Email Templa
     end
 
     permit_params :name, :body
-    actions :all, except: [:new]
+    # actions :all, except: [:new]
   
     index do
       selectable_column
@@ -19,6 +19,9 @@ ActiveAdmin.register BxBlockEmailNotifications::EmailTemplate, as: 'Email Templa
     show do
       attributes_table do
         row :name
+        row :body do |et|
+          raw et.body
+        end
       end
     end
   
@@ -31,8 +34,7 @@ ActiveAdmin.register BxBlockEmailNotifications::EmailTemplate, as: 'Email Templa
                 options: { 
                     heightMin: 500,
                     imageUploadParam: 'file_upload', 
-                    imageUploadURL: upload_admin_email_template_path(resource.id), 
-                    # toolbarButtons: ['bold', 'italic', 'underline', 'insertImage' 'insertVideo' 'insertFile'],
+                    imageUploadURL: resource.id.present? ? upload_admin_email_template_path(resource.id) : nil, 
                     toolbarButtons: {
                     'moreText': {
                         'buttons': ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', 'textColor', 'backgroundColor', 'inlineClass', 'inlineStyle', 'clearFormatting']
