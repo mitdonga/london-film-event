@@ -67,7 +67,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
 
   controller do
     def update
-      status = params["inquiry"]["status"] rescue ""
+      status = params["bx_block_invoice_inquiry"]["status"] rescue ""
       find_resource.update(approved_by_lf_admin: current_admin_user) if find_resource.status != status && status == "approved"
       super
     end
