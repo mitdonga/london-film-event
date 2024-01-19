@@ -5,6 +5,9 @@
 @import 'activeadmin/quill_editor/quill.snow';
 @import 'activeadmin/quill_editor_input';
 
+@import 'font-awesome/font-awesome';
+@import 'activeadmin/froala_editor_input';
+
 body.active_admin [data-aa-quill-editor] {
     width: 70% !important;
 }
@@ -90,4 +93,9 @@ fieldset h3 {
 
 #service_description {
     width: 50% !important;
+}
+
+div .fr-box.fr-basic.fr-top {
+    width: 50% !important;
+    height: 500px !important;
 }
