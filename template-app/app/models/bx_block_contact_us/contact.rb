@@ -3,6 +3,7 @@ module BxBlockContactUs
     self.table_name = :contacts
     before_save :prepopulated_fields
     belongs_to :account, class_name: "AccountBlock::Account"
+    has_one_attached :file
 
     validates :first_name, :last_name, :email, presence: true
     validate :valid_email, if: Proc.new { |c| c.email.present? }

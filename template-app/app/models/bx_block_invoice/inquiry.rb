@@ -27,11 +27,12 @@ module BxBlockInvoice
 
         def send_email_from_lf
             user = self.user
+            @lf_mail = approved_by_lf_admin.email if approved_by_lf_admin.present?
             if user&.type == "ClientUser"
                 client_admin_mail = user.client_admin.email
-                BxBlockContactUs::ContactMailer.email_from_lf(client_admin_mail, self.lf_admin_email).deliver_now
+                BxBlockContactUs::ContactMailer.email_from_lf(client_admin_mail, @lf_mail).deliver_now
             else
-                BxBlockContactUs::ContactMailer.email_from_lf(user.email, self.lf_admin_email).deliver_now
+                BxBlockContactUs::ContactMailer.email_from_lf(user.email, @lf_mail).deliver_now
             end
         end
 
