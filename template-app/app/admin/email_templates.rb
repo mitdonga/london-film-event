@@ -6,19 +6,21 @@ ActiveAdmin.register BxBlockEmailNotifications::EmailTemplate, as: 'Email Templa
         render json: result
     end
 
-    permit_params :name, :body
+    permit_params :name, :body, :dynamic_words
     # actions :all, except: [:new]
   
     index do
       selectable_column
       id_column
       column :name
+      column :dynamic_words
       actions
     end
   
     show do
       attributes_table do
         row :name
+        row :dynamic_words
         row :body do |et|
           raw et.body
         end
@@ -28,6 +30,7 @@ ActiveAdmin.register BxBlockEmailNotifications::EmailTemplate, as: 'Email Templa
     form do |f|
       f.inputs do
         f.input :name
+        f.input :dynamic_words
         f.input :body, as: :froala_editor, input_html: { 
             class: 'rich-text-input',
             data: { 
