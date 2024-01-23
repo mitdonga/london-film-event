@@ -3,6 +3,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
   permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service, :sub_category
   actions :all, except: [:new]
   STATUS = "Inquiry Status"
+  scope("Pending Reviews", default: true) { |scope| scope.where.not(status: 'draft') }
 
   index do
     selectable_column
@@ -67,8 +68,8 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
 
   controller do
     def update
-      status = params["inquiry"]["status"] rescue ""
-      find_resource.update(approved_by_lf_admin: current_admin_user) if find_resource.status != status && status == "approved"
+      status = params["bx_block_invoice_inquiry"]["status"] rescue ""
+      find_resource.update(approved_by_lf_admin: current_admin_user, lf_admin_approval_required: true) if find_resource.status != status && status == "approved"
       super
     end
   end
