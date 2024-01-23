@@ -40,6 +40,8 @@ ActiveAdmin.register AccountBlock::Account, as: "Users Account Activities" do
     end
   
     filter :id
+    filter :first_name
+    filter :last_name
     filter :email
     filter :last_visit_at
   end

@@ -1,3 +1,4 @@
+
 <h1><%=@user.account.first_name%> User Has Requested!</h1>
 <br>
 <p>First Name: <%= @user.account.first_name %></p>
@@ -6,4 +7,5 @@
 <p>Phone Number: <%= @user.account.full_phone_number %></p>
 <p>Company Name: <%= @user.subject %></p>
 <p>Details: <%= @user.details %></p>
-<p>Company Link: <%= @user.account.company.meeting_link %></p>
+<p>Company Link: <%= link_to 'Company Details', "#{Rails.application.config.base_url}/admin/companies/#{@user.account.company.id}" %></p>
+
