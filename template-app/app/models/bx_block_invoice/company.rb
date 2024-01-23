@@ -50,7 +50,7 @@ module BxBlockInvoice
         .where("sub_categories.parent_id IN (?) and company_sub_categories.company_id = ?", service_ids, self.id).distinct
     end
 
-    def comapny_admins
+    def company_admins
       accounts.where(type: "ClientAdmin")
     end
 
