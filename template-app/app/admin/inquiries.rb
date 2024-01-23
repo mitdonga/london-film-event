@@ -1,8 +1,9 @@
 ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
 
-  permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service, :sub_category
+  permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry
   actions :all, except: [:new]
   STATUS = "Inquiry Status"
+  scope("Pending Reviews", default: true) { |scope| scope.where.not(status: 'draft') }
 
   index do
     selectable_column
@@ -52,6 +53,48 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       row :approved_by_lf_admin
       row(:approved_by_client_admin) {|inquiry| inquiry.approved_by_client_admin&.full_name }
     end
+
+    panel "Input Fields" do
+      table_for resource.service.input_fields do
+        column :name
+        column :field_type
+        column :section
+        column :options
+        column :values
+        column :multiplier
+        column :default_value
+        column :note
+      end
+    end
+
+    panel "Input Values" do
+      table_for resource.input_values do
+        column :name do |nm|
+          nm.user_input
+        end
+        column :field_type do |ft|
+          ft.user_input
+        end        
+        column :section do |se|
+          se.user_input
+        end        
+        column :options do |op|
+          op.user_input
+        end
+        column :values do |va|
+          va.user_input
+        end
+        column :multiplier do |mu|
+          mu.user_input
+        end
+        column :default_value do |dv|
+          dv.user_input
+        end
+        column :note do |no|
+          no.user_input
+        end
+      end
+    end
   end
 
   form do |f|
@@ -68,7 +111,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
   controller do
     def update
       status = params["bx_block_invoice_inquiry"]["status"] rescue ""
-      find_resource.update(approved_by_lf_admin: current_admin_user) if find_resource.status != status && status == "approved"
+      find_resource.update(approved_by_lf_admin: current_admin_user, lf_admin_approval_required: true) if find_resource.status != status && status == "approved"
       super
     end
   end
