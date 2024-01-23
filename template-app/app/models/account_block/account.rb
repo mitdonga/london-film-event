@@ -53,6 +53,8 @@ module AccountBlock
       EmailValidationMailer
             .with(account: self, host: "#{Rails.application.config.base_url}")
             .activation_email.deliver
+      ManageAccountMailer.send_welcome_mail_to_user(self.id).deliver
+      ManageAccountMailer.send_welcome_mail_to_admins(self.id).deliver
     end 
 
     def parse_full_phone_number

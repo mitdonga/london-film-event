@@ -3,7 +3,8 @@ require 'spec_helper'
 require 'factory_bot'
 
 RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
-
+  include_context "setup data"
+  
   before do 
     @company_1 = FactoryBot.create(:company)
     @company_2 = FactoryBot.create(:company)
