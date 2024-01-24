@@ -24,13 +24,18 @@ module AccountBlock
       token = encoded_token(10.minutes.from_now)
       @url = "#{@frontend_host}/NewPassword?token=#{token}"
 
+      template = BxBlockEmailNotifications::EmailTemplate.find_by_name("Password Reset (Client User/Admin)")
+      return unless template.present? && @account.present?
+    
+      button_html = "<a href='#{@url}' style='background-color: #4CAF50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; cursor: pointer; border-radius: 5px;'>Reset Password</a>"
+      email_body = template.body.gsub('{first_name}', @account.first_name).gsub('{last_name}', @account.last_name).gsub('{user_name}', @account.full_name).gsub('{password_reset_button}', button_html).gsub('{password_reset_url}', @url)
       mail(
         to: @account.email,
         from: "builder.bx_dev@engineer.ai",
-        subject: "Reset Password"
-      ) do |format|
-        format.html { render "reset_password_email" }
-      end
+        subject: "Reset Password",
+        body: email_body,
+        content_type: "text/html"
+      )
     end
 
     private

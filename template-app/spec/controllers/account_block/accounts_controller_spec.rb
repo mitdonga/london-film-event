@@ -3,6 +3,7 @@ require 'spec_helper'
 require 'factory_bot'
 
 RSpec.describe AccountBlock::AccountsController, type: :controller do
+  include_context "setup data"
 
   before do 
     @company = FactoryBot.create(:company)

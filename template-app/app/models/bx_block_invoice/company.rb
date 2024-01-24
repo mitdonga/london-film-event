@@ -50,6 +50,10 @@ module BxBlockInvoice
         .where("sub_categories.parent_id IN (?) and company_sub_categories.company_id = ?", service_ids, self.id).distinct
     end
 
+    def company_admins
+      accounts.where(type: "ClientAdmin")
+    end
+
     private
 
     def create_company_input_fields

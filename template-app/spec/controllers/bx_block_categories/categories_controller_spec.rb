@@ -3,6 +3,7 @@ require 'spec_helper'
 require 'factory_bot'
 
 RSpec.describe BxBlockCategories::CategoriesController, type: :controller do
+  include_context "setup data"
 
   before do 
     @company_1 = FactoryBot.create(:company)

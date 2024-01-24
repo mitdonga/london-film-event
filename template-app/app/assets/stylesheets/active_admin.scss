@@ -5,11 +5,14 @@
 @import 'activeadmin/quill_editor/quill.snow';
 @import 'activeadmin/quill_editor_input';
 
+@import 'font-awesome/font-awesome';
+@import 'activeadmin/froala_editor_input';
+
 body.active_admin [data-aa-quill-editor] {
     width: 70% !important;
 }
 
-.inline-errors {
+.inline-errors::first-letter {    
     text-transform: capitalize;
 }
 
@@ -85,9 +88,14 @@ fieldset h3 {
     margin-bottom: 30px;
     padding-top: 10px;
     padding-bottom: 10px;
-    background-color: rgb(255, 243, 228);
+    background-color: rgb(212, 207, 200);
 }
 
 #service_description {
     width: 50% !important;
+}
+
+div .fr-box.fr-basic.fr-top {
+    width: 50% !important;
+    // height: 500px !important;
 }
