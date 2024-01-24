@@ -45,6 +45,42 @@ module BxBlockLogin
       end
     end
 
+    def logout_account(account_params)
+      case account_params.type
+      when 'sms_account'
+        # Depending on your logic, find the account to log out
+        phone = Phonelib.parse(account_params.full_phone_number).sanitized
+        account = AccountBlock::SmsAccount.find_by(
+          full_phone_number: phone,
+          activated: true)
+      when 'email_account'
+        email = account_params.email.downcase
+
+        account = AccountBlock::Account
+          .where('LOWER(email) = ?', email)
+          .first
+      when 'social_account'
+        # Depending on your logic, find the account to log out
+        account = AccountBlock::SocialAccount.find_by(
+          email: account_params.email.downcase,
+          unique_auth_id: account_params.unique_auth_id,
+          activated: true)
+      end
+
+      unless account.present?
+        broadcast(:account_not_found)
+        return
+      end
+
+      # Perform any additional logout logic here
+
+      # Assuming you are using a JWT token, you might want to add a method
+      # to your user model to invalidate the token
+      account.invalidate_token
+
+      broadcast(:successful_logout, account)
+    end
+
     def generate_tokens(account_id)
       [
         BuilderJsonWebToken.encode(account_id, 1.day.from_now, token_type: 'login'),
