@@ -46,6 +46,10 @@ Rails.application.routes.draw do
     resources :contacts
   end
 
+  namespace :bx_block_help_centre do
+    resources :question_answer, only: [:index]
+  end
+
   namespace :bx_block_invoice do
     resources :invoices
   end
