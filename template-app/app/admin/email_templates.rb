@@ -57,6 +57,19 @@ ActiveAdmin.register BxBlockEmailNotifications::EmailTemplate, as: 'Email Templa
                 } 
             } 
         }
+
+        # f.input :body, as: :quill_editor, input_html: { 
+        #   data: { 
+        #     options: { 
+        #       modules: {
+        #         toolbar: [['bold', 'italic', 'underline'], ['link', 'image']] 
+        #       }, 
+        #       placeholder: 'Type something...', 
+        #       theme: 'snow' 
+        #     },
+        #     # plugins: { image_uploader: { server_url: resource.id.present? ? upload_admin_email_template_path(resource.id) : "", field_name: 'file_upload' } } 
+        #   }
+        # }
       end
       f.actions
     end
