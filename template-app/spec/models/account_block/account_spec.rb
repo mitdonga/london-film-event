@@ -21,4 +21,21 @@ RSpec.describe AccountBlock::Account, type: :model do
             assert_equal user.authenticate('Test@1234'), false
         end
     end
+
+    describe '#invalidate_token' do
+        it 'updates token expiration and session duration' do
+        account = create(:account, last_visit_at: Time.current - 1.hour) 
+        fixed_time = Time.current
+        allow(Time).to receive(:current).and_return(fixed_time)
+
+        account.invalidate_token
+
+        reloaded_account = AccountBlock::Account.find(account.id)
+
+        expect(reloaded_account.token_expires_at).to be_within(1.second).of(fixed_time)
+
+        expected_session_duration = "#{1} hours, #{0} minutes" 
+        expect(reloaded_account.session_duration).to eq(expected_session_duration)
+        end
+    end
 end
