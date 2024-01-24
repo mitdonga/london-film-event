@@ -45,13 +45,15 @@ module AccountBlock
 
     def invalidate_token
       update(token_expires_at: Time.current)
-      last_visit_date = Time.parse("#{self.last_visit_at}")
-      token_expires_date = Time.parse("#{self.token_expires_at}")
+      last_visit_date = Time.parse("#{self&.last_visit_at}")
+      token_expires_date = Time.parse("#{self&.token_expires_at}")
 
-      time_duration_seconds = token_expires_date - last_visit_date
-      hours, remainder = time_duration_seconds.divmod(3600)
-      minutes, seconds = remainder.divmod(60)
-      update(session_duration: "#{hours} hours, #{minutes} minutes")
+      if (last_visit_date && token_expires_date).present?
+        time_duration_seconds = token_expires_date - last_visit_date
+        hours, remainder = time_duration_seconds.divmod(3600)
+        minutes, seconds = remainder.divmod(60)
+        update(session_duration: "#{hours} hours, #{minutes} minutes")
+      end
     end
 
     private

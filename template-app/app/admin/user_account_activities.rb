@@ -11,7 +11,7 @@ ActiveAdmin.register AccountBlock::Account, as: "Users Account Activities" do
       column :email
       column :created_at
       column "Last Login At",:last_visit_at
-      column "Total Time Duration",:session_duration
+      column "Last Session Duration",:session_duration
       actions
     end
   
