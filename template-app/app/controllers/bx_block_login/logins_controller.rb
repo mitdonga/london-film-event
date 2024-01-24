@@ -1,7 +1,7 @@
 module BxBlockLogin
   class LoginsController < ApplicationController
     def create
-      case params[:data][:type] #### rescue invalid API format
+      case params[:data][:type]
       when 'sms_account', 'email_account', 'social_account'
         account = OpenStruct.new(jsonapi_deserialize(params))
         account.type = params[:data][:type]
@@ -31,8 +31,11 @@ module BxBlockLogin
             }],
           }, status: :unauthorized
         end
-
+      
         output.on(:successful_login) do |account, token, refresh_token|
+          account.update(last_visit_at: Time.current)
+
+          
           render json: {meta: {
             token: token,
             refresh_token: refresh_token,
