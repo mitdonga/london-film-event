@@ -17,7 +17,8 @@ RSpec.describe Admin::EmailTemplatesController, type: :controller do
   describe "EmailTemplate#new" do
     let(:params) do {
         name: Faker::Lorem.sentence(word_count: 2),
-        body: Faker::Lorem.paragraph(sentence_count: 200)
+        body: "Hi {user_name}, " + Faker::Lorem.paragraph(sentence_count: 200),
+        dynamic_words: "user_name"
       }
     end
     it "create email template" do
