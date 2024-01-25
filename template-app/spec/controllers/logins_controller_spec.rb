@@ -7,7 +7,6 @@ RSpec.describe BxBlockLogin::LoginsController, type: :controller do
     before do
         @company = FactoryBot.create(:company)
         @client_admin = FactoryBot.create(:admin_account, company_id: @company.id)
-        byebug
         @client_admin.update!(password: 'qwe', password_confirmation: 'qwe')
     end
     context 'with valid account type' do
