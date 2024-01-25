@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   ActiveAdmin.routes(self) rescue ActiveAdmin::DatabaseHitDuringLoad
   namespace :bx_block_login do
     post "login", to: "logins#create"
+    delete "logout", to: "logins#destroy"
   end
 
   namespace :account_block do

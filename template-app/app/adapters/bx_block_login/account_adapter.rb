@@ -45,6 +45,39 @@ module BxBlockLogin
       end
     end
 
+    def logout_account(acc)
+      case acc.type
+      when 'sms_account'
+        phone = Phonelib.parse(acc.full_phone_number).sanitized
+        account = AccountBlock::SmsAccount.find_by(
+          full_phone_number: phone,
+          activated: true
+        )
+      when 'email_account'
+        email = acc.email.downcase
+        account = AccountBlock::Account
+          .where('LOWER(email) = ?', email)
+          .first
+      when 'social_account'
+        account = AccountBlock::SocialAccount.find_by(
+          email: acc.email.downcase,
+          unique_auth_id: acc.unique_auth_id,
+          activated: true
+        )
+      else
+        broadcast(:account_not_found)
+        return
+      end
+
+      unless account.present?
+        broadcast(:account_not_found)
+        return
+      end
+      account.invalidate_token
+
+      broadcast(:successful_logout, account)
+    end
+
     def generate_tokens(account_id)
       [
         BuilderJsonWebToken.encode(account_id, 1.day.from_now, token_type: 'login'),
