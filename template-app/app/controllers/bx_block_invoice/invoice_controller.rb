@@ -158,7 +158,7 @@ module BxBlockInvoice
 
     def approve_inquiry
       if @inquiry.status == "pending"
-        if @inquiry.update(status: "approved")
+        if @inquiry.update(status: "approved", approved_by_client_admin: @current_user)
           render json: {inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Success"}, status: :ok
         else
           render json: {message: "Unable to approve inquiry", errors: @inquiry.errors.full_messages}, status: :unprocessable_entity
