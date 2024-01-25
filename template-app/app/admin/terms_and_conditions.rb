@@ -3,6 +3,8 @@ ActiveAdmin.register BxBlockTermsAndConditions::TermsAndCondition, as: "Terms An
     permit_params :description, :for_whom
     
       form do |f|
+        text_node javascript_include_tag "activeadmin/quill_editor/quill"
+        text_node javascript_include_tag "activeadmin/quill_editor_input"
         f.inputs do 
           f.input :for_whom
           f.input :description, as: :quill_editor, input_html: { data: { options: { modules: { toolbar: [ ['bold', 'italic', 'underline', 'strike'],['blockquote', 'code-block'],  [{ 'header': 1 }, { 'header': 2 }], [{ 'list': 'ordered'}, { 'list': 'bullet' }], [{ 'script': 'sub'}, { 'script': 'super' }], [{ 'indent': '-1'}, { 'indent': '+1' }], [{ 'direction': 'rtl' }], [{ 'size': ['small', false, 'large', 'huge'] }], [{ 'header': [1, 2, 3, 4, 5, 6, false] }], [{ 'color': [] }, { 'background': [] }], [{ 'font': [] }], [{ 'align': [] }], ['clean'] ] }, theme: 'snow' } } }
@@ -30,5 +32,11 @@ ActiveAdmin.register BxBlockTermsAndConditions::TermsAndCondition, as: "Terms An
           end
       end
     end
+
+    # controller do
+    #   def javascript
+    #     super + view_context.javascript_include_tag('activeadmin/quill_editor/quill', 'activeadmin/quill_editor_input')
+    #   end
+    # end
   end
   

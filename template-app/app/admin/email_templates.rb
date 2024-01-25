@@ -28,6 +28,9 @@ ActiveAdmin.register BxBlockEmailNotifications::EmailTemplate, as: 'Email Templa
     end
   
     form do |f|
+      text_node javascript_include_tag  'activeadmin/froala_editor/froala_editor.pkgd.min'
+      text_node javascript_include_tag 'activeadmin/froala_editor_input'
+       
       f.inputs do
         f.input :name
         f.input :dynamic_words
