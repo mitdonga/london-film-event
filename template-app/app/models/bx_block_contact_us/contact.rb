@@ -5,6 +5,7 @@ module BxBlockContactUs
     belongs_to :account, class_name: "AccountBlock::Account"
     has_one_attached :file
 
+    validates :details, length: { maximum: 1000 }
     validates :first_name, :last_name, :email, presence: true
     validate :valid_email, if: Proc.new { |c| c.email.present? }
     # validates :phone_number, format: { with: /\A\d{10}\z/, message: 'must be a valid 10-digit phone number' }
