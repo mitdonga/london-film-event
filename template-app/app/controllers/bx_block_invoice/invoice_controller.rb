@@ -3,7 +3,8 @@ module BxBlockInvoice
     skip_before_action :validate_json_web_token, only: [:invoice_pdf, :generate_invoice_pdf]
     before_action :fetch_invoice, only: %i[generate_invoice_pdf invoice_pdf]
     before_action :current_user
-    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost upload_attachment submit_inquiry]
+    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost upload_attachment submit_inquiry approve_inquiry]
+    before_action :check_admin, only: %i[approve_inquiry]
 
     def generate_invoice_pdf
       host = "#{request.protocol}#{request.host_with_port}"
@@ -155,6 +156,18 @@ module BxBlockInvoice
       render json: { inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Inquiry successfully submitted" }, status: :ok
     end
 
+    def approve_inquiry
+      if @inquiry.status == "pending"
+        if @inquiry.update(status: "approved", approved_by_client_admin: @current_user)
+          render json: {inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Success"}, status: :ok
+        else
+          render json: {message: "Unable to approve inquiry", errors: @inquiry.errors.full_messages}, status: :unprocessable_entity
+        end
+      else
+        render json: {message: "Inquiry is not in pending state"}, status: :unprocessable_entity
+      end
+    end
+
     private
 
     def send_email_to_lf
@@ -184,6 +197,10 @@ module BxBlockInvoice
       true
     rescue
       false
+    end
+
+    def check_admin
+      return render json: { errors: ["You're unauthorized to perform this action", "Only client admin can perform this action"] }, status: :unauthorized unless @current_user.type == "ClientAdmin"
     end
 
   end
