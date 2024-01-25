@@ -42,5 +42,14 @@ module BxBlockContactUs
       from: lf_admin_email,
       subject: "Approval Review Status Has Been Updated") if filter_user.present? && lf_admin_email.present?
     end
+
+    def email_for_user(contact)
+      smtp_settings = Rails.configuration.action_mailer.smtp_settings
+      smtp_username = smtp_settings.present? ? smtp_settings[:user_name] : "admin@ai.com"
+
+      mail(to: contact.email,
+      from: smtp_username,
+      subject: "LF Admin will be in touch as soon as possible ") if contact.email.present?
+    end
   end
 end
