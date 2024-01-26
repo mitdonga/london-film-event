@@ -54,6 +54,7 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
       f.input :job_title
       f.input :can_create_accounts, label: "Account creation permission"
       f.input :account_type, prompt: "Select Account Type"
+      f.input :location
     end
     f.actions
   end
