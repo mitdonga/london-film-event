@@ -9,6 +9,7 @@ RSpec.describe BxBlockContactUs::Contact, type: :model do
       expect(contact.errors[:account]).to include("must exist")
       expect(contact.errors[:first_name]).to include("can't be blank")
     end
+    it { should validate_length_of(:details).is_at_most(1000) }
   end
 
   describe 'associations' do

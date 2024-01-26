@@ -1,6 +1,6 @@
 ActiveAdmin.register BxBlockContactUs::Contact, as: 'Contact Requests' do
 
-  permit_params :id, :first_name, :last_name, :country_code, :phone_number, :email, :subject, :details
+  permit_params :id, :first_name, :last_name, :country_code, :phone_number, :email, :subject, :details, :file
   actions :all, except: [:new]
 
   index do
@@ -17,6 +17,14 @@ ActiveAdmin.register BxBlockContactUs::Contact, as: 'Contact Requests' do
     column 'User Type' do |contact|
       contact.account&.type
     end
+    column :file do |a|
+      if a.file.present?
+        a.file.blob.content_type.include?("image") ?
+        image_tag(Rails.application.routes.url_helpers.rails_blob_url(a.file, only_path: true), width: 100, controls: true) : a.file.blob.filename
+      else
+        NO_FILE
+      end
+    end
     actions
   end
 
@@ -32,6 +40,21 @@ ActiveAdmin.register BxBlockContactUs::Contact, as: 'Contact Requests' do
       row :details
       row :country_code
       row :phone_number
+      row :file do |con_file|
+        if con_file.file.present?
+          con_file.file.blob.content_type.include?("image") ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(con_file.file, only_path: true), width: 100, controls: true) : con_file.file.blob.filename
+        else
+          NO_FILE
+        end
+      end
+      
+      panel "Attachment" do
+        if resource.file.attached?
+          link_to 'Download File', rails_blob_path(resource.file, disposition: 'attachment'), class: 'button'
+        else
+          'No attachment'
+        end
+      end
     end
   end
 
