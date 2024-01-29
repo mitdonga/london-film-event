@@ -26,8 +26,7 @@ module BxBlockProfile
     end
 
     def popup_confirmation
-      @user_account = AccountBlock::Account.find_by_id(params[:id])
-      if @user_account.update!(account_params)
+      if @account.update!(account_params)
         render json: AccountBlock::AccountSerializer.new(@account).serializable_hash, status: :ok
         BxBlockContactUs::ContactMailer.send_profile_mail(@account).deliver_now
       else
@@ -92,7 +91,7 @@ module BxBlockProfile
     #   end
     # end
 
-    def update
+    def update_profile
       if params["account"]["email"] == @account.email
         status, result = UpdateAccountCommand.execute(@token.id, account_params)
         if status == :ok
