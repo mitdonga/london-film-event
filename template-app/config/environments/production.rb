@@ -104,6 +104,10 @@ Rails.application.configure do
     password:             'zvxcbjcnglcfbubc',
     authentication:       :plain  
   }
+
+  config.action_mailer.default_options = {
+    from: 'donga.m@r-one.in'
+  }
   # config.active_record.database_selector = { delay: 2.seconds }
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session

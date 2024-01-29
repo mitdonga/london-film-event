@@ -60,8 +60,11 @@ Rails.application.routes.draw do
   end
   
   namespace :bx_block_profile do
-    resources :profiles do
-      put 'popup_confirmation', on: :member
+    resources :profiles  do
+      collection do
+        put 'update_profile'
+        put 'popup_confirmation'
+      end
     end
   end
 
