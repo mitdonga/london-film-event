@@ -5,12 +5,12 @@ module BxBlockCategories
     attributes :id, :name, :description
 
     attributes :sub_categories do |cat, params|
-      if params[:account].present? 
-        sub_categories = params[:account].available_sub_categories.where(parent_id: cat.id)
-        SubCategorySerializer.new(sub_categories).serializable_hash 
-      else
-        SubCategorySerializer.new(cat.sub_categories).serializable_hash
-      end
+      sb_categories = params[:account].present? ? params[:account].available_sub_categories.where(parent_id: cat.id) : cat.sub_categories
+      SubCategorySerializer.new(sb_categories).serializable_hash
+    end
+
+    attributes :start_from_price do |cat, params|
+      params[:account].present? ? params[:account].available_sub_categories.where(parent_id: cat.id).map(&:actual_price).min : cat.sub_categories.pluck(:start_from).min
     end
 
     attributes :image do |cat|
