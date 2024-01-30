@@ -47,6 +47,14 @@ Rails.application.routes.draw do
     resources :contacts
   end
 
+  namespace :bx_block_email_notifications do
+    resources :email_notifications do
+      collection do
+        get 'notification_list'
+      end
+    end
+  end
+
   namespace :bx_block_help_centre do
     resources :question_answer, only: [:index]  do
       collection do
