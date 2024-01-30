@@ -55,4 +55,9 @@ Rails.application.configure do
   
   config.action_mailer.delivery_method = :letter_opener
   config.action_mailer.perform_deliveries = true
+  config.xero_credentials = {
+    client_id: "0DA6DB96168C4C93A0CEF804C78BD250",
+    client_secret: "q8y5XV9JVTStPpjARUxshaSTyn_OkUEKayAfZWwfhTuDA6qw",
+    grant_type: 'client_credentials'
+  }
 end

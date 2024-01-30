@@ -40,6 +40,7 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
       row("Account creation permission") {|f| f.can_create_accounts }
       row :activated
       row :location
+      row("Xero Contact ID") {|f| f.xero_id }
     end
   end
 
