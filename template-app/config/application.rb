@@ -25,6 +25,7 @@ module App
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
+    config.assets.precompile += %w( activeadmin/quill_editor/quill.js activeadmin/quill_editor_input.js activeadmin/froala_editor/froala_editor.pkgd.min activeadmin/froala_editor_input)
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers

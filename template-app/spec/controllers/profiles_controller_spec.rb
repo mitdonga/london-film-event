@@ -25,7 +25,7 @@ RSpec.describe BxBlockProfile::ProfilesController, type: :controller do
     end
   end
 
-  describe 'PUT #update' do
+  describe 'PUT #update_profile' do
     context 'with valid parameters' do
       payload = {
       first_name: "test first name",
@@ -33,7 +33,7 @@ RSpec.describe BxBlockProfile::ProfilesController, type: :controller do
       }
 
       it 'updates user profile' do
-        put "update", params: {
+        put "update_profile", params: {
             token: @client_token,
             account: {
               first_name: "test first name",
@@ -59,7 +59,7 @@ RSpec.describe BxBlockProfile::ProfilesController, type: :controller do
         }
   
       it 'returns errors in JSON' do
-        put "update", params: 
+        put "update_profile", params: 
         { token: @client_token,
           account: payload,
           controller: "bx_block_profile/profiles",
@@ -76,25 +76,23 @@ RSpec.describe BxBlockProfile::ProfilesController, type: :controller do
   end
 
   describe 'PUT#popup_confirmation' do
-
     payload = {
-      first_name: "new name"
+      first_name: "new name",
+      full_phone_number: ''
     }
     
     it 'updates the user account' do
-      put :popup_confirmation, params: { token: @client_token,id: @client_user.id, email: 'test@test.com', first_name: 'new name', account: payload }     
-      
+      put :popup_confirmation, params: { token: @client_token,id: @client_user.id, email: 'test@test.com', first_name: @client_user.first_name, account: payload }     
       json_response = JSON.parse(response.body)
       expect(response).to have_http_status(:ok)
-      expect(json_response["data"]["attributes"]["first_name"]).to eq(@client_user.first_name)
+      expect(json_response["data"]["attributes"]["first_name"]).to eq(payload[:first_name])
       expect(json_response["data"]["attributes"]["email"]).to eq(@client_user.email)
       mail = ActionMailer::Base.deliveries.last
       expect(mail.from).to include(@client_user.email)
     end
 
-    it 'updates the user account' do
+    it "updates the user account" do
       put :popup_confirmation, params: { id: @client_user.id, email: 'test@test.com', first_name: 'new name', account: payload }     
-      
       json_response = JSON.parse(response.body)
       expect(response).to have_http_status(400)
     end

@@ -23,9 +23,9 @@ module BxBlockContactUs
       end
     
       @contact = Contact.new(contact_params.merge(account_id: @token.id))
-    
       if @contact.save
         BxBlockContactUs::ContactMailer.send_mail(@contact).deliver_now
+        BxBlockContactUs::ContactMailer.email_for_user(@contact).deliver_now
         render json: ContactSerializer
                          .new(@contact)
                          .serializable_hash, status: :created

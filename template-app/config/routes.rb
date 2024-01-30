@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   ActiveAdmin.routes(self) rescue ActiveAdmin::DatabaseHitDuringLoad
   namespace :bx_block_login do
     post "login", to: "logins#create"
+    delete "logout", to: "logins#destroy"
   end
 
   namespace :account_block do
@@ -46,13 +47,24 @@ Rails.application.routes.draw do
     resources :contacts
   end
 
+  namespace :bx_block_help_centre do
+    resources :question_answer, only: [:index]  do
+      collection do
+        get 'search_question'
+      end
+    end
+  end
+
   namespace :bx_block_invoice do
     resources :invoices
   end
   
   namespace :bx_block_profile do
-    resources :profiles do
-      put 'popup_confirmation', on: :member
+    resources :profiles  do
+      collection do
+        put 'update_profile'
+        put 'popup_confirmation'
+      end
     end
   end
 
@@ -68,4 +80,5 @@ Rails.application.routes.draw do
   put "/calculate_cost",                    to: "bx_block_invoice/invoice#calculate_cost"
   put "/upload_attachment",                 to: "bx_block_invoice/invoice#upload_attachment"
   put "/submit_inquiry",                    to: "bx_block_invoice/invoice#submit_inquiry"
+  put "/approve_inquiry",                   to: "bx_block_invoice/invoice#approve_inquiry"
 end

@@ -1,5 +1,6 @@
 ActiveAdmin.register BxBlockCategories::Service, as: "Service" do
   NO_IMAGE = "No Image"
+  NO_FILE  = "No File"
   permit_params :name, :description, :start_from, :catalogue_type, :status, :image, 
                 company_ids: [], sub_categories_attributes: [:id, :name, :start_from, :duration, :color_theme, :image, :_destroy],
                 input_fields_attributes: [:id, :name, :field_type, :options, :section, :values, :multiplier, :default_value, :note, :_destroy]

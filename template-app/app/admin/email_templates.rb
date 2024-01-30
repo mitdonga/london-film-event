@@ -28,6 +28,9 @@ ActiveAdmin.register BxBlockEmailNotifications::EmailTemplate, as: 'Email Templa
     end
   
     form do |f|
+      text_node javascript_include_tag  'activeadmin/froala_editor/froala_editor.pkgd.min'
+      text_node javascript_include_tag 'activeadmin/froala_editor_input'
+       
       f.inputs do
         f.input :name
         f.input :dynamic_words
@@ -57,6 +60,19 @@ ActiveAdmin.register BxBlockEmailNotifications::EmailTemplate, as: 'Email Templa
                 } 
             } 
         }
+
+        # f.input :body, as: :quill_editor, input_html: { 
+        #   data: { 
+        #     options: { 
+        #       modules: {
+        #         toolbar: [['bold', 'italic', 'underline'], ['link', 'image']] 
+        #       }, 
+        #       placeholder: 'Type something...', 
+        #       theme: 'snow' 
+        #     },
+        #     # plugins: { image_uploader: { server_url: resource.id.present? ? upload_admin_email_template_path(resource.id) : "", field_name: 'file_upload' } } 
+        #   }
+        # }
       end
       f.actions
     end

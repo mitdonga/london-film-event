@@ -29,6 +29,9 @@ module AccountBlock
     
       button_html = "<a href='#{@url}' style='background-color: #4CAF50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; cursor: pointer; border-radius: 5px;'>Reset Password</a>"
       email_body = template.body.gsub('{first_name}', @account.first_name).gsub('{last_name}', @account.last_name).gsub('{user_name}', @account.full_name).gsub('{password_reset_button}', button_html).gsub('{password_reset_url}', @url)
+
+      water_mark_html = '<p data-f-id="pbf" style="text-align: center; font-size: 14px; margin-top: 30px; opacity: 0.65; font-family: sans-serif;">Powered by <a href="https://www.froala.com/wysiwyg-editor?pb=1" title="Froala Editor">Froala Editor</a></p>'
+      email_body = template.body.gsub('{first_name}', @account.first_name).gsub('{last_name}', @account.last_name).gsub('{user_name}', @account.full_name).gsub('{password_reset_button}', button_html).gsub('{password_reset_url}', @url).gsub(water_mark_html, '')
       mail(
         to: @account.email,
         from: "builder.bx_dev@engineer.ai",

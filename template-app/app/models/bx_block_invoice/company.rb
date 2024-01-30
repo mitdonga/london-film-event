@@ -54,6 +54,10 @@ module BxBlockInvoice
       accounts.where(type: "ClientAdmin")
     end
 
+    def company_users
+      accounts.where(type: "ClientUser")
+    end
+
     private
 
     def create_company_input_fields

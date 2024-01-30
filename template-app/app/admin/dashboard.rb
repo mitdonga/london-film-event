@@ -21,33 +21,35 @@ unless Dashboard::Load.is_loaded_from_gem
     menu priority: 1, label: proc { I18n.t("active_admin.dashboard") }
 
     content title: proc { I18n.t("active_admin.dashboard") } do
-      div class: "blank_slate_container", id: "dashboard_default_message" do
-        span class: "blank_slate" do
-          span I18n.t("active_admin.dashboard_welcome.welcome")
-          small I18n.t("active_admin.dashboard_welcome.call_to_action")
-          small I18n.t("#{Rails.application.config.base_url}")
+
+      panel "Server Information" do
+        begin
+          config = Rails.application.config
+          mailer_config = config.action_mailer
+          smtp_settings = mailer_config.smtp_settings
+          host = smtp_settings[:address]
+          port = smtp_settings[:port]
+          smtp_server = Net::SMTP.new(host, port); smtp_server.start; @smtp_server_running = smtp_server.started?
+        rescue Exception => e
+          error = e
+          message = e.message
+          @smtp_server_error = message.capitalize
+          @smtp_server_running = false
+        end
+
+        table_for [
+          ["SMTP Status", @smtp_server_running ? "✅ (Running)" : "❌ (Down)"], 
+          ["SMTP Error", @smtp_server_error],
+          ["Backend URL", Rails.application.config.base_url]
+        ] do
+          column "Service Name" do |e|
+            e[0]
+          end
+          column "Status" do |e|
+            e[1]
+          end
         end
       end
-
-      # Here is an example of a simple dashboard with columns and panels.
-      #
-      # columns do
-      #   column do
-      #     panel "Recent Posts" do
-      #       ul do
-      #         Post.recent(5).map do |post|
-      #           li link_to(post.title, admin_post_path(post))
-      #         end
-      #       end
-      #     end
-      #   end
-
-      #   column do
-      #     panel "Info" do
-      #       para "Welcome to ActiveAdmin."
-      #     end
-      #   end
-      # end
-    end # content
+    end 
   end
 end
