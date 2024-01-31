@@ -168,6 +168,16 @@ module BxBlockInvoice
       end
     end
 
+    def user_invoices
+      # status = DRAFT | AUTHORISED | PAID
+      invoice_status = params[:status]
+      page = params[:page]
+      invoices = AccountBlock::XeroApiService.new.get_invoices(@current_user, invoice_status, page)
+      render json: {invoices: invoices, message: "Success"}, status: :ok
+    rescue Exception => e
+      render json: {message: e.message}, status: :unprocessable_entity
+    end
+
     private
 
     def send_email_to_lf
