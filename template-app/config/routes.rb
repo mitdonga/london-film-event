@@ -47,10 +47,11 @@ Rails.application.routes.draw do
     resources :contacts
   end
 
-  namespace :bx_block_email_notifications do
-    resources :email_notifications do
+  namespace :bx_block_notifications do
+    resources :notifications do
       collection do
         get 'notification_list'
+        get 'unreaded_notifications'
       end
     end
   end
