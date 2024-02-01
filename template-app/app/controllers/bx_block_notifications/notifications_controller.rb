@@ -14,22 +14,32 @@ module BxBlockNotifications
       end
     end
 
+    def unreaded_notifications
+      @notifications = current_user.notifications.where(is_read: false).order(created_at: :desc).limit(5)
+      if @notifications.present?
+        render json: NotificationSerializer.new(@notifications, meta: {
+            message: "Last 5 notifications."}).serializable_hash, status: :ok
+      else
+        render json: {errors: [{message: 'No unreaded notifications.'},]}, status: :ok
+      end
+    end
+
     def show
       notification = Notification.find(params[:id])
       render json: NotificationSerializer.new(notification, meta: {
           message: "Success."}).serializable_hash, status: :ok
     end
 
-    def create
-      notification = Notification.new(notification_params)
-      if notification.save
-        render json: NotificationSerializer.new(notification, meta: {
-            message: "Notification created."}).serializable_hash, status: :created
-      else
-        render json: {errors: format_activerecord_errors(notification.errors)},
-               status: :unprocessable_entity
-      end
-    end
+    # def create
+    #   notification = Notification.new(notification_params)
+    #   if notification.save
+    #     render json: NotificationSerializer.new(notification, meta: {
+    #         message: "Notification created."}).serializable_hash, status: :created
+    #   else
+    #     render json: {errors: format_activerecord_errors(notification.errors)},
+    #            status: :unprocessable_entity
+    #   end
+    # end
 
     def update
       notification = Notification.find(params[:id])
@@ -38,19 +48,19 @@ module BxBlockNotifications
           message: "Notification marked as read."}).serializable_hash, status: :ok
       else
         render json: {errors: format_activerecord_errors(notification.errors)},
-               status: :unprocessable_entity
+                          status: :unprocessable_entity
       end
     end
 
-    def destroy
-      notification = Notification.find(params[:id])
-      if notification.destroy
-        render json: {message: "Deleted."}, status: :ok
-      else
-        render json: {errors: format_activerecord_errors(notification.errors)},
-               status: :unprocessable_entity
-      end
-    end
+    # def destroy
+    #   notification = Notification.find(params[:id])
+    #   if notification.destroy
+    #     render json: {message: "Deleted."}, status: :ok
+    #   else
+    #     render json: {errors: format_activerecord_errors(notification.errors)},
+    #            status: :unprocessable_entity
+    #   end
+    # end
 
     private
 
