@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   namespace :account_block do
     resources :accounts do
       collection do
+        put :update_for_notification
         put :update
         put :change_password
         get :specific_account
