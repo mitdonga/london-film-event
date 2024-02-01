@@ -12,6 +12,21 @@ RSpec.describe BxBlockContactUs::ContactsController, type: :controller do
     @contact = FactoryBot.create(:contact, account_id: @client_user.id,email: @client_user.email)
   end
 
+  describe '#create_notification_for_contact_creation' do
+    it 'creates a new notification when a contact is created' do
+      contact = FactoryBot.create(:contact, account_id: @client_user.id, email: @client_user.email)
+
+      expect {
+        controller.send(:create_notification_for_contact_creation, contact)
+      }.to change(BxBlockNotifications::Notification, :count).by(1)
+
+      notification = BxBlockNotifications::Notification.last
+      expect(notification.headings).to eq('New Contact Created')
+      expect(notification.contents).to eq("A new contact with id #{contact.id} has been created.")
+      expect(notification.account).to eq(@client_user)
+    end
+  end
+
   describe 'POST #create' do
     
     context 'with valid parameters' do
