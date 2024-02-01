@@ -1,22 +1,5 @@
 module BxBlockEmailNotifications
   class EmailNotificationsController < ApplicationController
-
-    def index
-      @all_notifications = EmailNotification.all
-      if @all_notifications
-        render json: EmailNotificationSerializer.new(@all_notifications).serializable_hash,
-               status: :ok
-      end
-    end
-
-    def notification_list
-      @notifications = EmailNotification.order(created_at: :desc).limit(5)
-      if @notifications
-        render json: EmailNotificationSerializer.new(@all_notifications).serializable_hash,
-               status: :ok
-      end
-    end
-
     def show
       email_notification = EmailNotification.joins(:notification).find_by(
         id: params[:id],
