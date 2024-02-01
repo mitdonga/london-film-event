@@ -2,6 +2,7 @@ module AccountBlock
   class XeroApiService
 
     CREDENTIALS = Rails.application.config.xero_credentials
+    XERO_TENANT_ID = Rails.application.config.xero_tenant_id
     @@xero_client = XeroRuby::ApiClient.new(credentials: CREDENTIALS)
 
     def initialize
@@ -27,7 +28,11 @@ module AccountBlock
         }
       }
 
-      @invoices = user.xero_id.present? && Rails.env != "test" ? @@xero_client.accounting_api.get_invoices('318e1b05-b47b-4d49-90c5-4950a0bc31ba', opts).invoices : []
+      @invoices = user.xero_id.present? && Rails.env != "test" ? @@xero_client.accounting_api.get_invoices(XERO_TENANT_ID, opts).invoices : []
+    end
+
+    def invoice_pdf(invoice_id)
+      @@xero_client.accounting_api.get_invoice_as_pdf(XERO_TENANT_ID, invoice_id)
     end
 
     def contacts
@@ -53,7 +58,7 @@ module AccountBlock
         contacts: [contact]
       }
       return if Rails.env == "test"
-      response = @@xero_client.accounting_api.create_contacts('318e1b05-b47b-4d49-90c5-4950a0bc31ba', contacts)
+      response = @@xero_client.accounting_api.create_contacts(XERO_TENANT_ID, contacts)
       user.update(xero_id: response.contacts.first.contact_id)
     end
   end

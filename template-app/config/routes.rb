@@ -81,5 +81,6 @@ Rails.application.routes.draw do
   put "/upload_attachment",                 to: "bx_block_invoice/invoice#upload_attachment"
   put "/submit_inquiry",                    to: "bx_block_invoice/invoice#submit_inquiry"
   put "/approve_inquiry",                   to: "bx_block_invoice/invoice#approve_inquiry"
-  get "/get_invoices",                     to: "bx_block_invoice/invoice#user_invoices"
+  get "/get_invoices",                      to: "bx_block_invoice/invoice#user_invoices"
+  get "/download_invoice_pdf",              to: "bx_block_invoice/invoice#invoice_pdf"
 end

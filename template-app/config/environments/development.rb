@@ -60,4 +60,5 @@ Rails.application.configure do
     client_secret: "q8y5XV9JVTStPpjARUxshaSTyn_OkUEKayAfZWwfhTuDA6qw",
     grant_type: 'client_credentials'
   }
+  config.xero_tenant_id = "318e1b05-b47b-4d49-90c5-4950a0bc31ba"
 end
