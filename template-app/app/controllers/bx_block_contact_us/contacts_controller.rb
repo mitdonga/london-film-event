@@ -91,7 +91,9 @@ module BxBlockContactUs
     end
   
     def contact_params
-      params.permit(:first_name, :country_code, :last_name, :email, :phone_number, :subject, :details, :file)
+      permitted_params = [:first_name, :country_code, :last_name, :email, :phone_number, :subject, :details]
+      permitted_params << :file if params[:file].present?
+      params.permit(permitted_params)    
     end
   end
 end
