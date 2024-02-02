@@ -53,6 +53,33 @@ RSpec.describe BxBlockProfile::ProfilesController, type: :controller do
       end
     end
 
+    context 'with blank email' do
+      payload = {
+      first_name: "test first name",
+      last_name: "test last name",
+      }
+
+      it 'updates user profile' do
+        @client_user.email = "test@gmail.com"
+        @client_user.save
+        put "update_profile", params: {
+            token: @client_token,
+            account: {
+              first_name: "test first name",
+              last_name: "test last name",
+              email: ""
+              },
+            controller: "bx_block_profile/profiles",
+            action: "update",
+            id: @client_user.id,
+            profile: { account: payload }
+        }
+        
+        updated_profile = JSON.parse(response.body)
+        expect(updated_profile["errors"]).to eq("Email can't be blank.")
+      end
+    end
+
     context 'when email is already present in a different account' do
       it 'returns unprocessable_entity' do
         existing_account = FactoryBot.create(:account, email: 'existing@example.com')
