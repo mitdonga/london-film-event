@@ -10,6 +10,7 @@ module AccountBlock
     validates :phone_number, format: { with: /\A\d{10}\z/, message: 'must be a valid 10-digit phone number' }
 
     has_secure_password
+    has_one_attached :profile_picture
     before_validation :parse_full_phone_number, on: [:create, :update]
     before_validation :set_password, on: :create
     before_create :generate_api_key
