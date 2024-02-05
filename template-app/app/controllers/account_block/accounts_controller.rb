@@ -90,17 +90,17 @@ module AccountBlock
       end
     end
 
-    def search
-      @accounts = Account.where(activated: true)
-        .where("first_name ILIKE :search OR " \
-                           "last_name ILIKE :search OR " \
-                           "email ILIKE :search", search: "%#{search_params[:query]}%")
-      if @accounts.present?
-        render json: AccountSerializer.new(@accounts, meta: {message: "List of users."}).serializable_hash, status: :ok
-      else
-        render json: {errors: [{message: "Not found any user."}]}, status: :ok
-      end
-    end
+    # def search
+    #   @accounts = Account.where(activated: true)
+    #     .where("first_name ILIKE :search OR " \
+    #                        "last_name ILIKE :search OR " \
+    #                        "email ILIKE :search", search: "%#{search_params[:query]}%")
+    #   if @accounts.present?
+    #     render json: AccountSerializer.new(@accounts, meta: {message: "List of users."}).serializable_hash, status: :ok
+    #   else
+    #     render json: {errors: [{message: "Not found any user."}]}, status: :ok
+    #   end
+    # end
 
     def change_email_address
       query_email = params["email"]
@@ -119,14 +119,14 @@ module AccountBlock
       end
     end
 
-    def change_phone_number
-      @account = Account.find(@token.id)
-      if @account.update(full_phone_number: params["full_phone_number"])
-        render json: AccountSerializer.new(@account).serializable_hash, status: :ok
-      else
-        render json: {errors: "account user phone_number is not updated"}, status: :ok
-      end
-    end
+    # def change_phone_number
+    #   @account = Account.find(@token.id)
+    #   if @account.update(full_phone_number: params["full_phone_number"])
+    #     render json: AccountSerializer.new(@account).serializable_hash, status: :ok
+    #   else
+    #     render json: {errors: "account user phone_number is not updated"}, status: :ok
+    #   end
+    # end
 
     def specific_account
       @account = Account.find(@token.id)
@@ -136,6 +136,7 @@ module AccountBlock
         render json: {errors: "account does not exist"}, status: :ok
       end
     end
+    
 
     def index
       @accounts = Account.all
@@ -191,6 +192,12 @@ module AccountBlock
         end
       else
         render json: {message: "Please enter valid password", errors: password_validation.errors.full_messages}, status: :unprocessable_entity
+      end
+    end
+
+    def update_for_notification
+      if @account.update(email_enable: false)
+        render json: {message: "email is disabled"}, status: :ok        
       end
     end
 
@@ -256,14 +263,14 @@ module AccountBlock
       render json: {message: "Success"}, status: :ok
     end
 
-    def logged_user
-      @account = Account.find(@token.id)
-      if @account.present?
-        render json: AccountSerializer.new(@account).serializable_hash, status: :ok
-      else
-        render json: {errors: "account does not exist"}, status: :ok
-      end
-    end
+    # def logged_user
+    #   @account = Account.find(@token.id)
+    #   if @account.present?
+    #     render json: AccountSerializer.new(@account).serializable_hash, status: :ok
+    #   else
+    #     render json: {errors: "account does not exist"}, status: :ok
+    #   end
+    # end
 
     def all_company_users
       data = BxBlockInvoice::Company.find(params[:company_id]).accounts.where(type: "ClientAdmin").map {|u| {name: u.full_name, id: u.id}} rescue []

@@ -9,6 +9,7 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
     @company = FactoryBot.create(:company)
     @company_2 = FactoryBot.create(:company)
 
+    @account = FactoryBot.create(:account)
     @client_admin = FactoryBot.create(:admin_account, company_id: @company.id)
     @psw = @client_admin.generate_password
     @token = BuilderJsonWebToken.encode(@client_admin.id)
@@ -19,6 +20,50 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
     @client_admin_2 = FactoryBot.create(:admin_account, company_id: @company_2.id)
     @client_user_2 = FactoryBot.create(:user_account, client_admin_id: @client_admin_2.id, company_id: @company_2.id)
 
+  end
+
+  describe '#change_email_address' do
+    context 'when changing email address successfully' do
+      it 'updates the email address and returns the modified account' do
+        old_email = @client_admin.email
+        new_email = 'new.email@example.com'
+
+        put :change_email_address, params: { token: @token, email: new_email }
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body)
+        expect(json).to include('data')
+        expect(json['data']['attributes']['email']).to eq(new_email)
+
+        updated_admin = AccountBlock::ClientAdmin.find(@client_admin.id)
+        expect(updated_admin.email).to eq(new_email)
+        expect(updated_admin.email).not_to eq(old_email)
+      end
+    end
+
+    context 'when the new email is invalid' do
+      it 'returns unprocessable entity response with an error message' do
+        put :change_email_address, params: { token: @token, email: 'invalid.email.com' }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        json = JSON.parse(response.body)
+        expect(json).to include('errors')
+        expect(json['errors']).to eq('Email invalid')
+      end
+    end
+
+    context 'when the account update fails' do
+      it 'returns an error response with an appropriate message' do
+        existing_account = FactoryBot.create(:account, email: 'existing.email@example.com')
+
+        put :change_email_address, params: { token: @token, email: existing_account.email }
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body)
+        expect(json).to include('errors')
+        expect(json['errors']).to eq('account user email id is not updated')
+      end
+    end
   end
 
   describe '#change_password' do
@@ -46,6 +91,49 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
       data = JSON.parse(response.body)
       expect(response).to have_http_status(201)
       expect(data["message"]).to eq("Password updated")
+    end
+  end
+
+  describe '#index' do
+    context 'when accounts are created' do
+      before do
+        
+        @company = FactoryBot.create(:company)
+        @token = BuilderJsonWebToken.encode(@account.id)
+      end
+      
+      it 'returns a successful response with accounts' do
+        get :index, params: { token: @token }
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body)
+        expect(json['data']).not_to be_empty
+      end
+    end
+  end
+  
+  describe '#specific_account' do
+    context 'when account exists' do
+      before do
+        @company = FactoryBot.create(:company)
+        @token = BuilderJsonWebToken.encode(@account.id)
+      end
+
+
+      it 'returns the specific account' do
+        get :specific_account, params: { token: @token, client_admin: @account.id}
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body)
+        expect(json['data']).not_to be_empty
+      end
+    end
+  end
+  
+  describe '#update_for_notification' do
+    it 'should update email_enable to false' do
+      put :update_for_notification, params: { token: @token }
+      expect(response).to have_http_status(:ok)
+      expect(@client_admin.reload.email_enable).to be_falsey
+      expect(response.body).to include('email is disabled')
     end
   end
 
@@ -193,5 +281,4 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
       expect(response.body).to include("Invalid token")
     end
   end
-
 end

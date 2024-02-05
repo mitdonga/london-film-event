@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   namespace :account_block do
     resources :accounts do
       collection do
+        put :update_for_notification
         put :update
         put :change_password
         get :specific_account
@@ -22,6 +23,7 @@ Rails.application.routes.draw do
         put :reset_password
         delete :remove_user
         post :send_account_activation_email
+        put :change_email_address
       end
     end
   end

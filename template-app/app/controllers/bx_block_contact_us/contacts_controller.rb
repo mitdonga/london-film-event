@@ -23,9 +23,10 @@ module BxBlockContactUs
       end
     
       @contact = Contact.new(contact_params.merge(account_id: @token.id))
+      @user = AccountBlock::Account.find(@token.id)
       if @contact.save
         BxBlockContactUs::ContactMailer.send_mail(@contact).deliver_now
-        BxBlockContactUs::ContactMailer.email_for_user(@contact).deliver_now
+        BxBlockContactUs::ContactMailer.email_for_user(@contact, @user).deliver_now
 
         create_notification_for_contact_creation(@contact)
     
