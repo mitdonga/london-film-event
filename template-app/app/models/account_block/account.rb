@@ -61,6 +61,10 @@ module AccountBlock
       end
     end
 
+    def is_email_enabled?
+      email_enable?
+    end
+
     private
 
     def set_password
