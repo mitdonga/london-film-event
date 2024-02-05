@@ -6,6 +6,7 @@ module BxBlockProfile
       [:first_name],
       [:last_name],
       [:email],
+      [:profile_picture],
       [:phone_number],
       [:country_code],
       [:full_name],
