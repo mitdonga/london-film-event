@@ -47,5 +47,10 @@ Rails.application.configure do
   # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
   config.base_url = 'http://localhost:3000'
-
+  config.xero_credentials = {
+    client_id: "0DA6DB96168C4C93A0CEF804C78BD250",
+    client_secret: "q8y5XV9JVTStPpjARUxshaSTyn_OkUEKayAfZWwfhTuDA6qw",
+    grant_type: 'client_credentials'
+  }
+  config.xero_tenant_id = "318e1b05-b47b-4d49-90c5-4950a0bc31ba"
 end

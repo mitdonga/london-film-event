@@ -269,4 +269,17 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       expect(response).to have_http_status(200)
     end
   end
+
+  describe "fetch invoices" do
+    it "should return invoices" do
+      get "user_invoices", params: {token: @token_1}
+      expect(response).to have_http_status(200)
+    end
+
+    it "should download invoice" do
+      get "invoice_pdf", params: {token: @token_1, invoice_uid: "913cf561-5f02-450a-9fcc-3f868f4ce8a"}
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("Failed to download invoice PDF")
+    end
+  end
 end

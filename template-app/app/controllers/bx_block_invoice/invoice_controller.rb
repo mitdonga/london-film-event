@@ -1,7 +1,7 @@
 module BxBlockInvoice
   class InvoiceController < BxBlockInvoice::ApplicationController
-    skip_before_action :validate_json_web_token, only: [:invoice_pdf, :generate_invoice_pdf]
-    before_action :fetch_invoice, only: %i[generate_invoice_pdf invoice_pdf]
+    skip_before_action :validate_json_web_token, only: [:generate_invoice_pdf]
+    before_action :fetch_invoice, only: %i[generate_invoice_pdf]
     before_action :current_user
     before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost upload_attachment submit_inquiry approve_inquiry]
     before_action :check_admin, only: %i[approve_inquiry]
@@ -166,6 +166,30 @@ module BxBlockInvoice
       else
         render json: {message: "Inquiry is not in pending state"}, status: :unprocessable_entity
       end
+    end
+
+    def user_invoices
+      # status = DRAFT | AUTHORISED | PAID
+      invoice_status = params[:status]
+      page = params[:page]
+      invoices = AccountBlock::XeroApiService.new.get_invoices(@current_user, invoice_status, page)
+      render json: {invoices: invoices, message: "Success"}, status: :ok
+    rescue Exception => e
+      render json: {message: e.message}, status: :unprocessable_entity
+    end
+
+    def invoice_pdf
+      invoice_id = params[:invoice_uid]
+      return render json: {message: "Invoice ID required"}, status: :unprocessable_entity unless invoice_id.present?
+      pdf = AccountBlock::XeroApiService.new.invoice_pdf(invoice_id)
+      send_file(
+        pdf.path,
+        filename: "#{invoice_id}.pdf",
+        type: "application/pdf",
+        disposition: "attachment"
+      )
+    rescue Exception => e
+      render json: {message: "Failed to download invoice PDF", error: e.message}, status: :unprocessable_entity
     end
 
     private

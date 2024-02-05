@@ -46,7 +46,7 @@ ActiveAdmin.register AccountBlock::ClientUser, as: "Client User" do
         end
         row :activated
         row :location
-
+        row("Xero Contact ID") {|f| f.xero_id }
       end
     end
   

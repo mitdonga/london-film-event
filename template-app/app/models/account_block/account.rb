@@ -13,6 +13,7 @@ module AccountBlock
     before_validation :parse_full_phone_number, on: [:create, :update]
     before_validation :set_password, on: :create
     before_create :generate_api_key
+    after_create :create_xero_contact
     after_create :send_email
     has_one :blacklist_user, class_name: "AccountBlock::BlackListUser", dependent: :destroy
     belongs_to :company, class_name: "BxBlockInvoice::Company"
@@ -63,6 +64,10 @@ module AccountBlock
 
     def set_password
       self.password = self.password_confirmation = self.generate_password
+    end
+
+    def create_xero_contact
+      AccountBlock::XeroApiService.new.create_contact(self)
     end
 
     def send_email
