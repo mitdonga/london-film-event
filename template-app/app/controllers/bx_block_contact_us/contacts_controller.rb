@@ -23,9 +23,13 @@ module BxBlockContactUs
       end
     
       @contact = Contact.new(contact_params.merge(account_id: @token.id))
+      @user = AccountBlock::Account.find(@token.id)
       if @contact.save
         BxBlockContactUs::ContactMailer.send_mail(@contact).deliver_now
-        BxBlockContactUs::ContactMailer.email_for_user(@contact).deliver_now
+        BxBlockContactUs::ContactMailer.email_for_user(@contact, @user).deliver_now
+
+        create_notification_for_contact_creation(@contact)
+    
         render json: ContactSerializer
                          .new(@contact)
                          .serializable_hash, status: :created
@@ -54,7 +58,7 @@ module BxBlockContactUs
     #   }, status: 200
     # end
 
-    # private
+    private
 
     # def find_contact
     #   begin
@@ -66,6 +70,14 @@ module BxBlockContactUs
     #   end
     # end
     
+    def create_notification_for_contact_creation(contact)
+      BxBlockNotifications::Notification.create(
+        account: AccountBlock::Account.find(contact.account_id),
+        headings: 'New Contact Created',
+        contents: "A new contact with id #{contact.id} has been created."
+      )
+    end
+
     def verify_email
       @email = params[:email]
       client_admin_exists = AccountBlock::ClientAdmin.exists?(email: @email)
@@ -80,7 +92,9 @@ module BxBlockContactUs
     end
   
     def contact_params
-      params.permit(:first_name, :country_code, :last_name, :email, :phone_number, :subject, :details, :file)
+      permitted_params = [:first_name, :country_code, :last_name, :email, :phone_number, :subject, :details]
+      permitted_params << :file if params[:file].present?
+      params.permit(permitted_params)    
     end
   end
 end

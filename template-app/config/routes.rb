@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   namespace :account_block do
     resources :accounts do
       collection do
+        put :update_for_notification
         put :update
         put :change_password
         get :specific_account
@@ -22,6 +23,7 @@ Rails.application.routes.draw do
         put :reset_password
         delete :remove_user
         post :send_account_activation_email
+        put :change_email_address
       end
     end
   end
@@ -45,6 +47,15 @@ Rails.application.routes.draw do
 
   namespace :bx_block_contact_us do
     resources :contacts
+  end
+
+  namespace :bx_block_notifications do
+    resources :notifications do
+      collection do
+        get 'notification_list'
+        get 'unreaded_notifications'
+      end
+    end
   end
 
   namespace :bx_block_help_centre do

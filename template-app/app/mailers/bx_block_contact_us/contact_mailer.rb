@@ -43,13 +43,17 @@ module BxBlockContactUs
       subject: "Approval Review Status Has Been Updated") if filter_user.present? && lf_admin_email.present?
     end
 
-    def email_for_user(contact)
-      smtp_settings = Rails.configuration.action_mailer.smtp_settings
-      smtp_username = smtp_settings.present? ? smtp_settings[:user_name] : "admin@ai.com"
-
-      mail(to: contact.email,
-      from: smtp_username,
-      subject: "LF Admin will be in touch as soon as possible ") if contact.email.present?
+    def email_for_user(contact, user)
+      if user.is_email_enabled?
+        smtp_settings = Rails.configuration.action_mailer.smtp_settings
+        smtp_username = smtp_settings.present? ? smtp_settings[:user_name] : "admin@ai.com"
+  
+        mail(to: contact.email,
+        from: smtp_username,
+        subject: "LF Admin will be in touch as soon as possible ") if contact.email.present?
+      else
+        Rails.logger.info("Emails not enabled for user #{user.id}")
+      end
     end
   end
 end

@@ -92,19 +92,30 @@ module BxBlockProfile
     # end
 
     def update_profile
-      if params["account"]["email"] == @account.email
-        status, result = UpdateAccountCommand.execute(@token.id, account_params)
-        if status == :ok
-          serializer = AccountBlock::AccountSerializer.new(result)
-          render :json => serializer.serializable_hash,
-            :status => :ok
-        else
-          render json: { errors: result&.map { |message| message.sub(/\AEmail\s*/, '') }}, status: :unprocessable_entity
-        end
+      @accounts = AccountBlock::Account.all
+    
+      if @accounts.any? { |account| account.email == params[:account][:email] && account.id != @token.id }
+        render json: { errors: ["Email is already associated with a different account."] }, status: :unprocessable_entity
+        return
+      end
+    
+      if params[:account][:email].blank?
+        render json: { errors: "Email can't be blank." }, status: :unprocessable_entity
+        return
+      end
+    
+      status, result = UpdateAccountCommand.execute(@token.id, account_params)
+    
+      if verify_domain && status == :ok
+        serializer = AccountBlock::AccountSerializer.new(result)
+        render json: serializer.serializable_hash, status: :ok
+      elsif verify_domain && params[:account][:email] == @account.email
+        render json: { errors: result&.map { |message| message.sub(/\AEmail\s*/, '') } }, status: :unprocessable_entity
       else
-        render json: { errors: "You've entered an email from an external domain. Please confirm this is correct before saving."}, status: :unprocessable_entity
+        render json: { errors: "You've entered an email from an external domain. Please confirm this is correct before saving." }, status: :unprocessable_entity
       end
     end
+    
 
     # def like_count
     #   count = 0
@@ -135,14 +146,24 @@ module BxBlockProfile
     #   render json: ProfileSerializer.new(profile).serializable_hash, status: :ok
     # end
 
+    def verify_domain
+      new_email = params[:account][:email]
+      return false unless new_email.present? && @account.email.present?
+  
+      current_domain = @account.email.split('@').last
+      new_domain = new_email.split('@').last
+      current_domain == new_domain
+    end
+
+
     private
 
     def current_user
-       @account = AccountBlock::Account.find_by(id: @token.id)
+      @account = AccountBlock::Account.find_by(id: @token.id)
     end
 
     def account_params
-      params.require(:account).permit(:first_name, :last_name, :email, :phone_number, :country_code, :location)
+      params.require(:account).permit(:first_name, :last_name, :email, :phone_number, :country_code, :location, :profile_picture)
     end
 
     # Added required params need to be updated
