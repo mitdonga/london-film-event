@@ -1,9 +1,10 @@
+require 'xero-ruby'
+
 module AccountBlock
   class XeroApiService
-  include XeroRuby
     CREDENTIALS = Rails.application.config.xero_credentials
     XERO_TENANT_ID = Rails.application.config.xero_tenant_id
-    @@xero_client = ApiClient.new(credentials: CREDENTIALS)
+    @@xero_client = XeroRuby::ApiClient.new(credentials: CREDENTIALS)
 
     def initialize
       @@xero_client.get_client_credentials_token 
