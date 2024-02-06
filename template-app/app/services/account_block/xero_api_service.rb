@@ -1,13 +1,11 @@
-require 'xero-ruby'
-
 module AccountBlock
   class XeroApiService
     CREDENTIALS = Rails.application.config.xero_credentials
     XERO_TENANT_ID = Rails.application.config.xero_tenant_id
-    @@xero_client = XeroRuby::ApiClient.new(credentials: CREDENTIALS)
-
+    
     def initialize
-      @@xero_client.get_client_credentials_token 
+      @xero_client = XeroRuby::ApiClient.new(credentials: CREDENTIALS)
+      @xero_client.get_client_credentials_token 
     end
 
     def get_invoices(user, inv_status=nil,  page=1)
@@ -29,20 +27,21 @@ module AccountBlock
         }
       }
 
-      @invoices = user.xero_id.present? && Rails.env != "test" ? @@xero_client.accounting_api.get_invoices(XERO_TENANT_ID, opts).invoices : []
+      @invoices = user.xero_id.present? && Rails.env != "test" ? @xero_client.accounting_api.get_invoices(XERO_TENANT_ID, opts).invoices : []
     end
 
     def invoice_pdf(invoice_id)
-      @@xero_client.accounting_api.get_invoice_as_pdf(XERO_TENANT_ID, invoice_id)
+      @xero_client.accounting_api.get_invoice_as_pdf(XERO_TENANT_ID, invoice_id)
     end
 
-    def contacts
-      @contacts = @@xero_client.accounting_api.get_contacts('').contacts
-    end
+    # def contacts
+    #   @contacts = @xero_client.accounting_api.get_contacts('').contacts
+    # end
 
     def create_contact(user)
+      user_phone_number = user.phone_number
       phone = { 
-        phone_number: user.phone_number,
+        phone_number: user_phone_number,
         phone_type: "DEFAULT"
       }
       phones = []
@@ -58,8 +57,11 @@ module AccountBlock
       contacts = {  
         contacts: [contact]
       }
-      return if Rails.env == "test"
-      response = @@xero_client.accounting_api.create_contacts(XERO_TENANT_ID, contacts)
+      application_enviroment = Rails.env
+      if application_enviroment == "test"
+        return
+      end
+      response = @xero_client.accounting_api.create_contacts(XERO_TENANT_ID, contacts)
       user.update(xero_id: response.contacts.first.contact_id)
     end
   end
