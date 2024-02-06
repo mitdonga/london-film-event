@@ -4,7 +4,7 @@ module AccountBlock
     XERO_TENANT_ID = Rails.application.config.xero_tenant_id
     
     def initialize
-      @xero_client = XeroRuby::ApiClient.new(credentials: CREDENTIALS)
+      @xero_client = ::XeroRuby::ApiClient.new(credentials: CREDENTIALS)
       @xero_client.get_client_credentials_token 
     end
 
