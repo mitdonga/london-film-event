@@ -34,13 +34,14 @@ module AccountBlock
       @xero_client.accounting_api.get_invoice_as_pdf(XERO_TENANT_ID, invoice_id)
     end
 
-    def contacts
-      @contacts = @xero_client.accounting_api.get_contacts('').contacts
-    end
+    # def contacts
+    #   @contacts = @xero_client.accounting_api.get_contacts('').contacts
+    # end
 
     def create_contact(user)
+      user_phone_number = user.phone_number
       phone = { 
-        phone_number: user.phone_number,
+        phone_number: user_phone_number,
         phone_type: "DEFAULT"
       }
       phones = []
@@ -56,7 +57,10 @@ module AccountBlock
       contacts = {  
         contacts: [contact]
       }
-      return if Rails.env == "test"
+      application_enviroment = Rails.env
+      if application_enviroment == "test"
+        return
+      end
       response = @xero_client.accounting_api.create_contacts(XERO_TENANT_ID, contacts)
       user.update(xero_id: response.contacts.first.contact_id)
     end
