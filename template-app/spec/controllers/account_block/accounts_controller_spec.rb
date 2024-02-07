@@ -256,6 +256,38 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
     end
   end
 
+  describe "#update_email_enable_disable" do
+    context 'update_disable_email' do
+      before do
+        @company = FactoryBot.create(:company)
+        @client_admin = FactoryBot.create(:admin_account,email_enable: false, company_id: @company.id)
+        @client_token = BuilderJsonWebToken.encode(@client_admin.id)
+      end
+
+      it "should update with enable if email is disabled" do
+        put "update_for_notification", params: { token: @client_token }
+        response_data = JSON.parse(response.body)
+        expect(response).to have_http_status(200)
+        expect(response_data["message"]).to eq("email is enabled")
+      end
+    end
+
+    context 'update_disable_email' do
+      before do
+        @new_company = FactoryBot.create(:company)
+        @new_client_admin = FactoryBot.create(:admin_account,email_enable: true, company_id: @new_company.id)
+        @new_client_token = BuilderJsonWebToken.encode(@new_client_admin.id)
+      end
+
+      it "should update with enable if email is disabled" do
+        put "update_for_notification", params: { token: @new_client_token }
+        response_data = JSON.parse(response.body)
+        expect(response).to have_http_status(200)
+        expect(response_data["message"]).to eq("email is disabled")
+      end
+    end
+  end
+
   describe "#reset_password" do
     it "should succeed" do
       put "reset_password", params: { token: @token, password: "@!234232BuilderAi", confirm_password: "@!234232BuilderAi" }
