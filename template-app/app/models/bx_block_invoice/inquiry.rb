@@ -59,7 +59,15 @@ module BxBlockInvoice
         end
 
         def event_date
-            input_values.joins(:input_field).where("input_fields.name = ?", "Event Date").first&.user_input rescue ""
+            input_values.joins(:input_field).where("input_fields.name ilike ?", "%event date%").first&.user_input rescue ""
+        end
+
+        def client_name
+            input_values.joins(:input_field).where("input_fields.name ilike ?", "%client name%").first&.user_input rescue ""
+        end
+
+        def event_name
+            input_values.joins(:input_field).where("input_fields.name ilike ?", "%event name%").first&.user_input rescue ""
         end
 
         private 
