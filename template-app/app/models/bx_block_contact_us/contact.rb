@@ -23,11 +23,7 @@ module BxBlockContactUs
     end
 
     def prepopulated_fields
-      self.first_name = self.account.first_name
-      self.last_name = self.account.last_name
       self.email = self.account.email
-      self.country_code = self.account.country_code
-      self.phone_number = self.account.phone_number
     end
 
     # def valid_phone_number
