@@ -26,10 +26,10 @@ ActiveAdmin.register AccountBlock::ClientUser, as: "Client User" do
       column :client_admin do |obj|
         obj.client_admin.full_name
       end
-      column :profile_picture do |a|
-        if a.profile_picture.present?
-          a.profile_picture.blob.content_type.include?("image") ?
-          image_tag(Rails.application.routes.url_helpers.rails_blob_url(a.profile_picture, only_path: true), width: 100, controls: true) : a.profile_picture.blob.filename
+      column :profile_picture do |att|
+        if att.profile_picture.present?
+          att.profile_picture.blob.content_type.include?("image") ?
+          image_tag(Rails.application.routes.url_helpers.rails_blob_url(att.profile_picture, only_path: true), width: 100, controls: true) : att.profile_picture.blob.filename
         else
           NO_FILE
         end

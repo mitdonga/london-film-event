@@ -49,9 +49,9 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
       row :activated
       row :location
       row("Xero Contact ID") {|f| f.xero_id }
-      row :profile_picture do |con_file|
-        if con_file.profile_picture.present?
-          con_file.profile_picture.blob.content_type.include?("image") ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(con_file.profile_picture, only_path: true), width: 100, controls: true) : con_file.profile_picture.blob.filename
+      row :profile_picture do |fi|
+        if fi.profile_picture.present?
+          fi.profile_picture.blob.content_type.include?("image") ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(fi.profile_picture, only_path: true), width: 100, controls: true) : fi.profile_picture.blob.filename
         else
           NO_FILE
         end
