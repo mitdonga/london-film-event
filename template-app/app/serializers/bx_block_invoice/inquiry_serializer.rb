@@ -9,19 +9,19 @@ module BxBlockInvoice
       end
       
       attributes :service_name do |inquiry| 
-        inquiry.service.name 
+        serivce_name = inquiry.service.name 
       end
 
       attributes :event_date do |inquiry| 
-        inquiry.event_date
+        event_date = inquiry.event_date
       end
 
       attributes :event_name do |inquiry| 
-        inquiry.event_name
+        event_name = inquiry.event_name
       end
 
       attributes :client_name do |inquiry| 
-        inquiry.client_name
+        client_name = inquiry.client_name
       end
 
       attributes :total_price do |inquiry| 
@@ -29,9 +29,8 @@ module BxBlockInvoice
       end
 
       attributes :base_service_detail do |inquiry, params|
-        return [] unless inquiry.base_service.present?
         additional_service = inquiry.base_service
-        BxBlockCategories::AdditionalServiceSerializer.new(additional_service, { params: {extra: params[:extra] || false }}).serializable_hash
+        additional_service.present? ? BxBlockCategories::AdditionalServiceSerializer.new(additional_service, { params: {extra: params[:extra] || false }}).serializable_hash : {}
       end
 
       attributes :extra_services_detail do |inquiry, params|
