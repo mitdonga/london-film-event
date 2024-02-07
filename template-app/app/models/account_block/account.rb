@@ -73,6 +73,8 @@ module AccountBlock
 
     def create_xero_contact
       AccountBlock::XeroApiService.new.create_contact(self)
+    rescue Exception => e
+      puts e
     end
 
     def send_email

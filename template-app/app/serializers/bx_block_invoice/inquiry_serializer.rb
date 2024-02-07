@@ -12,6 +12,22 @@ module BxBlockInvoice
         inquiry.service.name 
       end
 
+      attributes :event_date do |inquiry| 
+        inquiry.event_date
+      end
+
+      attributes :event_name do |inquiry| 
+        inquiry.event_name
+      end
+
+      attributes :client_name do |inquiry| 
+        inquiry.client_name
+      end
+
+      attributes :total_price do |inquiry| 
+        inquiry.package_sub_total.to_f + inquiry.addon_sub_total.to_f rescue 0
+      end
+
       attributes :base_service_detail do |inquiry, params|
         return [] unless inquiry.base_service.present?
         additional_service = inquiry.base_service
