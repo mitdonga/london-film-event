@@ -28,25 +28,6 @@ ActiveAdmin.register AccountBlock::Account, as: "Users Account Activities" do
         end
 
       end
-  
-      panel "User Services" do
-        table_for resource.inquiries do
-        
-          column :service_name do |inquiry|
-            inquiry.service.id
-          end
-          column :service_name do |inquiry|
-            inquiry.service.name
-          end
-          column :service_image do |inquiry|
-            if inquiry.service.image.attached?
-              image_tag(url_for(inquiry.service.image), width: 100, controls: true)
-            else
-              'NO_SERVICE_IMAGE'
-            end
-          end
-        end
-      end
     end
   
     filter :id

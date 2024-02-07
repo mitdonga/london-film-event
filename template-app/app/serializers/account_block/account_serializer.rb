@@ -10,6 +10,11 @@ module AccountBlock
     #   phone_number_for object
     # end
 
+    attribute :profile_picture do |obj|
+      obj.profile_picture.attached? ?
+      Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(obj.profile_picture, only_path: true) : "No File Attached"
+    end
+
     attribute :company do |object|
       object.company
     end

@@ -196,9 +196,13 @@ module AccountBlock
     end
 
     def update_for_notification
-      if @account.update(email_enable: false)
-        render json: {message: "email is disabled"}, status: :ok        
-      end
+      if @account.email_enable == true
+        @account.update(email_enable: false)
+        render json: {message: "email is disabled"}, status: :ok
+      else
+        @account.update(email_enable: true)
+        render json: {message: "email is enabled"}, status: :ok
+      end   if @account.present?
     end
 
     def update
