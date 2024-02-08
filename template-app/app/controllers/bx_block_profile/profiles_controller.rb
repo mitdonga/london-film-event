@@ -103,8 +103,10 @@ module BxBlockProfile
         render json: { errors: "Email can't be blank." }, status: :unprocessable_entity
         return
       end
-    
+      
       status, result = UpdateAccountCommand.execute(@token.id, account_params)
+      phone = Phonelib.parse("#{result.full_phone_number}")
+      result.update(country_code: phone.country_code, phone_number: phone.raw_national)
     
       if verify_domain && status == :ok
         serializer = AccountBlock::AccountSerializer.new(result)
@@ -163,7 +165,7 @@ module BxBlockProfile
     end
 
     def account_params
-      params.require(:account).permit(:first_name, :last_name, :email, :phone_number, :country_code, :location, :profile_picture)
+      params.require(:account).permit(:first_name, :last_name, :email, :phone_number, :country_code, :location, :profile_picture, :full_phone_number)
     end
 
     # Added required params need to be updated

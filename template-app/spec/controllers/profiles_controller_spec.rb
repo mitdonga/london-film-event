@@ -120,7 +120,7 @@ RSpec.describe BxBlockProfile::ProfilesController, type: :controller do
   describe 'PUT#popup_confirmation' do
     payload = {
       first_name: "new name",
-      full_phone_number: ''
+      full_phone_number: '912225556662'
     }
     
     it 'updates the user account' do

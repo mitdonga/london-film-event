@@ -5,13 +5,12 @@ module AccountBlock
 
     include Wisper::Publisher
     validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: "Please enter valid email" }, uniqueness: { case_sensitive: false, message: "Account already exist with this email" }
-    validates :account_type, :first_name, :country_code, :last_name, :full_phone_number, :phone_number, :company_id, presence: true
-    validates :full_phone_number, presence: true
-    validates :phone_number, format: { with: /\A\d{10}\z/, message: 'must be a valid 10-digit phone number' }
+    validates :account_type, :first_name, :last_name, :full_phone_number, :phone_number, :company_id, presence: true
+    validates :phone_number, :country_code, presence: true, on: [:create]
 
     has_secure_password
     has_one_attached :profile_picture
-    before_validation :parse_full_phone_number, on: [:create, :update]
+    before_validation :parse_full_phone_number, on: [:create]
     before_validation :set_password, on: :create
     before_create :generate_api_key
     after_create :create_xero_contact
@@ -86,7 +85,7 @@ module AccountBlock
     end 
 
     def parse_full_phone_number
-      # phone = Phonelib.parse("#{self.country_code.to_s}#{self.phone_number}")
+      # phone = Phonelib.parse("#{self.full_phone_number}")
       # self.full_phone_number = phone.sanitized
       # self.country_code = phone.country_code
       # self.phone_number = phone.raw_national
