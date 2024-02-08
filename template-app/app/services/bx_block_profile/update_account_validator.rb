@@ -14,7 +14,8 @@ module BxBlockProfile
       [:gender],
       [:user_name],
       [:date_of_birth],
-      [:new_phone_number, :full_phone_number],
+      [:new_phone_number],
+      [:full_phone_number],
       [:new_password, :password],
       [:new_email],
     ]
