@@ -16,7 +16,7 @@ module BxBlockCategories
         after_create :create_company_input_fields
 
         enum field_type: %i[text multiple_options calender_select]
-        enum section: %i[required_information addon]
+        enum section: %i[required_information addon services]
 
         private
 
