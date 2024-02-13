@@ -6,6 +6,7 @@ module BxBlockContactUs
         :email,
         :country_code,
         :phone_number,
+        :full_mobile_number,
         :subject,
         :details,
     ]

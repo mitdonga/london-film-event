@@ -10,7 +10,7 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
   filter :account_type
   filter :company
 
-  permit_params :first_name, :last_name, :full_phone_number, :country_code, :phone_number, :email, :activated, :device_id, :unique_auth_id, :can_create_accounts, :job_title, :password, :type, :user_name, :platform, :account_type, :app_language_id, :last_visit_at, :is_blacklisted, :suspend_until, :status, :role_id, :stripe_id, :stripe_subscription_id, :stripe_subscription_date, :gender, :date_of_birth, :age, :company_id, :location
+  permit_params :first_name, :last_name, :number, :country_code, :phone_number, :email, :activated, :device_id, :unique_auth_id, :can_create_accounts, :job_title, :password, :type, :user_name, :platform, :account_type, :app_language_id, :last_visit_at, :is_blacklisted, :suspend_until, :status, :role_id, :stripe_id, :stripe_subscription_id, :stripe_subscription_date, :gender, :date_of_birth, :age, :company_id, :location
 
   index do
     selectable_column
@@ -20,11 +20,21 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
     end
     column :company
     column :email
-    column :full_phone_number
+    column :number do |obj|
+      "+#{obj.country_code} #{obj.phone_number}"
+    end
     column :account_type
     column("Account creation permission") {|f| f.can_create_accounts }
     column :activated
     column :location
+    column :profile_picture do |a|
+      if a.profile_picture.present?
+        a.profile_picture.blob.content_type.include?("image") ?
+        image_tag(Rails.application.routes.url_helpers.rails_blob_url(a.profile_picture, only_path: true), width: 100, controls: true) : a.profile_picture.blob.filename
+      else
+        NO_FILE
+      end
+    end
     actions
   end
 
@@ -33,7 +43,9 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
       row :first_name
       row :last_name
       row :email
-      row :full_phone_number
+      row :number do |num|
+        "+#{num.country_code} #{num.phone_number}"
+      end
       row :company
       row :job_title
       row :account_type
@@ -41,6 +53,13 @@ ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
       row :activated
       row :location
       row("Xero Contact ID") {|f| f.xero_id }
+      row :profile_picture do |fi|
+        if fi.profile_picture.present?
+          fi.profile_picture.blob.content_type.include?("image") ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(fi.profile_picture, only_path: true), width: 100, controls: true) : fi.profile_picture.blob.filename
+        else
+          NO_FILE
+        end
+      end
     end
   end
 

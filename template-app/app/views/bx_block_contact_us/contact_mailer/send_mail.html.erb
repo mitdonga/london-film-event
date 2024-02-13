@@ -4,8 +4,7 @@
 <p>First Name: <%= @user.first_name %></p>
 <p>Last Name: <%= @user.last_name %></p>
 <p>Email: <%= @user.account.email %></p>
-<p>Phone Number: <%= @user.account.full_phone_number %></p>
+<p>Phone Number: <span><%= @user.full_mobile_number %></p>
 <p>Subject: <%= @user.subject %></p>
 <p>Details: <%= @user.details %></p>
 <p>Company Link: <%= link_to 'Company Details', "#{Rails.application.config.base_url}/admin/companies/#{@user.account.company.id}" %></p>
-
