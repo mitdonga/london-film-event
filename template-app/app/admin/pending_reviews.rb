@@ -92,7 +92,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       f.input :full_name, input_html: { value: f.object.user.full_name, disabled:true }
       f.input :service_name, input_html: { value: f.object.service.name, disabled:true }
       f.input :sub_categoy_name, input_html: { value: f.object.sub_category.name, disabled:true }
-      f.input :status, label: STATUS, input_html: { id: 'inquiry_status' }
+      f.input :status, label: STATUS, collection: [["Pending", "pending"], ["Approved", "approved"], ["Hold", "hold"], ["Reject", "rejected"]]
       f.input :status_description, as: :string, input_html: { class: 'status-description', id: 'inquiry_status_description' }
     end
     f.actions
