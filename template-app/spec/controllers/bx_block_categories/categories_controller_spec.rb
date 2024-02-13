@@ -6,19 +6,6 @@ RSpec.describe BxBlockCategories::CategoriesController, type: :controller do
   include_context "setup data"
 
   before do 
-    @company_1 = FactoryBot.create(:company)
-    @company_2 = FactoryBot.create(:company)
-
-    @client_admin_1 = FactoryBot.create(:admin_account, company_id: @company_1.id)
-    @token_1 = BuilderJsonWebToken.encode(@client_admin_1.id)
-
-    @client_admin_2 = FactoryBot.create(:admin_account, company_id: @company_2.id)
-    @token_2 = BuilderJsonWebToken.encode(@client_admin_2.id)
-
-    3.times do
-      service = FactoryBot.create(:service)
-      sub_category = FactoryBot.create(:sub_category, parent_id: service.id)
-    end
 
   end
 

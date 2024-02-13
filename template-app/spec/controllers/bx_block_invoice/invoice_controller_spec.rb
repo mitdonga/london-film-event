@@ -6,37 +6,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
   include_context "setup data"
   
   before do 
-    @company_1 = FactoryBot.create(:company)
-    @company_2 = FactoryBot.create(:company)
-
-    3.times do |index|
-      service = FactoryBot.create(:service)
-      3.times do
-        FactoryBot.create(:sub_category, parent_id: service.id)
-      end
-      3.times do
-        FactoryBot.create(:input_field, inputable: service)
-        FactoryBot.create(:input_field_multi_option_value, inputable: service)
-        FactoryBot.create(:input_field_multi_option_multiplier, inputable: service)
-      end
-      index == 0 ?
-      FactoryBot.create(:input_field_date_values, inputable: service) :
-      FactoryBot.create(:input_field_date_multiplier, inputable: service)
-    end
-    @service_1 = BxBlockCategories::Service.first
-    @service_2 = BxBlockCategories::Service.last
-    @service_3 = BxBlockCategories::Service.second
-
-    @client_admin_1 = FactoryBot.create(:admin_account, company_id: @company_1.id)
-    @client_user_1 = FactoryBot.create(:user_account, client_admin_id: @client_admin_1.id)
-    @token_1 = BuilderJsonWebToken.encode(@client_admin_1.id)
-    @token_3 = BuilderJsonWebToken.encode(@client_user_1.id)
-    @inquiry_1 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_1.id, sub_category_id: @service_1.sub_categories.first.id)   
-    @inquiry_2 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_2.id, sub_category_id: @service_2.sub_categories.first.id, status: "pending")   
-    @inquiry_3 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_2.id, sub_category_id: @service_2.sub_categories.last.id, approved_by_client_admin_id: @client_admin_1.id, status: "approved")   
-
-    @client_admin_2 = FactoryBot.create(:admin_account, company_id: @company_2.id)
-    @token_2 = BuilderJsonWebToken.encode(@client_admin_2.id)
+    
   end
 
   describe "#create_inquiry" do
