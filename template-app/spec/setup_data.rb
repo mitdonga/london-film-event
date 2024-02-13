@@ -75,6 +75,9 @@ RSpec.shared_context "setup data" do
 
 		@client_admin_2 = FactoryBot.create(:admin_account, company_id: @company_2.id)
 		@token_2 = BuilderJsonWebToken.encode(@client_admin_2.id)
+
+		@admin = AdminUser.create!(email: "#{Faker::Internet.user_name}@gmail.com", password: 'password', password_confirmation: 'password')
+    	@admin.save
 	end
 end
 
