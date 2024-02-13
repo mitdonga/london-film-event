@@ -25,7 +25,7 @@ module BxBlockCategories
 
         def create_input_values
             if inquiry.service == service
-                fields = service.input_fields.where(section: "required_information")
+                fields = service.input_fields.where.not(section: "addon")
                 fields.each do |f|
                     record = input_values.new(input_field_id: f.id)
                     record.save!
