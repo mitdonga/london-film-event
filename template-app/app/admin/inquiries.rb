@@ -58,6 +58,8 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
         row "Total Cost" do |inq|
           inq.package_sub_total + inq.addon_sub_total + inq.extra_cost
         end
+        row :created_at
+        row :updated_at
       end
 
   
@@ -71,6 +73,9 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
           end
           column :user_input do |iv|
             iv.user_input
+          end      
+          column :cost do |iv|
+            iv.cost
           end      
           column :options do |iv|
             iv.current_input_field.options
