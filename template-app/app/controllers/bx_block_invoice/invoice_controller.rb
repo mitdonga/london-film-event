@@ -104,12 +104,14 @@ module BxBlockInvoice
       end
       if event_start_time.present? && event_end_time.present?
         begin
-          event_start_time, event_end_time = Time.parse(event_start_time), Time.parse(event_end_time)
+          event_start_time = Time.parse(event_start_time)
+          event_end_time = Time.parse(event_end_time)
           diff = (event_end_time - event_start_time)/3600
           duration = @inquiry.sub_category.duration
           errors << "Event duration is greater than #{duration} hours for #{@inquiry.sub_category.name} event" if diff > duration
         rescue Exception => e
-          puts "event_start_time: #{event_start_time} | event_end_time: #{event_end_time}"; puts e
+          puts "event_start_time: #{event_start_time} | event_end_time: #{event_end_time}"
+          puts e
         end
       end
       return render json: { message: "Updated user inputs, got some errors", errors: errors }, status: :ok if errors.present?

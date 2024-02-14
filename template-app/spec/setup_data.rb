@@ -60,6 +60,8 @@ RSpec.shared_context "setup data" do
 		index == 0 ?
 		FactoryBot.create(:input_field_date_values, inputable: service) :
 		FactoryBot.create(:input_field_date_multiplier, inputable: service)
+		FactoryBot.create(:event_start_time, inputable: service)
+		FactoryBot.create(:event_start_time, name: "Event End Time", inputable: service)
 		end
 		@service_1 = BxBlockCategories::Service.first
 		@service_2 = BxBlockCategories::Service.last

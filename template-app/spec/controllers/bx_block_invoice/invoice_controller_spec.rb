@@ -87,12 +87,16 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       FactoryBot.create(:additional_service, inquiry_id: @inquiry_1.id, service_id: @service_2.id)
       FactoryBot.create(:additional_service, inquiry_id: @inquiry_1.id, service_id: @service_3.id)
       @input_values = @inquiry_1.input_values
+      @esi = @inquiry_1.input_values.joins(:input_field).where("input_fields.name = ?", "Event Start Time").first
+      @eei = @inquiry_1.input_values.joins(:input_field).where("input_fields.name = ?", "Event End Time").first
     end
     let(:input_values) do [
       {id: @input_values[0].id, user_input: "4"},
       {id: @input_values[1].id, user_input: "10"},
       {id: @input_values[2].id, user_input: "100"},
       {id: 1001, user_input: "120"},
+      {id: @esi.id, user_input: (Time.now + 10.days).to_s},
+      {id: @eei.id, user_input: (Time.now + 10.days + 3.hours).to_s},
      ] end
     it "should save inquiry" do
       put "save_inquiry", params: { token: @token_1, inquiry_id:  @inquiry_1.id,  input_values: input_values }
