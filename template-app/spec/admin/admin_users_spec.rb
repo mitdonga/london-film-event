@@ -22,6 +22,15 @@ RSpec.feature "Admin Users", type: :feature do
     expect(page).to have_content("LF Admins")
   end
 
+  scenario "Dashboard" do
+    visit admin_root_path
+
+    expect(page).to have_content("SMTP Status")
+    expect(page).to have_content("SMTP Error")
+    expect(page).to have_content("Server Information")
+    expect(page).to have_content("❌ (Down)")
+  end
+
   scenario "Create a new LF Admin" do
     visit new_admin_lf_admin_path
 
