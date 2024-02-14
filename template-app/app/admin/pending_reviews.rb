@@ -52,8 +52,8 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
         row(:sub_category) {|inquiry| inquiry.sub_category&.name }
         row :approved_by_lf_admin
         row(:approved_by_client_admin) {|inquiry| inquiry.approved_by_client_admin&.full_name }
-        row :updated_at
-        row :created_at
+        # row :updated_at
+        # row :created_at
       end
   panel "Input Values" do
     table_for resource.input_values do
@@ -66,9 +66,9 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       column :user_input do |iv|
         iv.user_input
       end    
-      column :cost do |iv|
-        iv.cost
-      end     
+      # column :cost do |iv|
+      #   iv.cost
+      # end     
       column :options do |iv|
         iv.current_input_field.options
       end
