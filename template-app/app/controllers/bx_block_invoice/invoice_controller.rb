@@ -41,7 +41,7 @@ module BxBlockInvoice
                   @current_user.inquiries.where(status: "approved") :
                   @current_user.inquiries
       return render json: { inquiries: [], message: "Inquiry not found"}, status: :ok unless inquiries.present?
-      render json: { inquiries: InquirySerializer.new(inquiries, {params: {extra: false}}).serializable_hash, message: "#{inquiries.size} inquiries found" }, status: :ok
+      render json: { inquiries: InquirySerializer.new(inquiries.order(created_at: :desc), {params: {extra: false}}).serializable_hash, message: "#{inquiries.size} inquiries found" }, status: :ok
     end
 
     def create_inquiry
@@ -89,15 +89,27 @@ module BxBlockInvoice
       unless input_values.present? && input_values.is_a?(Array) && input_values.all? { |element| valid_input_value?(element) }
         return render json: { message: "Invalid input_values"}, status: :unprocessable_entity
       end
-      errors = []
+      errors, event_start_time, event_end_time = [], nil, nil
       input_values.each do |iv|
         input_value, user_input = all_values.find_by_id(iv[:id]), iv[:user_input].to_s.strip
         if input_value.present?
           unless input_value.update(user_input: user_input)
             errors << input_value.errors.full_messages.first + " ID #{iv[:id]}"
           end
+          event_start_time = user_input if input_value.current_input_field.name.downcase.include?("event start time")
+          event_end_time = user_input if input_value.current_input_field.name.downcase.include?("event end time")
         elsif !input_value.present?
           errors << "Input value with ID #{iv[:id]} not present"
+        end
+      end
+      if event_start_time.present? && event_end_time.present?
+        begin
+          event_start_time, event_end_time = Time.parse(event_start_time), Time.parse(event_end_time)
+          diff = (event_end_time - event_start_time)/3600
+          duration = @inquiry.sub_category.duration
+          errors << "Event duration is greater than #{duration} hours for #{@inquiry.sub_category.name} event" if diff > duration
+        rescue Exception => e
+          puts "event_start_time: #{event_start_time} | event_end_time: #{event_end_time}"; puts e
         end
       end
       return render json: { message: "Updated user inputs, got some errors", errors: errors }, status: :ok if errors.present?
