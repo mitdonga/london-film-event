@@ -58,6 +58,13 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
         row "Total Cost" do |inq|
           inq.package_sub_total + inq.addon_sub_total + inq.extra_cost
         end
+        row :files do |inq|
+          ul do
+            inq.files.each do |file|
+              li link_to(file.filename, url_for(file))
+            end
+          end
+        end
       end
 
   
