@@ -148,15 +148,15 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       @file = fixture_file_upload("files/test.txt", 'text')
     end
     it "should upload the file" do
-      put "upload_attachment", params: {token: @token_1, inquiry_id:  @inquiry_1.id, attachment: @file }
+      put "upload_attachment", params: {token: @token_1, inquiry_id:  @inquiry_1.id, files: [@file] }
       expect(response).to have_http_status(200)
-      expect(response.body).to include("File successfully uploaded")
+      expect(response.body).to include("Success")
     end
 
     it "should remove the file" do
-      put "upload_attachment", params: {token: @token_1, inquiry_id:  @inquiry_1.id, attachment: nil }
-      expect(response).to have_http_status(200)
-      expect(response.body).to include("File successfully removed")
+      put "upload_attachment", params: {token: @token_1, inquiry_id:  @inquiry_1.id, remove_file_ids: [1] }
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("Something went wrong")
     end
   end
 

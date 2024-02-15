@@ -18,10 +18,10 @@ module BxBlockInvoice
         has_many :input_values, through: :additional_services, class_name: "BxBlockCategories::InputValue"
         
         has_one_attached :attachment
+        has_many_attached :files
 
         enum status: %i[draft pending approved hold rejected]
 
-        has_one_attached :attachment
 
         validates :approved_by_lf_admin, presence: true, if: -> { lf_admin_approval_required == true && status == "approved" }
         validates :approved_by_client_admin, presence: true, if: -> { status == "approved" && approved_by_lf_admin_id.blank? }

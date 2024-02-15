@@ -136,14 +136,17 @@ module BxBlockInvoice
     end
 
     def upload_attachment
-      if params[:attachment].present?
-        @inquiry.attachment.attach(params[:attachment])
-        url = Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(@inquiry.attachment, only_path: true)
-        render json: {url: url, message: "File successfully uploaded"}, status: :ok
-      else
-        @inquiry.attachment.purge
-        render json: {url: "",message: "File successfully removed"}, status: :ok
+      if params[:files].present?
+        @inquiry.files.attach(params[:files])
       end
+      if params[:remove_file_ids].present?
+        @inquiry.files.attachments.find(params[:remove_file_ids]).each do |file|
+          file.purge
+        end
+      end
+      render json: {inquiry: InquirySerializer.new(@inquiry).serializable_hash, message: "Success"}, status: :ok
+    rescue Exception => e
+      render json: {message: "Something went wrong", error: e.message}, status: :unprocessable_entity
     end
 
     def submit_inquiry

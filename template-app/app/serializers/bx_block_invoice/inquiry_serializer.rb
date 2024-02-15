@@ -51,6 +51,14 @@ module BxBlockInvoice
         iq.attachment.attached? ?
         Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(iq.attachment, only_path: true) : ""
       end
+
+      attributes :files do |iq|
+        result = []
+        iq.files.each do |file|
+          result << {name: file.filename, url: Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(file, only_path: true), id: file.id} rescue ""
+        end
+        result
+      end
   
     end
   end
