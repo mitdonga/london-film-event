@@ -3,7 +3,7 @@ module BxBlockInvoice
     skip_before_action :validate_json_web_token, only: [:generate_invoice_pdf]
     before_action :fetch_invoice, only: %i[generate_invoice_pdf]
     before_action :current_user
-    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost upload_attachment submit_inquiry approve_inquiry]
+    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost upload_attachment submit_inquiry approve_inquiry change_inquiry_sub_category]
     before_action :check_admin, only: %i[approve_inquiry]
 
     def generate_invoice_pdf
@@ -207,6 +207,40 @@ module BxBlockInvoice
       )
     rescue Exception => e
       render json: {message: "Failed to download invoice PDF", error: e.message}, status: :unprocessable_entity
+    end
+
+    def change_inquiry_sub_category
+      days_coverage = @inquiry.days_coverage
+      current_service = @inquiry.service
+      messages = []
+      sub_category = @inquiry.sub_category&.name
+      new_sub_category = nil
+      target_sub_category = nil
+      if days_coverage.present? && days_coverage > 0
+        if days_coverage > 1 && !@inquiry.is_multi_day
+          new_sub_category, target_sub_category = @inquiry.service.sub_categories.find_by("name ilike ?", "%multi%"), "Multi Day"
+        elsif days_coverage == 1 && !@inquiry.is_full_day
+          new_sub_category, target_sub_category = @inquiry.service.sub_categories.find_by("name ilike ?", "%full%"), "Full Day"
+        elsif days_coverage < 1 && !@inquiry.is_half_day
+          new_sub_category, target_sub_category = @inquiry.service.sub_categories.find_by("name ilike ?", "%half%"), "Half Day"
+        end
+        if new_sub_category.present?
+          message = "Because you have selected '#{days_coverage < 0 ? days_coverage : days_coverage.to_i} #{days_coverage > 1 ? "days" : "day"}', we need to re-direct you to the form for #{current_service.name} | #{new_sub_category.name}. Please confirm this is what you require."
+          return render json: {message: message}, status: :ok if params[:only_message].present?
+          new_inquiry = BxBlockInvoice::Inquiry.new(user: @current_user, service: @inquiry.service, sub_category: new_sub_category)
+          if new_inquiry.save
+            @inquiry.destroy
+            return render json: {inquiry: InquirySerializer.new(new_inquiry, {params: {extra: true}}).serializable_hash, message: messages}, status: :ok
+          else
+            messages << new_inquiry.full_messages
+          end
+        elsif target_sub_category.present?
+          return render json: {message: "#{target_sub_category} package not available", messages: messages}, status: :unprocessable_entity
+        end
+        return render json: {message: "No need to change package duration"}, status: :ok
+      else
+        render json: {message: "How many days coverage? option not selected for this inquiry"}, status: :unprocessable_entity
+      end
     end
 
     private

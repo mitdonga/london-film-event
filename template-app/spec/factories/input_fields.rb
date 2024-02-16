@@ -54,4 +54,14 @@ FactoryBot.define do
     default_value { }
     inputable { FactoryBot.create(:category) }
   end
+
+  factory :how_many_event_days, class: "BxBlockCategories::InputField" do
+    name { "How Many Event Days?" }
+    field_type { 'multiple_options' }
+    section { "required_information" }
+    options { "0.5, 1, 2, 3+" }
+    multiplier { "1, 2, 3, 4" }
+    default_value { 231 }
+    inputable { FactoryBot.create(:category) }
+  end
 end
