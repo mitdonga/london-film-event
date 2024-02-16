@@ -60,6 +60,13 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
         end
         row :created_at
         row :updated_at
+        row :files do |inq|
+          ul do
+            inq.files.each do |file|
+              li link_to(file.filename, url_for(file))
+            end
+          end
+        end
       end
 
   
