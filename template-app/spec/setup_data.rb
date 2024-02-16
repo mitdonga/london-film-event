@@ -60,6 +60,8 @@ RSpec.shared_context "setup data" do
 		index == 0 ?
 		FactoryBot.create(:input_field_date_values, inputable: service) :
 		FactoryBot.create(:input_field_date_multiplier, inputable: service)
+		FactoryBot.create(:event_start_time, inputable: service)
+		FactoryBot.create(:event_start_time, name: "Event End Time", inputable: service)
 		end
 		@service_1 = BxBlockCategories::Service.first
 		@service_2 = BxBlockCategories::Service.last
@@ -75,6 +77,9 @@ RSpec.shared_context "setup data" do
 
 		@client_admin_2 = FactoryBot.create(:admin_account, company_id: @company_2.id)
 		@token_2 = BuilderJsonWebToken.encode(@client_admin_2.id)
+
+		@admin = AdminUser.create!(email: "#{Faker::Internet.user_name}@gmail.com", password: 'password', password_confirmation: 'password')
+    	@admin.save
 	end
 end
 

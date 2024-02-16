@@ -24,6 +24,11 @@ module BxBlockInvoice
         client_name = inquiry.client_name
       end
 
+      attributes :meeting_link do |inquiry| 
+        company = inquiry.user_company
+        company.meeting_link
+      end
+
       attributes :total_price do |inquiry| 
         inquiry.package_sub_total.to_f + inquiry.addon_sub_total.to_f rescue 0
       end

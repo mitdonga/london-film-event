@@ -58,6 +58,8 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
         row "Total Cost" do |inq|
           inq.package_sub_total + inq.addon_sub_total + inq.extra_cost
         end
+        row :created_at
+        row :updated_at
         row :files do |inq|
           ul do
             inq.files.each do |file|
@@ -78,6 +80,9 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
           end
           column :user_input do |iv|
             iv.user_input
+          end      
+          column :cost do |iv|
+            iv.cost
           end      
           column :options do |iv|
             iv.current_input_field.options
@@ -106,7 +111,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
         f.input :full_name, input_html: { value: f.object.user.full_name, disabled:true }
         f.input :service_name, input_html: { value: f.object.service.name, disabled:true }
         f.input :sub_categoy_name, input_html: { value: f.object.sub_category.name, disabled:true }
-        f.input :status, label: STATUS, collection: [["Pending", "pending"], ["Approved", "approved"], ["Hold", "hold"], ["Reject", "rejected"]], input_html: { id: 'inquiry_status' }
+        f.input :status, label: STATUS, collection: [["Pending", "pending"], ["Approved", "approved"], ["Hold", "hold"], ["Reject", "rejected"]]
         f.input :status_description, as: :string, input_html: { class: 'status-description', id: 'inquiry_status_description' }
       end
       f.actions

@@ -44,4 +44,14 @@ FactoryBot.define do
     default_value { 121 }
     inputable { FactoryBot.create(:category) }
   end
+
+  factory :event_start_time, class: "BxBlockCategories::InputField" do
+    name { "Event Start Time" }
+    field_type { 'date_time' }
+    section { "required_information" }
+    options { }
+    multiplier { }
+    default_value { }
+    inputable { FactoryBot.create(:category) }
+  end
 end

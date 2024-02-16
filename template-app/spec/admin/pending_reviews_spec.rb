@@ -5,14 +5,15 @@ require 'factory_bot'
 include Warden::Test::Helpers
 
 RSpec.describe Admin::PendingReviewsController, type: :controller do
+  include_context "setup data"
   render_views
   before(:each) do
-    @admin = AdminUser.create!(email: 'test123@example.com', password: 'password', password_confirmation: 'password')
-    @admin.save
-    @account = FactoryBot.create(:account)
-    @service = FactoryBot.create(:service)
-    @sub_category = FactoryBot.create(:sub_category, parent_id: @service.id)
-    @inquiry = FactoryBot.create(:inquiry, user_id: @account.id, service_id: @service.id, sub_category_id: @sub_category.id)
+    # @admin = AdminUser.create!(email: 'test123@example.com', password: 'password', password_confirmation: 'password')
+    # @admin.save
+    # # @account = FactoryBot.create(:account)
+    # # @service = FactoryBot.create(:service)
+    # # @sub_category = FactoryBot.create(:sub_category, parent_id: @service.id)
+    # # @inquiry = FactoryBot.create(:inquiry, user_id: @account.id, service_id: @service.id, sub_category_id: @sub_category.id)
 
     sign_in @admin
   end
@@ -26,7 +27,7 @@ RSpec.describe Admin::PendingReviewsController, type: :controller do
 
   describe "Get#show" do
     it "show contact requests" do
-      get :show, params: {id: @inquiry.id}
+      get :show, params: {id: @inquiry_2.id}
       expect(response).to have_http_status(200)
     end
   end
@@ -36,7 +37,7 @@ RSpec.describe Admin::PendingReviewsController, type: :controller do
       "status" => "accepted"
     }end
     it "edit company" do
-        put :update, params: {id: @inquiry.id, inquiry: params}
+        put :update, params: {id: @inquiry_2.id, inquiry: params}
         expect(response).to have_http_status(302)
     end
   end

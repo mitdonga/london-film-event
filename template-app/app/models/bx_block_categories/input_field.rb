@@ -15,7 +15,7 @@ module BxBlockCategories
         before_validation :sanitize_columns
         after_create :create_company_input_fields
 
-        enum field_type: %i[text multiple_options calender_select]
+        enum field_type: %i[text multiple_options calender_select date_time]
         enum section: %i[required_information addon services]
 
         private
