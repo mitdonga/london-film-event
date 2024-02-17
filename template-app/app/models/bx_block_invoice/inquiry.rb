@@ -5,6 +5,7 @@ module BxBlockInvoice
         before_validation :check_service_and_sub_category, on: :create
         after_create :create_additional_service
         after_update :send_email_from_lf
+        after_create :check_for_bespoke
         before_update :notify_user_after_approval, if: :status_changed?
 
         belongs_to :user, class_name: "AccountBlock::Account"
@@ -71,6 +72,26 @@ module BxBlockInvoice
             input_values.joins(:input_field).where("input_fields.name ilike ?", "%event name%").first&.user_input rescue ""
         end
 
+        def days_coverage
+            input_values.joins(:input_field).where("input_fields.name ilike ? or input_fields.name ilike ?", "%how many days coverage%", "%how many event day%").first.user_input.downcase.gsub("more than", "").strip.to_f rescue nil
+        end
+
+        def is_full_day
+            sub_category.name.downcase.include?("full") rescue false
+        end
+
+        def is_half_day
+            sub_category.name.downcase.include?("half") rescue false
+        end
+
+        def is_multi_day
+            sub_category.name.downcase.include?("multi") rescue false
+        end
+
+        def is_bespoke
+            sub_category.name.downcase.include?("bespoke") rescue false
+        end
+
         private 
 
         def notify_user_after_approval
@@ -81,6 +102,11 @@ module BxBlockInvoice
             unless self.sub_category.parent == self.service
                 self.errors.add(:sub_category_id, "Selected sub category doesn't belongs to selected service")
             end
+        end
+
+        def check_for_bespoke
+            subc = sub_category.name.downcase.include?("bespoke") rescue nil
+            self.is_bespoke = true if subc.present?
         end
 
         def create_additional_service

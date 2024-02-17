@@ -44,8 +44,14 @@ module BxBlockCategories
     private
 
     def add_basic_input_fields
-      ["Client Name", "Company Name", "Event Name"].each do |name|
+      ["Client Name", "Company Name", "Event Name", "Location / Venue", "Total Event Budget"].each do |name|
         input_fields.create(name: name, field_type: "text", section: "required_information")
+      end
+      ["Event Date"].each do |name|
+        input_fields.create(name: name, field_type: "calender_select", section: "required_information")
+      end
+      ["Event Start Time", "Event End Time"].each do |name|
+        input_fields.create(name: name, field_type: "time", section: "required_information")
       end
     end
   end
