@@ -2,10 +2,11 @@ module BxBlockInvoice
     class Inquiry < ApplicationRecord
         self.table_name = :inquiries
 
+        before_validation :check_for_bespoke, on: :create
         before_validation :check_service_and_sub_category, on: :create
+        
         after_create :create_additional_service
         after_update :send_email_from_lf
-        after_create :check_for_bespoke
         before_update :notify_user_after_approval, if: :status_changed?
 
         belongs_to :user, class_name: "AccountBlock::Account"
@@ -99,14 +100,25 @@ module BxBlockInvoice
         end
 
         def check_service_and_sub_category
-            unless self.sub_category.parent == self.service
+            unless self.sub_category&.parent == self.service
                 self.errors.add(:sub_category_id, "Selected sub category doesn't belongs to selected service")
             end
         end
 
         def check_for_bespoke
             subc = sub_category.name.downcase.include?("bespoke") rescue nil
-            self.is_bespoke = true if subc.present?
+            if subc.present?
+                self.is_bespoke = true 
+            elsif service.name.downcase.include?("bespoke") && subc.nil?
+                subc = service.sub_categories.find_by('name ilike ?', '%bespoke%') rescue nil
+                if subc.present?
+                    self.is_bespoke, self.sub_category = true, subc
+                else
+                    self.errors.add(:sub_category_id, "Bespoke package not found")
+                end
+            end
+        rescue Exception => e
+            self.errors.add(:base, "Not able to create bespoke inquiry"); puts e
         end
 
         def create_additional_service
