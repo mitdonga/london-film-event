@@ -54,6 +54,7 @@ module BxBlockInvoice
                   params[:status] == "approved" ?
                   @current_user.inquiries.where(status: "approved") :
                   @current_user.inquiries
+      inquiries = inquiries.where(is_bespoke: false)
       return render json: { inquiries: [], message: "Inquiry not found"}, status: :ok unless inquiries.present?
       render json: { inquiries: InquirySerializer.new(inquiries.order(created_at: :desc), {params: {extra: false}}).serializable_hash, message: "#{inquiries.size} inquiries found" }, status: :ok
     end
