@@ -5,7 +5,7 @@ module BxBlockInvoice
       attributes :id, :user_id, :service_id, :sub_category_id, :status, :package_sub_total, :addon_sub_total, :extra_cost, :note
   
       attributes :sub_category_name do |inquiry| 
-        inquiry.sub_category.name
+        inquiry.sub_category&.name
       end
       
       attributes :service_name do |inquiry| 

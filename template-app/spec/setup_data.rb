@@ -48,20 +48,24 @@ RSpec.shared_context "setup data" do
 		@company_2 = FactoryBot.create(:company)
 
 		3.times do |index|
-		service = FactoryBot.create(:service)
-		3.times do
-			FactoryBot.create(:sub_category, parent_id: service.id)
-		end
-		3.times do
-			FactoryBot.create(:input_field, inputable: service)
-			FactoryBot.create(:input_field_multi_option_value, inputable: service)
-			FactoryBot.create(:input_field_multi_option_multiplier, inputable: service)
-		end
-		index == 0 ?
-		FactoryBot.create(:input_field_date_values, inputable: service) :
-		FactoryBot.create(:input_field_date_multiplier, inputable: service)
-		FactoryBot.create(:event_start_time, inputable: service)
-		FactoryBot.create(:event_start_time, name: "Event End Time", inputable: service)
+			service = FactoryBot.create(:service)
+
+			FactoryBot.create(:sub_category, name: "Half Day",parent_id: service.id)
+			FactoryBot.create(:sub_category, name: "Full Day",parent_id: service.id)
+			FactoryBot.create(:sub_category, name: "Multi Day",parent_id: service.id)
+
+			3.times do
+				FactoryBot.create(:input_field, inputable: service)
+				FactoryBot.create(:input_field_multi_option_value, inputable: service)
+				FactoryBot.create(:input_field_multi_option_multiplier, inputable: service)
+			end
+			index == 0 ?
+			FactoryBot.create(:input_field_date_values, inputable: service) :
+			FactoryBot.create(:input_field_date_multiplier, inputable: service)
+			
+			FactoryBot.create(:event_start_time, inputable: service)
+			FactoryBot.create(:event_start_time, name: "Event End Time", inputable: service)
+			FactoryBot.create(:how_many_event_days, inputable: service)
 		end
 		@service_1 = BxBlockCategories::Service.first
 		@service_2 = BxBlockCategories::Service.last
@@ -82,5 +86,4 @@ RSpec.shared_context "setup data" do
     	@admin.save
 	end
 end
-
- 	 	 	 	 	
+	 	 	 	 	

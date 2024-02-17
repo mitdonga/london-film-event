@@ -256,4 +256,51 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
       expect(response.body).to include("Failed to download invoice PDF")
     end
   end
+
+  describe "Change invoice inquiry sub category" do
+    before do      
+    end
+
+    it "should change to multi day" do
+      input_values = @inquiry_1.input_values
+      input = @inquiry_1.input_values.joins(:input_field).where("input_fields.name ilike ?", "%how many event days%").first
+      input.update(user_input: "2")
+
+      post "change_inquiry_sub_category", params: {token: @token_1, inquiry_id: @inquiry_1.id}
+      expect(response).to have_http_status(200)
+    end
+
+    it "should change to half day" do
+      input_values = @inquiry_1.input_values
+      input = @inquiry_1.input_values.joins(:input_field).where("input_fields.name ilike ?", "%how many event days%").first
+      input.update(user_input: "0.5")
+
+      post "change_inquiry_sub_category", params: {token: @token_1, inquiry_id: @inquiry_1.id}
+      expect(response).to have_http_status(200)
+    end
+
+    it "should raise error while changing" do
+      post "change_inquiry_sub_category", params: {token: @token_1, inquiry_id: @inquiry_1.id}
+      expect(response).to have_http_status(422)
+    end
+  end
+
+  describe "Delete User Inquiries" do
+    it "should delete all inquiries of user" do
+      delete "delete_user_inquiries", params: {token: @token_1, user_id: @client_admin_2.id}
+      expect(response).to have_http_status(200)
+    end
+
+    it "should raise user not found error" do
+      delete "delete_user_inquiries", params: {token: @token_1, user_id: 10101}
+      expect(response).to have_http_status(422)
+    end
+  end
+
+  describe "Delete Inquiry" do
+    it "should delete inquiry" do
+      delete "delete_inquiry", params: {token: @token_1, inquiry_id: @inquiry_1.id}
+      expect(response).to have_http_status(200)
+    end
+  end
 end

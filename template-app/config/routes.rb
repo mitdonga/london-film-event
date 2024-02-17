@@ -94,4 +94,7 @@ Rails.application.routes.draw do
   put "/approve_inquiry",                   to: "bx_block_invoice/invoice#approve_inquiry"
   get "/get_invoices",                      to: "bx_block_invoice/invoice#user_invoices"
   get "/download_invoice_pdf",              to: "bx_block_invoice/invoice#invoice_pdf"
+  post "/change_inquiry_sub_category",      to: "bx_block_invoice/invoice#change_inquiry_sub_category"
+  delete "/delete_inquiry",                 to: "bx_block_invoice/invoice#delete_inquiry"
+  delete "/delete_user_inquiries",          to: "bx_block_invoice/invoice#delete_user_inquiries"
 end
