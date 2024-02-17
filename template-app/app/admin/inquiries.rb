@@ -3,7 +3,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
     permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry
     actions :all, except: [:new]
     STATUS = "Inquiry Status"
-    scope("Inquiry", default: true) { |inquiry| inquiry.includes(:input_values).where.not(status: "draft").order(:status) }
+    scope("Inquiry", default: true) { |inquiry| inquiry.includes(:input_values).where.not(status: "draft", is_bespoke: true).order(created_at: :desc, status: :asc) }
   
     index do
       selectable_column
@@ -26,9 +26,10 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
       column 'Service Name', :service do |inq|
         inq.service&.name
       end
-      column 'SubCategory Name' do |inq|
+      column 'Sub Category Name' do |inq|
         inq.sub_category&.name
       end
+      column :created_at
       actions
     end
   
