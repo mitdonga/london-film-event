@@ -3,8 +3,8 @@ module BxBlockInvoice
     skip_before_action :validate_json_web_token, only: [:generate_invoice_pdf]
     before_action :fetch_invoice, only: %i[generate_invoice_pdf]
     before_action :current_user
-    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost upload_attachment submit_inquiry approve_inquiry change_inquiry_sub_category]
-    before_action :check_admin, only: %i[approve_inquiry]
+    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost upload_attachment submit_inquiry approve_inquiry change_inquiry_sub_category delete_inquiry]
+    before_action :check_admin, only: %i[approve_inquiry delete_inquiry delete_user_inquiries]
 
     def generate_invoice_pdf
       host = "#{request.protocol}#{request.host_with_port}"
@@ -18,6 +18,20 @@ module BxBlockInvoice
       return render json: { message: "Inquiry not found"}, status: :unprocessable_entity unless inquiry.present?
       
       render json: { inquiry: InquirySerializer.new(inquiry, {params: {extra: true}}).serializable_hash, message: "Success" }, status: :ok
+    end
+
+    def delete_inquiry
+      @inquiry.destroy
+      render json: {message: "Inquiry successfully deleted"}, status: :ok
+    end
+
+    def delete_user_inquiries
+      user = AccountBlock::Account.find_by(id: params[:user_id])
+      if user.present?
+        user.inquiries.destroy_all
+        return render json: {message: "Deleted all inquiries"}, status: :ok
+      end
+      render json: {message: "User not found"}, status: :unprocessable_entity
     end
   
     def manage_users_inquiries
