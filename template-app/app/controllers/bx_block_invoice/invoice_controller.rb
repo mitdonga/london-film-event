@@ -246,6 +246,11 @@ module BxBlockInvoice
           return render json: {message: message}, status: :ok if params[:only_message].present?
           new_inquiry = BxBlockInvoice::Inquiry.new(user: @current_user, service: @inquiry.service, sub_category: new_sub_category)
           if new_inquiry.save
+            @inquiry.input_values.joins(:input_field).where("input_fields.section in (?)", [0, 2]).each do |iv|
+              input_value = new_inquiry.input_values.find_by(input_field_id: iv.input_field_id) rescue nil
+              input_value.update(user_input: iv.user_input) if input_value.present?
+            end
+            new_inquiry.update(status: @inquiry.status)
             @inquiry.destroy
             return render json: {inquiry: InquirySerializer.new(new_inquiry, {params: {extra: true}}).serializable_hash, message: messages}, status: :ok
           else
