@@ -161,7 +161,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
 
   describe "#submit_inquiry" do
     it "should submit inquiry" do
-      put "submit_inquiry", params: {token: @token_1, inquiry_id:  @inquiry_1.id}
+      put "submit_inquiry", params: {token: @token_1, inquiry_id:  @inquiry_1.id, new_status: "pending"}
       expect(response).to have_http_status(200)
       expect(response.body).to include("Inquiry successfully submitted")
     end
@@ -178,7 +178,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
         end
       end
       it "raise error" do
-        put "submit_inquiry", params: {token: @token_1, inquiry_id:  @inquiry_1.id}
+        put "submit_inquiry", params: {token: @token_1, inquiry_id:  @inquiry_1.id, new_status: "pending"}
         expect(response).to have_http_status(422)
         expect(response.body).to include("Invalid data entered")
       end

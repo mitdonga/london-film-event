@@ -22,7 +22,7 @@ module BxBlockInvoice
         has_one_attached :attachment
         has_many_attached :files
 
-        enum status: %i[draft pending approved hold rejected]
+        enum status: %i[unsaved draft pending approved hold rejected]
 
 
         validates :approved_by_lf_admin, presence: true, if: -> { lf_admin_approval_required == true && status == "approved" }

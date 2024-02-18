@@ -7,7 +7,7 @@ RSpec.describe BxBlockInvoice::Inquiry, type: :model do
   end
 
   describe "Validations" do
-    it { should define_enum_for(:status).with_values(%i[draft pending approved hold rejected]) }
+    it { should define_enum_for(:status).with_values(%i[unsaved draft pending approved hold rejected]) }
   end
 
   describe "Callbacks" do

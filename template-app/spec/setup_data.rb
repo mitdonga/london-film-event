@@ -78,7 +78,7 @@ RSpec.shared_context "setup data" do
 		@client_user_1 = FactoryBot.create(:user_account, client_admin_id: @client_admin_1.id)
 		@token_1 = BuilderJsonWebToken.encode(@client_admin_1.id)
 		@token_3 = BuilderJsonWebToken.encode(@client_user_1.id)
-		@inquiry_1 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_1.id, sub_category_id: @service_1.sub_categories.first.id)   
+		@inquiry_1 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_1.id, sub_category_id: @service_1.sub_categories.first.id, status: "draft")   
 		@inquiry_2 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_2.id, sub_category_id: @service_2.sub_categories.first.id, status: "pending")   
 		@inquiry_3 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_2.id, sub_category_id: @service_2.sub_categories.last.id, approved_by_client_admin_id: @client_admin_1.id, status: "approved")   
 		@bspk_inquiry_1 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @bspk_service.id, sub_category_id: @bspk_sub_category.id)

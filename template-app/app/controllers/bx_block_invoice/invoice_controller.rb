@@ -3,7 +3,7 @@ module BxBlockInvoice
     skip_before_action :validate_json_web_token, only: [:generate_invoice_pdf]
     before_action :fetch_invoice, only: %i[generate_invoice_pdf]
     before_action :current_user
-    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost upload_attachment submit_inquiry approve_inquiry change_inquiry_sub_category delete_inquiry]
+    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost upload_attachment submit_inquiry approve_inquiry change_inquiry_sub_category delete_inquiry draft_inquiry]
     before_action :check_admin, only: %i[approve_inquiry delete_inquiry delete_user_inquiries]
 
     def generate_invoice_pdf
@@ -53,7 +53,7 @@ module BxBlockInvoice
                   @current_user.inquiries.where(status: "pending") :
                   params[:status] == "approved" ?
                   @current_user.inquiries.where(status: "approved") :
-                  @current_user.inquiries
+                  @current_user.inquiries.where.not(status: "unsaved")
       inquiries = inquiries.where(is_bespoke: false)
       return render json: { inquiries: [], message: "Inquiry not found"}, status: :ok unless inquiries.present?
       render json: { inquiries: InquirySerializer.new(inquiries.order(created_at: :desc), {params: {extra: false}}).serializable_hash, message: "#{inquiries.size} inquiries found" }, status: :ok
@@ -165,7 +165,9 @@ module BxBlockInvoice
     end
 
     def submit_inquiry
-      return render json: {message: "Inquiry already submitted"}, status: :unprocessable_entity if @inquiry.status != "draft"
+      new_status = params[:new_status] == "pending" ? "pending" : "draft"
+      return render json: {message: "Can't draft this inquiry"}, status: :unprocessable_entity if new_status == "draft" && @inquiry.status != "unsaved"
+      return render json: {message: "Can't submit this inquiry"}, status: :unprocessable_entity if new_status == "pending" && @inquiry.status != "draft"
       all_values, errors = @inquiry.input_values, []
       all_values.each do |input_value|
         input_value.calculate_cost
@@ -178,14 +180,14 @@ module BxBlockInvoice
         end
       end
       if errors.present?
-        if errors.any? { |error| error["error"].include?("Speak to expert") }
-          send_email_to_lf
-        end
+        # if errors.any? { |error| error["error"].include?("Speak to expert") }
+        #   send_email_to_lf
+        # end
         return render json: {message: "Invalid data entered",errors: errors}, status: :unprocessable_entity
       end
-      @inquiry.update(status: "pending")
-      InquiryMailer.send_inquiry_details_to(@inquiry.id).deliver
-      render json: { inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Inquiry successfully submitted" }, status: :ok
+      @inquiry.update(status: new_status)
+      InquiryMailer.send_inquiry_details_to(@inquiry.id).deliver if new_status == "pending"
+      render json: { inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Inquiry successfully #{new_status == "pending" ? 'submitted' : 'draft'}" }, status: :ok
     end
 
     def approve_inquiry

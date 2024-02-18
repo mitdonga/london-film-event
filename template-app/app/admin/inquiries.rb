@@ -3,7 +3,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
     permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry
     actions :all, except: [:new]
     STATUS = "Inquiry Status"
-    scope("Inquiry", default: true) { |inquiry| inquiry.includes(:input_values).where("status != ? and is_bespoke = false", 0).order(created_at: :desc, status: :asc) }
+    scope("Inquiry", default: true) { |inquiry| inquiry.includes(:input_values).where("status not in (?) and is_bespoke = false", [0, 1]).order(created_at: :desc, status: :asc) }
   
     index do
       selectable_column
