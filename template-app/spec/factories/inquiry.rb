@@ -5,5 +5,6 @@ FactoryBot.define do
     sub_category_id { FactoryBot.create(:sub_category).id }
     note { Faker::Lorem.paragraph_by_chars }
     status {"draft"}
+    is_bespoke { false }
   end
 end

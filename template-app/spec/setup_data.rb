@@ -53,6 +53,7 @@ RSpec.shared_context "setup data" do
 			FactoryBot.create(:sub_category, name: "Half Day",parent_id: service.id)
 			FactoryBot.create(:sub_category, name: "Full Day",parent_id: service.id)
 			FactoryBot.create(:sub_category, name: "Multi Day",parent_id: service.id)
+			FactoryBot.create(:sub_category, name: "Bespoke Request",parent_id: service.id)
 
 			3.times do
 				FactoryBot.create(:input_field, inputable: service)
@@ -68,16 +69,20 @@ RSpec.shared_context "setup data" do
 			FactoryBot.create(:how_many_event_days, inputable: service)
 		end
 		@service_1 = BxBlockCategories::Service.first
-		@service_2 = BxBlockCategories::Service.last
+		@service_2 = BxBlockCategories::Service.third
 		@service_3 = BxBlockCategories::Service.second
+		@bspk_service = FactoryBot.create(:service, name: "Bespoke Request")
+		@bspk_sub_category = FactoryBot.create(:sub_category, name: "Bespoke Request", parent_id: @bspk_service.id)
 
 		@client_admin_1 = FactoryBot.create(:admin_account, company_id: @company_1.id)
 		@client_user_1 = FactoryBot.create(:user_account, client_admin_id: @client_admin_1.id)
 		@token_1 = BuilderJsonWebToken.encode(@client_admin_1.id)
 		@token_3 = BuilderJsonWebToken.encode(@client_user_1.id)
-		@inquiry_1 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_1.id, sub_category_id: @service_1.sub_categories.first.id)   
+		@inquiry_1 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_1.id, sub_category_id: @service_1.sub_categories.first.id, status: "draft")   
 		@inquiry_2 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_2.id, sub_category_id: @service_2.sub_categories.first.id, status: "pending")   
 		@inquiry_3 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_2.id, sub_category_id: @service_2.sub_categories.last.id, approved_by_client_admin_id: @client_admin_1.id, status: "approved")   
+		@bspk_inquiry_1 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @bspk_service.id, sub_category_id: @bspk_sub_category.id)
+		@bspk_inquiry_2 = FactoryBot.create(:inquiry, user_id: @client_admin_1.id, service_id: @service_1.id, sub_category_id: @service_1.sub_categories.find_by('name ilike ?', '%bespoke%').id)
 
 		@client_admin_2 = FactoryBot.create(:admin_account, company_id: @company_2.id)
 		@token_2 = BuilderJsonWebToken.encode(@client_admin_2.id)

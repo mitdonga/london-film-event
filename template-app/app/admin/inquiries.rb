@@ -3,7 +3,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
     permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry
     actions :all, except: [:new]
     STATUS = "Inquiry Status"
-    scope("Inquiry", default: true) { |inquiry| inquiry.includes(:input_values).where.not(status: "draft").order(:status) }
+    scope("Inquiry", default: true) { |inquiry| inquiry.includes(:input_values).where("status not in (?) and is_bespoke = false", [0, 1]).order(created_at: :desc, status: :asc) }
   
     index do
       selectable_column
@@ -26,9 +26,10 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
       column 'Service Name', :service do |inq|
         inq.service&.name
       end
-      column 'SubCategory Name' do |inq|
+      column 'Sub Category Name' do |inq|
         inq.sub_category&.name
       end
+      column :created_at
       actions
     end
   
@@ -76,7 +77,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
             iv.id
           end
           column :name do |iv|
-            iv.current_input_field.name
+            iv.current_input_field&.name
           end
           column :user_input do |iv|
             iv.user_input
@@ -85,22 +86,22 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
             iv.cost
           end      
           column :options do |iv|
-            iv.current_input_field.options
+            iv.current_input_field&.options
           end
           column :values do |iv|
-            iv.current_input_field.values
+            iv.current_input_field&.values
           end
           column :multiplier do |iv|
-            iv.current_input_field.multiplier
+            iv.current_input_field&.multiplier
           end
           column :default_value do |iv|
-            iv.current_input_field.default_value
+            iv.current_input_field&.default_value
           end
           column :field_type do |iv|
-            iv.current_input_field.field_type
+            iv.current_input_field&.field_type
           end        
           column :section do |iv|
-            iv.current_input_field.section
+            iv.current_input_field&.section
           end
         end
       end
