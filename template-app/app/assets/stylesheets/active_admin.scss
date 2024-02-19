@@ -99,3 +99,13 @@ div .fr-box.fr-basic.fr-top {
     width: 50% !important;
     // height: 500px !important;
 }
+
+.input-values-container {
+    @extend .addons-container;
+}
+
+.input-values-container.inputs.has_many_fields ol {
+    display: block;
+}
+
+
