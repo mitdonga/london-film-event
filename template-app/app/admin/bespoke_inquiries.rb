@@ -1,6 +1,6 @@
 ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
 
-    permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry
+    permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry, input_values: [:id, :cost]
     actions :all, except: [:new]
     scope("Inquiry", default: true) { |inquiry| inquiry.includes(:input_values).where("status not in (?) and is_bespoke = true", [0]).order(created_at: :desc, status: :asc) }
   
@@ -113,6 +113,16 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
         f.input :sub_categoy_name, input_html: { value: f.object.sub_category.name, disabled:true }
         f.input :status, label: STATUS, collection: [["Pending", "pending"], ["Approved", "approved"], ["Hold", "hold"], ["Reject", "rejected"]]
         f.input :status_description, as: :string, input_html: { class: 'status-description', id: 'inquiry_status_description' }
+        f.has_many :input_values, 
+            heading: 'Manage Cost',                    
+            allow_destroy: false,
+            new_record: false,
+            class: 'addons-container' do |s|   
+              s.input :id, label: false, input_html: { disabled: true }
+              s.input :name, label: false, input_html: { disabled: true }
+              s.input :user_input, label: false, input_html: { disabled: true }
+              s.input :cost
+          end
       end
       f.actions
     end

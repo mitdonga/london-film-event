@@ -18,6 +18,10 @@ module BxBlockCategories
             input_field.presence || company_input_field
         end
 
+        def name
+            current_input_field&.name
+        end
+
         def formatted_data
             result = {}
             field = current_input_field
