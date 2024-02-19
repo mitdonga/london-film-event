@@ -1,6 +1,6 @@
 ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
 
-    permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry, input_values: [:id, :cost]
+    permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry, input_values_attributes: [:id, :cost]
     actions :all, except: [:new]
     scope("Inquiry", default: true) { |inquiry| inquiry.includes(:input_values).where("status not in (?) and is_bespoke = true", [0]).order(created_at: :desc, status: :asc) }
   
@@ -117,10 +117,10 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
             heading: 'Manage Cost',                    
             allow_destroy: false,
             new_record: false,
-            class: 'addons-container' do |s|   
-              s.input :id, label: false, input_html: { disabled: true }
-              s.input :name, label: false, input_html: { disabled: true }
-              s.input :user_input, label: false, input_html: { disabled: true }
+            class: 'input-values-container' do |s|
+              # s.input :id
+              s.input :name, input_html: { disabled: true }
+              s.input :user_input, input_html: { disabled: true }
               s.input :cost
           end
       end
@@ -132,6 +132,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
         status = params["bx_block_invoice_inquiry"]["status"] rescue ""
         find_resource.update(approved_by_lf_admin: current_admin_user, lf_admin_approval_required: true) if find_resource.status != status && status == "approved"
         super
+        find_resource.calculate_addon_cost
       end
     end
   end
