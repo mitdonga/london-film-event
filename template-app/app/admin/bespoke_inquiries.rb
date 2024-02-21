@@ -1,6 +1,6 @@
 ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
 
-    permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry, input_values_attributes: [:id, :cost]
+    permit_params :id, :first_name, :status, :extra_cost, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry, input_values_attributes: [:id, :cost]
     actions :all, except: [:new]
     scope("Inquiry", default: true) { |inquiry| inquiry.includes(:input_values).where("status not in (?) and is_bespoke = true", [0]).order(created_at: :desc, status: :asc) }
   
@@ -56,7 +56,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
         row :addon_sub_total
         row :extra_cost
         row "Total Cost" do |inq|
-          inq.package_sub_total + inq.addon_sub_total + inq.extra_cost
+          inq.total_price
         end
         row :created_at
         row :updated_at
@@ -113,6 +113,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
         f.input :sub_categoy_name, input_html: { value: f.object.sub_category.name, disabled:true }
         f.input :status, label: STATUS, collection: [["Pending", "pending"], ["Approved", "approved"], ["Hold", "hold"], ["Reject", "rejected"]]
         f.input :status_description, as: :string, input_html: { class: 'status-description', id: 'inquiry_status_description' }
+        f.input :extra_cost
         f.has_many :input_values, 
             heading: 'Manage Cost',                    
             allow_destroy: false,

@@ -94,6 +94,10 @@ module BxBlockInvoice
             sub_category.name.downcase.include?("bespoke") rescue false
         end
 
+        def total_price
+            package_sub_total.to_f + addon_sub_total.to_f + extra_cost.to_f
+        end
+
         private 
 
         def notify_user_after_approval
