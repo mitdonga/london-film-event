@@ -16,11 +16,11 @@ module BxBlockHelpCentre
     end
 
     def search_question
-      query = params[:question]
+      query = params[:question]&.strip
 
       if query.present?
      
-        @search_results = QuestionAnswer.where('question LIKE ?', "%#{query}%")
+        @search_results = QuestionAnswer.where('question ilike ? or answer ilike ?', "%#{query}%", "%#{query}%")
 
         render json: QuestionAnswerSerializer.new(
           @search_results, meta: { message: 'Search results.' }
