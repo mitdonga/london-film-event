@@ -66,7 +66,7 @@ RSpec.shared_context "setup data" do
 			
 			FactoryBot.create(:event_start_time, inputable: service)
 			FactoryBot.create(:event_start_time, name: "Event End Time", inputable: service)
-			FactoryBot.create(:how_many_event_days, inputable: service)
+			FactoryBot.create(:how_many_days_coverage, inputable: service)
 		end
 		@service_1 = BxBlockCategories::Service.first
 		@service_2 = BxBlockCategories::Service.third

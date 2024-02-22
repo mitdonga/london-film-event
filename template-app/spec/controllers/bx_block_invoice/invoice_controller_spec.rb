@@ -258,7 +258,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
 
     it "should change to multi day" do
       input_values = @inquiry_1.input_values
-      input = @inquiry_1.input_values.joins(:input_field).where("input_fields.name ilike ?", "%how many event days%").first
+      input = @inquiry_1.input_values.joins(:input_field).where("input_fields.name ilike ?", "%how many days coverage%").first
       input.update(user_input: "2")
 
       post "change_inquiry_sub_category", params: {token: @token_1, inquiry_id: @inquiry_1.id}
@@ -267,7 +267,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
 
     it "should change to half day" do
       input_values = @inquiry_1.input_values
-      input = @inquiry_1.input_values.joins(:input_field).where("input_fields.name ilike ?", "%how many event days%").first
+      input = @inquiry_1.input_values.joins(:input_field).where("input_fields.name ilike ?", "%how many days coverage%").first
       input.update(user_input: "0.5")
 
       post "change_inquiry_sub_category", params: {token: @token_1, inquiry_id: @inquiry_1.id}

@@ -75,7 +75,7 @@ module BxBlockInvoice
         end
 
         def days_coverage
-            input_values.joins(:input_field).where("input_fields.name ilike ? or input_fields.name ilike ?", "%how many days coverage%", "%how many event day%").first.user_input.downcase.gsub("more than", "").strip.to_f rescue nil
+            input_values.joins(:input_field).where("input_fields.name ilike ? or input_fields.name ilike ?", "%how many days coverage%", "%how many day coverage%").first.user_input.downcase.gsub(/[^0-9.]/, '').strip.to_f rescue nil
         end
 
         def is_full_day
