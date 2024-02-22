@@ -235,7 +235,7 @@ module BxBlockInvoice
       target_sub_category = nil
       if days_coverage.present? && days_coverage > 0
         if days_coverage > 1 && !@inquiry.is_bespoke
-          new_sub_category, target_sub_category = @inquiry.service.sub_categories.find_by("name ilike ?", "%bespoke%"), "Bespoke Request"
+          new_sub_category, target_sub_category = @inquiry.service.sub_categories.find_by("sub_categories.name ilike ?", "%bespoke%"), "Bespoke Request"
         elsif days_coverage == 1 && !@inquiry.is_full_day
           new_sub_category, target_sub_category = @inquiry.service.sub_categories.find_by("name ilike ?", "%full%"), "Full Day"
         elsif days_coverage < 1 && !@inquiry.is_half_day
