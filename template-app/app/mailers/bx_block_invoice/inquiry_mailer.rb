@@ -1,13 +1,15 @@
 module BxBlockInvoice
     class InquiryMailer < ApplicationMailer
-        def send_inquiry_details_to(inquiry_id)
+        def send_inquiry_details_to(inquiry_id, is_bespoke = false)
             
             inquiry = BxBlockInvoice::Inquiry.find inquiry_id
             user = inquiry.user
 
-            template = BxBlockEmailNotifications::EmailTemplate.find_by_name("Client User Request for Quote (All Packages or Previous Packages)")
+            template = is_bespoke ?
+                      BxBlockEmailNotifications::EmailTemplate.find_by_name("Client User/Admin Submitted Bespoke Request") :
+                      BxBlockEmailNotifications::EmailTemplate.find_by_name("Client User Request for Quote (All Packages or Previous Packages)")
             return unless template.present? && inquiry.present?
-
+            email_subject = is_bespoke ? "User Requested For Bespoke Request" : "User Requested For Quote"
             email_body = template.body
                           .gsub('{first_name}', user.first_name)
                           .gsub('{user_name}', user.full_name)
@@ -20,7 +22,7 @@ module BxBlockInvoice
             mail(
               to: to_emails,
               from: "builder.bx_dev@engineer.ai",
-              subject: "User Requested For Quote",
+              subject: email_subject,
               body: email_body,
               content_type: "text/html"
             )
