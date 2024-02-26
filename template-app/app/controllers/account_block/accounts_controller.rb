@@ -218,8 +218,10 @@ module AccountBlock
       client_user.client_admin_id = @account.id
       client_user.company_id = @account.company_id
       if client_user.save
+        warning = email_org_warning(client_user)
         return render json: { 
           message: "Client user created successfully", 
+          warning: warning,
           client_user: AccountSerializer.new(client_user).serializable_hash
         }, status: :created
       else
@@ -234,7 +236,12 @@ module AccountBlock
       client_user = @account.company.accounts.find_by_id(params[:client_user_id]) rescue nil
       return render json: {message: "User not present or you're not authorized to update this user"}, status: :unprocessable_entity unless client_user.present?
       if client_user.update(account_params)
-        render json: {message: "User successfully updated", client_user: AccountSerializer.new(client_user).serializable_hash}, status: :ok
+        warning = email_org_warning(client_user)
+        render json: {
+          message: "User successfully updated",
+          warning: warning,
+          client_user: AccountSerializer.new(client_user).serializable_hash
+        }, status: :ok
       else
         render json: {message: "Failed to update user details", errors: client_user.errors.full_messages }, status: :unprocessable_entity
       end
@@ -246,7 +253,7 @@ module AccountBlock
     end
 
     def company_users
-      company_users = @account.company.accounts.where.not(id: @account.id)
+      company_users = @account.company.accounts.where.not(id: @account.id).order(last_name: :asc)
       render json: { message: "Found #{company_users.size} users", company_users: AccountSerializer.new(company_users).serializable_hash }, status: :ok
     end
 
@@ -305,6 +312,13 @@ module AccountBlock
 
     def search_params
       params.permit(:query)
+    end
+
+    def email_org_warning(user)
+      client_domain = user.email.split("@")[1].strip rescue ""
+      company = @account.company
+      cmp_domain = company.domain&.strip
+      client_domain != cmp_domain ? "Keep in mind that #{user.email} is not part of the #{company.name} organization. Are you sure..." : nil
     end
   end
 end

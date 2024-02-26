@@ -58,6 +58,10 @@ module BxBlockInvoice
       accounts.where(type: "ClientUser")
     end
 
+    def domain
+      self.email.split("@")[1] rescue nil
+    end
+
     private
 
     def create_company_input_fields
