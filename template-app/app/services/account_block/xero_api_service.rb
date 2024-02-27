@@ -1,33 +1,30 @@
 module AccountBlock
   class XeroApiService
-    CREDENTIALS = Rails.application.config.xero_credentials
-    XERO_TENANT_ID = Rails.application.config.xero_tenant_id
+    @@client_id = Rails.application.config.xero_credentials[:client_id]
+    @@client_secret = Rails.application.config.xero_credentials[:client_secret]
+    @@xero_tenant_id = Rails.application.config.xero_tenant_id
+    @@token = Base64.urlsafe_encode64("#{@@client_id}:#{@@client_secret}")
     
     def initialize
-      @xero_client = ::XeroRuby::ApiClient.new(credentials: CREDENTIALS)
-      @xero_client.get_client_credentials_token 
+      set_token
     end
 
     def get_invoices(user, inv_status=nil,  page=1)
-      return [] unless user.xero_id.present?
-      status = inv_status.nil? ? ["!=", "DRAFT"] : ["=", inv_status].flatten
-      opts = {
-        page: page,
-        where: {
-          # type: ['=', XeroRuby::Accounting::Invoice::ACCREC],
-          # fully_paid_on_date: (DateTime.now - 6.month)..DateTime.now,
-          # amount_due: ['>=', 0],
-          # reference: ['=', "Website Design"],
-          # invoice_number: ['=', "INV-0001"],
-          contact_id: ['=', user.xero_id],
-          # contact_number: ['=', "the-contact-number"],
-          # date: (DateTime.now - 2.year)..DateTime.now
-          # date: ['>=', DateTime.now - 2.year],
-          status: status
-        }
-      }
+      # return [] unless user.xero_id.present?
+      # status = inv_status.nil? ? "" : inv_status.join(", ")
 
-      @invoices = user.xero_id.present? && Rails.env != "test" ? @xero_client.accounting_api.get_invoices(XERO_TENANT_ID, opts).invoices : []
+      response = HTTParty.get(
+        "https://api.xero.com/api.xro/2.0/Invoices",
+        body: {
+          "ContactIDs" => user.xero_id,
+          "page" => page
+        },
+        headers: headers
+      )
+
+      result = JSON.parse(response.body)
+      # result[""]
+      # @invoices = user.xero_id.present? && Rails.env != "test" ? @xero_client.accounting_api.get_invoices(XERO_TENANT_ID, opts).invoices : []
     end
 
     def invoice_pdf(invoice_id)
@@ -63,6 +60,27 @@ module AccountBlock
       end
       response = @xero_client.accounting_api.create_contacts(XERO_TENANT_ID, contacts)
       user.update(xero_id: response.contacts.first.contact_id)
+    end
+
+    def set_token
+      response = HTTParty.post(
+        "https://identity.xero.com/connect/token",
+        body: {
+          "grant_type" => "client_credentials",
+          "scrope" => "accounting.contacts"
+        },
+        headers: { "Authorization" => "Basic #{@@token}"}
+      )
+      result = JSON.parse(response.body)
+      @token = result["access_token"]
+    end
+
+    def headers
+      {
+        "Accept" => "application/json",
+        "Xero-Tenant-Id" => @@xero_tenant_id,
+        "Authorization" => "Bearer #{@token}"
+      }
     end
   end
 end
