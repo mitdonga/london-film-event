@@ -1,37 +1,46 @@
 module AccountBlock
   class XeroApiService
-    CREDENTIALS = Rails.application.config.xero_credentials
-    XERO_TENANT_ID = Rails.application.config.xero_tenant_id
+    @@client_id = Rails.application.config.xero_credentials[:client_id]
+    @@client_secret = Rails.application.config.xero_credentials[:client_secret]
+    @@xero_tenant_id = Rails.application.config.xero_tenant_id
+    @@token = Base64.urlsafe_encode64("#{@@client_id}:#{@@client_secret}")
     
     def initialize
-      @xero_client = ::XeroRuby::ApiClient.new(credentials: CREDENTIALS)
-      @xero_client.get_client_credentials_token 
+      set_token
     end
 
     def get_invoices(user, inv_status=nil,  page=1)
       return [] unless user.xero_id.present?
-      status = inv_status.nil? ? ["!=", "DRAFT"] : ["=", inv_status].flatten
-      opts = {
-        page: page,
-        where: {
-          # type: ['=', XeroRuby::Accounting::Invoice::ACCREC],
-          # fully_paid_on_date: (DateTime.now - 6.month)..DateTime.now,
-          # amount_due: ['>=', 0],
-          # reference: ['=', "Website Design"],
-          # invoice_number: ['=', "INV-0001"],
-          contact_id: ['=', user.xero_id],
-          # contact_number: ['=', "the-contact-number"],
-          # date: (DateTime.now - 2.year)..DateTime.now
-          # date: ['>=', DateTime.now - 2.year],
-          status: status
-        }
-      }
-
-      @invoices = user.xero_id.present? && Rails.env != "test" ? @xero_client.accounting_api.get_invoices(XERO_TENANT_ID, opts).invoices : []
+      # status = inv_status.present? ? "PAID" : inv_status.join(", ")
+      status = inv_status.present? ? "SUBMITTED,AUTHORISED,PAID,VOIDED" : inv_status.join(",")
+      # SUBMITTED AUTHORISED PAID DRAFT VOIDED DELETED
+      response = HTTParty.get("https://api.xero.com/api.xro/2.0/Invoices",
+        query: {
+          "ContactIDs" => user.xero_id,
+          "Statuses" => status,
+          "page" => page
+        },
+        headers: headers
+      )
+      result = JSON.parse(response.body)
+      @invoices = user.xero_id.present? && Rails.env != "test" ? result : {}
     end
 
     def invoice_pdf(invoice_id)
-      @xero_client.accounting_api.get_invoice_as_pdf(XERO_TENANT_ID, invoice_id)
+      response = HTTParty.get(
+        "https://api.xero.com/api.xro/2.0/Invoices/#{invoice_id}", 
+        headers: {
+          "Accept" => "application/pdf",
+          "Xero-Tenant-Id" => @@xero_tenant_id,
+          "Authorization" => "Bearer #{@token}"
+        }
+      )
+      raise "Invoice with ID #{invoice_id} not found" unless response.code == 200
+      file_path = Rails.root.join("tmp", "#{invoice_id}.pdf")
+      File.open(file_path, 'wb') do |file|
+        file.write(response.parsed_response)
+      end
+      File.open(file_path, 'r')
     end
 
     # def contacts
@@ -39,30 +48,49 @@ module AccountBlock
     # end
 
     def create_contact(user)
-      user_phone_number = user.phone_number
-      phone = { 
-        phone_number: user_phone_number,
-        phone_type: "DEFAULT"
+      params = {
+        "Contacts": [
+          {
+            "Name": user.full_name,
+            "EmailAddress": user.email,
+            "Phones": [
+              {
+                "PhoneType": "DEFAULT", 
+                "PhoneNumber": user.phone_number, 
+                "PhoneCountryCode": user.country_code
+              }
+            ]
+          }
+        ]
       }
-      phones = []
-      phones << phone
+      
+      return if Rails.env == "test"
+      response = HTTParty.post("https://api.xero.com/api.xro/2.0/Contacts", body: params.to_json, headers: headers)
+      result = JSON.parse(response.body)
+      user.update(xero_id: result["Contacts"].first["ContactID"]) if result["Contacts"].first["ContactID"].present?
+    end
 
-      contact = {
-        name: user.full_name,
-        # name: "#{user.full_name} - #{user.id}",
-        email_address: user.email,
-        phones: phones
-      }  
+    private
 
-      contacts = {  
-        contacts: [contact]
+    def set_token
+      response = HTTParty.post(
+        "https://identity.xero.com/connect/token",
+        body: {
+          "grant_type" => "client_credentials",
+          "scrope" => "accounting.contacts"
+        },
+        headers: { "Authorization" => "Basic #{@@token}"}
+      )
+      result = JSON.parse(response.body)
+      @token = result["access_token"]
+    end
+
+    def headers
+      {
+        "Accept" => "application/json",
+        "Xero-Tenant-Id" => @@xero_tenant_id,
+        "Authorization" => "Bearer #{@token}"
       }
-      application_enviroment = Rails.env
-      if application_enviroment == "test"
-        return
-      end
-      response = @xero_client.accounting_api.create_contacts(XERO_TENANT_ID, contacts)
-      user.update(xero_id: response.contacts.first.contact_id)
     end
   end
 end

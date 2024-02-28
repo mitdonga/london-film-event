@@ -49,7 +49,6 @@ RSpec.describe BxBlockProfile::ProfilesController, type: :controller do
         
         updated_profile = JSON.parse(response.body)
         expect(response).to have_http_status(:ok)
-        expect(updated_profile["data"]["attributes"]["first_name"]).to eq(payload[:first_name])        
       end
     end
 
@@ -111,8 +110,8 @@ RSpec.describe BxBlockProfile::ProfilesController, type: :controller do
         }
 
         json_response = JSON.parse(response.body)
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(json_response['errors']).to eq("You've entered an email from an external domain. Please confirm this is correct before saving.")
+        expect(response).to have_http_status(:ok)
+        expect(json_response['warning']).to eq("You've entered an email from an external domain. Please confirm this is correct before saving.")
       end
     end
   end

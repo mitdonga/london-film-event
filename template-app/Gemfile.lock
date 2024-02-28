@@ -114,7 +114,6 @@ GEM
       activerecord (>= 5.0, < 6.2)
     addressable (2.8.5)
       public_suffix (>= 2.0.2, < 6.0)
-    aes_key_wrap (1.1.0)
     anyway_config (2.5.3)
       ruby-next-core (>= 0.14.0)
     arbre (1.5.0)
@@ -1566,7 +1565,6 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.1.1)
     bcrypt (3.1.16)
-    bindata (2.4.15)
     builder (3.2.4)
     builder_base (0.0.55)
       fast_jsonapi
@@ -1915,8 +1913,6 @@ GEM
       base64
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
-    faraday-follow_redirects (0.3.0)
-      faraday (>= 1, < 3)
     faraday-net_http (3.0.2)
     fast_jsonapi (1.5)
       activesupport (>= 4.2)
@@ -1947,6 +1943,9 @@ GEM
       activesupport (>= 5.2)
     hashie (5.0.0)
     htmlentities (4.3.4)
+    httparty (0.21.0)
+      mini_mime (>= 1.0.0)
+      multi_xml (>= 0.5.2)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     i18n_data (0.10.0)
@@ -1964,13 +1963,6 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (2.6.3)
-    json-jwt (1.16.5)
-      activesupport (>= 4.2)
-      aes_key_wrap
-      base64
-      bindata
-      faraday (~> 2.0)
-      faraday-follow_redirects
     json-schema (3.0.0)
       addressable (>= 2.8)
     jsonapi-serializer (2.2.0)
@@ -2227,10 +2219,6 @@ GEM
     xdan-datetimepicker-rails (2.5.4)
       jquery-rails
       rails (>= 3.2.16)
-    xero-ruby (4.3.1)
-      faraday (>= 2.0, < 3.0)
-      json (~> 2.1, >= 2.1.0)
-      json-jwt (~> 1.16, >= 1.16.3)
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yabeda (0.12.0)
@@ -2318,6 +2306,7 @@ DEPENDENCIES
   devise
   factory_bot_rails (= 6.2.0)
   faker
+  httparty
   jquery-rails
   letter_opener
   mock_redis (= 0.34.0)
@@ -2335,7 +2324,6 @@ DEPENDENCIES
   sidekiq_alive
   simplecov (= 0.17.0)
   tzinfo-data
-  xero-ruby
   yabeda-http_requests
   yabeda-prometheus
   yabeda-puma-plugin
