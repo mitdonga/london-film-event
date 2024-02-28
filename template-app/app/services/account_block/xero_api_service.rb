@@ -12,7 +12,7 @@ module AccountBlock
     def get_invoices(user, inv_status=nil,  page=1)
       return [] unless user.xero_id.present?
       # status = inv_status.present? ? "PAID" : inv_status.join(", ")
-      status = inv_status.present? ? "SUBMITTED, AUTHORISED, PAID, VOIDED" : inv_status.join(", ")
+      status = inv_status.present? ? "SUBMITTED,AUTHORISED,PAID,VOIDED" : inv_status.join(",")
       # SUBMITTED AUTHORISED PAID DRAFT VOIDED DELETED
       response = HTTParty.get("https://api.xero.com/api.xro/2.0/Invoices",
         query: {
