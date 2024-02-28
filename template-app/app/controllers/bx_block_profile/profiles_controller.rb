@@ -108,13 +108,14 @@ module BxBlockProfile
       phone = Phonelib.parse("#{result.full_phone_number}")
       result.update(country_code: phone.country_code, phone_number: phone.raw_national)
     
+      serializer = AccountBlock::AccountSerializer.new(result)
+      
       if verify_domain && status == :ok
-        serializer = AccountBlock::AccountSerializer.new(result)
-        render json: serializer.serializable_hash, status: :ok
+        render json: { account: serializer.serializable_hash }, status: :ok
       elsif verify_domain && params[:account][:email] == @account.email
         render json: { errors: result&.map { |message| message.sub(/\AEmail\s*/, '') } }, status: :unprocessable_entity
       else
-        render json: { errors: "You've entered an email from an external domain. Please confirm this is correct before saving." }, status: :unprocessable_entity
+        render json: { account: serializer.serializable_hash, warning: "You've entered an email from an external domain. Please confirm this is correct before saving." }, status: :ok
       end
     end
     
@@ -147,14 +148,13 @@ module BxBlockProfile
     #   profile = current_user.profiles&.last
     #   render json: ProfileSerializer.new(profile).serializable_hash, status: :ok
     # end
-
     def verify_domain
       new_email = params[:account][:email]
       return false unless new_email.present? && @account.email.present?
   
-      current_domain = @account.email.split('@').last
-      new_domain = new_email.split('@').last
-      current_domain == new_domain
+      cmp_domain = @account.company.domain&.strip
+      new_domain = new_email.split('@').last rescue ""
+      cmp_domain == new_domain
     end
 
 
