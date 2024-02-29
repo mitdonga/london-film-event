@@ -242,7 +242,7 @@ module BxBlockInvoice
           new_sub_category, target_sub_category = @inquiry.service.sub_categories.find_by("name ilike ?", "%half%"), "Half Day"
         end
         if new_sub_category.present?
-          message = "Because you have selected '#{days_coverage < 0 ? days_coverage : days_coverage.to_i} #{days_coverage > 1 ? "days" : "day"}', we need to re-direct you to the form for #{current_service.name} | #{new_sub_category.name}. Please confirm this is what you require."
+          message = "Because you have selected '#{days_coverage < 1 ? days_coverage : days_coverage.to_i} #{days_coverage > 1 ? "days" : "day"}', we need to re-direct you to the form for #{current_service.name} | #{new_sub_category.name}. Please confirm this is what you require."
           return render json: {message: message}, status: :ok if params[:only_message].present?
           new_inquiry = BxBlockInvoice::Inquiry.new(user: @current_user, service: @inquiry.service, sub_category: new_sub_category)
           if new_inquiry.save
