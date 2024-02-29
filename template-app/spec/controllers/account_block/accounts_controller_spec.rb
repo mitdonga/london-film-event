@@ -161,9 +161,8 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
     let(:user_params) do {
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.first_name,
-      country_code: "44", 
       email: Faker::Internet.email, 
-      phone_number: Faker::Base.numerify("54########"), 
+      full_phone_number: Faker::Base.numerify("9194########"), 
       account_type: "venue", 
       company_id: @company.id
     } end
@@ -192,7 +191,7 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
     let(:user_params) do {
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.first_name,
-      country_code: "44", 
+      full_phone_number: Faker::Base.numerify("9194########"), 
     } end
 
     it "should update client user" do

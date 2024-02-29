@@ -217,6 +217,7 @@ module AccountBlock
       client_user = ClientUser.new(account_params)
       client_user.client_admin_id = @account.id
       client_user.company_id = @account.company_id
+      client_user = parse_phone_number(client_user)
       if client_user.save
         warning = email_org_warning(client_user)
         return render json: { 
@@ -235,6 +236,7 @@ module AccountBlock
     def update_client_user
       client_user = @account.company.accounts.find_by_id(params[:client_user_id]) rescue nil
       return render json: {message: "User not present or you're not authorized to update this user"}, status: :unprocessable_entity unless client_user.present?
+      client_user = parse_phone_number(client_user)
       if client_user.update(account_params)
         warning = email_org_warning(client_user)
         render json: {
@@ -319,6 +321,18 @@ module AccountBlock
       company = @account.company
       cmp_domain = company.domain&.strip
       client_domain != cmp_domain ? "Keep in mind that #{user.email} is not part of the #{company.name} organization. Are you sure..." : nil
+    end
+
+    def parse_phone_number(account)
+      full_phone_number = params[:account][:full_phone_number] || params[:full_phone_number]
+      phone_number =  params[:account][:phone_number] || params[:phone_number]
+      if full_phone_number.present? && phone_number.nil?
+        phone = Phonelib.parse(full_phone_number)
+        account.full_phone_number = phone.sanitized
+        account.country_code = phone.country_code
+        account.phone_number = phone.raw_national
+      end
+      account
     end
   end
 end
