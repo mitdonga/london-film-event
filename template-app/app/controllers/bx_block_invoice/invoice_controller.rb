@@ -206,7 +206,8 @@ module BxBlockInvoice
       # status = DRAFT | AUTHORISED | PAID
       invoice_status = params[:status]
       page = params[:page]
-      invoices = AccountBlock::XeroApiService.new.get_invoices(@current_user, invoice_status, page)
+      xero_ids = @current_user_company.accounts.pluck(:xero_id).filter {|e| e.present? && e.size > 5}.join(",")
+      invoices = AccountBlock::XeroApiService.new.get_invoices(xero_ids, invoice_status, page)
       render json: {invoices: invoices, message: "Success"}, status: :ok
     rescue Exception => e
       render json: {message: e.message}, status: :unprocessable_entity
