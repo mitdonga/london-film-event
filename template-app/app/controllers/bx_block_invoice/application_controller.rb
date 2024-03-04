@@ -15,6 +15,7 @@ module BxBlockInvoice
     def current_user
       return unless @token
       @current_user ||= AccountBlock::Account.find(@token.id)
+      @current_user_company = @current_user.company rescue nil
     end
   end
 end

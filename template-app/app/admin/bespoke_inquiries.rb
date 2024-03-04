@@ -2,27 +2,23 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
 
     permit_params :id, :first_name, :status, :extra_cost, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry, input_values_attributes: [:id, :cost]
     actions :all, except: [:new]
-    scope("Inquiry", default: true) { |inquiry| inquiry.includes(:input_values).where("status not in (?) and is_bespoke = true", [0]).order(created_at: :desc, status: :asc) }
+    scope("Inquiry", default: true) { |inquiry| inquiry.includes(:user, input_values: [additional_service: :service]).where("status not in (?) and is_bespoke = true", [0]).order(created_at: :desc, status: :asc) }
   
     index do
       selectable_column
       id_column
-      column 'User Id', :id do |inq|
-        inq.user.id
-      end
-      column 'First Name', :first_name do |inq|
+      column :user_id
+      column :first_name do |inq|
         inq.user.first_name
       end
-      column 'Last Name', :last_name do |inq|
+      column 'Last Name' do |inq|
         inq.user.last_name
       end
-      column 'Email', :email do |inq|
+      column 'Email' do |inq|
         inq.user.email
       end
-      column :status do |inq|
-        inq.status
-      end
-      column 'Service Name', :service do |inq|
+      column :status
+      column 'Service Name' do |inq|
         inq.service&.name
       end
       column 'Sub Category Name' do |inq|
@@ -34,9 +30,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
   
     show do
       attributes_table do
-        row 'User Id',:user_id do |inquiry|
-          inquiry.user.id
-        end
+        row :user_id
         row :fist_name do |inquiry|
           inquiry.user.first_name
         end
@@ -55,9 +49,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
         row :package_sub_total
         row :addon_sub_total
         row :extra_cost
-        row "Total Cost" do |inq|
-          inq.total_price
-        end
+        row :total_cost
         row :created_at
         row :updated_at
         row :files do |inq|
@@ -72,18 +64,12 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
   
       panel "Input Values" do
         table_for resource.input_values do
-          column :id do |iv|
-            iv.id
-          end
+          column :id 
           column :name do |iv|
             iv.current_input_field&.name
           end
-          column :user_input do |iv|
-            iv.user_input
-          end      
-          column :cost do |iv|
-            iv.cost
-          end      
+          column :user_input   
+          column :cost    
           column :options do |iv|
             iv.current_input_field&.options
           end
@@ -119,8 +105,9 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
             allow_destroy: false,
             new_record: false,
             class: 'input-values-container' do |s|
-              # s.input :id
+              s.input :id, as: :hidden
               s.input :name, input_html: { disabled: true }
+              s.input :service_name, input_html: { value: s.object.additional_service.service.name, disabled:true }
               s.input :user_input, input_html: { disabled: true }
               s.input :cost
           end

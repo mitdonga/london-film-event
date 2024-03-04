@@ -9,21 +9,21 @@ module AccountBlock
       set_token
     end
 
-    def get_invoices(user, inv_status=nil,  page=1)
-      return [] unless user.xero_id.present?
+    def get_invoices(user_xero_ids, inv_status=nil,  page=1)
+      return {} if user_xero_ids.blank? || Rails.env == "test"
       # status = inv_status.present? ? "PAID" : inv_status.join(", ")
       status = inv_status.present? ? "SUBMITTED,AUTHORISED,PAID,VOIDED" : inv_status.join(",")
       # SUBMITTED AUTHORISED PAID DRAFT VOIDED DELETED
       response = HTTParty.get("https://api.xero.com/api.xro/2.0/Invoices",
         query: {
-          "ContactIDs" => user.xero_id,
+          "ContactIDs" => user_xero_ids,
           "Statuses" => status,
-          "page" => page
+          "page" => page,
+          "order" => "UpdatedDateUTC DESC"
         },
         headers: headers
       )
-      result = JSON.parse(response.body)
-      @invoices = user.xero_id.present? && Rails.env != "test" ? result : {}
+      JSON.parse(response.body)
     end
 
     def invoice_pdf(invoice_id)
