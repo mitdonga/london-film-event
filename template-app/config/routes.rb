@@ -97,4 +97,5 @@ Rails.application.routes.draw do
   post "/change_inquiry_sub_category",      to: "bx_block_invoice/invoice#change_inquiry_sub_category"
   delete "/delete_inquiry",                 to: "bx_block_invoice/invoice#delete_inquiry"
   delete "/delete_user_inquiries",          to: "bx_block_invoice/invoice#delete_user_inquiries"
+  get "/match_company_domain",              to: "account_block/accounts#match_company_domain"
 end

@@ -219,7 +219,7 @@ module AccountBlock
       client_user.company_id = @account.company_id
       client_user = parse_phone_number(client_user)
       if client_user.save
-        warning = email_org_warning(client_user)
+        warning = email_org_warning(client_user.email)
         return render json: { 
           message: "Client user created successfully", 
           warning: warning,
@@ -238,7 +238,7 @@ module AccountBlock
       return render json: {message: "User not present or you're not authorized to update this user"}, status: :unprocessable_entity unless client_user.present?
       client_user = parse_phone_number(client_user)
       if client_user.update(account_params)
-        warning = email_org_warning(client_user)
+        warning = email_org_warning(client_user.email)
         render json: {
           message: "User successfully updated",
           warning: warning,
@@ -290,6 +290,17 @@ module AccountBlock
       render json: {data: data}
     end
 
+    def match_company_domain
+      email = params[:email]
+      error = email_org_warning(email)
+      company_email = @account.company.email
+      if error.present?
+        render json: {error: error, company_email: company_email, email: email}, status: :unprocessable_entity
+      else
+        render json: {error: nil, company_email: company_email, email: email}, status: :ok
+      end
+    end
+
     private
 
     def account_params
@@ -316,11 +327,11 @@ module AccountBlock
       params.permit(:query)
     end
 
-    def email_org_warning(user)
-      client_domain = user.email.split("@")[1].strip rescue ""
+    def email_org_warning(user_email)
+      client_domain = user_email.split("@")[1].strip rescue ""
       company = @account.company
       cmp_domain = company.domain&.strip
-      client_domain != cmp_domain ? "Keep in mind that #{user.email} is not part of the #{company.name} organization. Are you sure..." : nil
+      client_domain != cmp_domain ? "Keep in mind that #{user_email} is not part of the #{company.name} organization. Are you sure..." : nil
     end
 
     def parse_phone_number(account)

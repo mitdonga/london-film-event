@@ -312,4 +312,17 @@ RSpec.describe AccountBlock::AccountsController, type: :controller do
       expect(response.body).to include("Invalid token")
     end
   end
+
+  describe "#match_company_domain" do
+    it "should raise invalid email error" do
+      get "match_company_domain", params: { token: @token, email: "randome@domain.de" }
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it "should return success response" do
+      get "match_company_domain", params: { token: @token, email: "support#{@client_admin.company.email}" }
+      expect(response).to have_http_status(:ok)
+    end
+  end
+  
 end
