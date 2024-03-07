@@ -294,7 +294,7 @@ module AccountBlock
       email = params[:email]
       error = email_org_warning(email)
       company_email = @account.company.email
-      if error.present?
+      if @account.email != email && error.present?
         render json: {error: error, company_email: company_email, email: email}, status: :unprocessable_entity
       else
         render json: {error: nil, company_email: company_email, email: email}, status: :ok
