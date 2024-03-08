@@ -54,7 +54,8 @@ module BxBlockInvoice
                   params[:status] == "approved" ?
                   @current_user.inquiries.where(status: "approved") :
                   @current_user.inquiries.where.not(status: "unsaved")
-      inquiries = inquiries.where(is_bespoke: false)
+      is_bespoke = params[:is_bespoke] == "true" || params[:is_bespoke] == true ? true : false
+      inquiries = params[:filter_by].present? ? inquiries.where("is_bespoke = ? AND created_at >= ?", is_bespoke, filter_by_params.to_time) : inquiries.where(is_bespoke: is_bespoke)
       return render json: { inquiries: [], message: "Inquiry not found"}, status: :ok unless inquiries.present?
       render json: { inquiries: InquirySerializer.new(inquiries.order(created_at: :desc), {params: {extra: false}}).serializable_hash, message: "#{inquiries.size} inquiries found" }, status: :ok
     end
@@ -204,10 +205,13 @@ module BxBlockInvoice
 
     def user_invoices
       # status = DRAFT | AUTHORISED | PAID
-      invoice_status = params[:status]
-      page = params[:page]
+      invoice_status, page = params[:status], params[:page]
+      start_date = params[:start_date].present? ? params[:start_date] : filter_by_params
+      end_date = params[:end_date]
+
+      where_filter = set_invoice_filter(start_date: start_date, end_date: end_date)
       xero_ids = @current_user_company.accounts.pluck(:xero_id).filter {|e| e.present? && e.size > 5}.join(",")
-      invoices = AccountBlock::XeroApiService.new.get_invoices(xero_ids, invoice_status, page)
+      invoices = AccountBlock::XeroApiService.new.get_invoices(xero_ids, invoice_status, page, where_filter)
       render json: {invoices: invoices, message: "Success"}, status: :ok
     rescue Exception => e
       render json: {message: e.message}, status: :unprocessable_entity
@@ -268,6 +272,13 @@ module BxBlockInvoice
 
     private
 
+    def set_invoice_filter(start_date: nil, end_date: nil)
+      arr, st_dt, ed_dt = [], start_date&.to_date, end_date&.to_date
+      arr << "Date >= DateTime(#{st_dt.year}, #{"%02d" % st_dt.month}, #{"%02d" % st_dt.day})" if st_dt.present?
+      arr << "Date <= DateTime(#{ed_dt.year}, #{"%02d" % ed_dt.month}, #{"%02d" % ed_dt.day})" if ed_dt.present?
+      arr.present? ? arr.join(" && ") : ""
+    end
+
     def send_email_to_lf
       BxBlockContactUs::ContactMailer.date_mail_from_user(@inquiry.user).deliver_now
     end
@@ -299,6 +310,14 @@ module BxBlockInvoice
 
     def check_admin
       return render json: { errors: ["You're unauthorized to perform this action", "Only client admin can perform this action"] }, status: :unauthorized unless @current_user.type == "ClientAdmin"
+    end
+
+    def filter_by_params
+      params[:filter_by] == "week" ?
+        Date.today - 1.week :
+      params[:filter_by] == "month" ?
+        Date.today - 1.month :
+        Date.today - 1.day
     end
 
   end

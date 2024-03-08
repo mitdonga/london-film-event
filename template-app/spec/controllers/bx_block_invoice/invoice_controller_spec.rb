@@ -187,14 +187,14 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
 
   describe "#inquiries" do
     it "should return draft inquiries" do
-      get "inquiries", params: {token: @token_1, status: "draft"}
+      get "inquiries", params: {token: @token_1, status: "draft", filter_by: "month"}
       expect(response).to have_http_status(200)
     end
   end
 
   describe "all inquiries" do
     it "should return all inquiries" do
-      get "inquiries", params: {token: @token_1}
+      get "inquiries", params: {token: @token_1, filter_by: "week"}
       expect(response).to have_http_status(200)
     end
   end
