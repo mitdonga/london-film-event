@@ -3,8 +3,8 @@ module BxBlockInvoice
     skip_before_action :validate_json_web_token, only: [:generate_invoice_pdf]
     before_action :fetch_invoice, only: %i[generate_invoice_pdf]
     before_action :current_user
-    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost upload_attachment submit_inquiry approve_inquiry change_inquiry_sub_category delete_inquiry draft_inquiry]
-    before_action :check_admin, only: %i[approve_inquiry delete_inquiry delete_user_inquiries]
+    before_action :set_inquiry, only: %i[manage_additional_services save_inquiry calculate_cost upload_attachment submit_inquiry approve_inquiry change_inquiry_sub_category delete_inquiry draft_inquiry reject_inquiry]
+    before_action :check_admin, only: %i[approve_inquiry delete_inquiry delete_user_inquiries reject_inquiry]
 
     def generate_invoice_pdf
       host = "#{request.protocol}#{request.host_with_port}"
@@ -200,6 +200,18 @@ module BxBlockInvoice
         end
       else
         render json: {message: "Inquiry is not in pending state"}, status: :unprocessable_entity
+      end
+    end
+
+    def reject_inquiry
+      if ["approved", "partial_approved"].include?(@inquiry.status)
+        if @inquiry.update(status: "rejected", rejected_by_ca: @current_user, status_description: params[:status_description])
+          render json: {inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Success"}, status: :ok
+        else
+          render json: {message: "Unable to reject inquiry", errors: @inquiry.errors.full_messages}, status: :unprocessable_entity
+        end
+      else
+        render json: {message: "Inquiry is not in approved state"}, status: :unprocessable_entity
       end
     end
 
