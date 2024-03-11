@@ -29,8 +29,8 @@ FactoryBot.define do
     name { "Event Date" }
     field_type { 'calender_select' }
     section { "required_information" }
-    options { "4+ weeks away, 2 - 3 weeks away, 1 - 2 weeks away, <1 week away" }
-    values { (100..200).to_a.sample(3).join(", ") + ", Speak to expert" }
+    options { "29+ days away, 15 - 28 days away, 8 - 14 days away, 3 - 7 days away, <3 days away" }
+    values { (100..200).to_a.sample(5).join(", ") }
     default_value { 121 }
     inputable { FactoryBot.create(:category) }
   end
@@ -39,8 +39,8 @@ FactoryBot.define do
     name { "Event Date" }
     field_type { 'calender_select' }
     section { "required_information" }
-    options { "4+ weeks away, 2 - 3 weeks away, 1 - 2 weeks away, <1 week away" }
-    multiplier { (1..10).to_a.sample(3).join(", ") + ", Speak to expert" }
+    options { "29+ days away, 15 - 28 days away, 8 - 14 days away, 3 - 7 days away, <3 days away" }
+    multiplier { (1..10).to_a.sample(5).join(", ") }
     default_value { 121 }
     inputable { FactoryBot.create(:category) }
   end

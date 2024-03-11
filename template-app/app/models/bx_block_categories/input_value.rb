@@ -76,21 +76,21 @@ module BxBlockCategories
                 options = field.options.split(", ")
                 event_date = self.user_input.to_date
                
-                week_left = (event_date - Date.today).to_i/7.0
+                days_left = working_days_left(event_date)
                 final_index = nil
                 options.each_with_index do |option, index|
                     match = option.match(/(\d+)\s?\+/)
-                    if match.present? && match[0].to_i <= week_left
+                    if match.present? && match[0].to_i <= days_left
                         final_index = index 
                         break
                     end
                     match = option.match(/<\s?(\d+)/)
-                    if match.present? && match[1].to_i >= week_left
+                    if match.present? && match[1].to_i >= days_left
                         final_index = index 
                         break
                     end
                     match = option.match(/(\d+)\s?-\s?(\d+)/)
-                    if match.present? && match[1].to_i <= week_left && match[2].to_i >= week_left
+                    if match.present? && match[1].to_i <= days_left && match[2].to_i >= days_left
                         final_index = index 
                         break
                     end
@@ -135,6 +135,20 @@ module BxBlockCategories
 
         def save_input_field_data
             self.input_field_data = self.input_field.to_json
+        end
+
+        private
+
+        def working_days_left(date)
+            end_date = date.to_date rescue nil
+            return 0 unless end_date.present?
+            start_date = Date.today + 1
+            intermediate_dates = (start_date..end_date)
+            count = 0
+            intermediate_dates.each do |date|
+                count += 1 unless [0, 6].include?(date.wday)
+            end
+            count
         end
     end
 end
