@@ -227,6 +227,26 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
     end
   end
 
+  describe "Reject inquiry" do
+    it "should raise inquiry not approved" do
+      put "reject_inquiry", params: {token: @token_1, inquiry_id: @inquiry_2.id}
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("Inquiry is not in approved state")
+    end
+
+    it "should unable to reject inquiry" do
+      put "reject_inquiry", params: {token: @token_1, inquiry_id: @inquiry_3.id}
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("Unable to reject inquiry")
+    end
+
+    it "should reject inquiry" do
+      put "reject_inquiry", params: {token: @token_1, inquiry_id: @inquiry_3.id, status_description: "Entered invalid data"}
+      expect(response).to have_http_status(200)
+      expect(response.body).to include("Success")
+    end
+  end
+
   describe "manage users inquiries" do
     it "should return client admin and associated users inquiries" do
       get "manage_users_inquiries", params: {token: @token_1}
