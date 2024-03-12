@@ -22,6 +22,10 @@ module BxBlockCategories
             current_input_field&.name
         end
 
+        def inquiry
+            additional_service.inquiry
+        end
+
         def formatted_data
             result = {}
             field = current_input_field
@@ -77,7 +81,7 @@ module BxBlockCategories
                 event_date = self.user_input.to_date
                
                 days_left = working_days_left(event_date)
-                final_index = nil
+                final_index, lf_admin_approval_required = nil, false
                 options.each_with_index do |option, index|
                     match = option.match(/(\d+)\s?\+/)
                     if match.present? && match[0].to_i <= days_left
@@ -87,6 +91,7 @@ module BxBlockCategories
                     match = option.match(/<\s?(\d+)/)
                     if match.present? && match[1].to_i >= days_left
                         final_index = index 
+                        lf_admin_approval_required = true
                         break
                     end
                     match = option.match(/(\d+)\s?-\s?(\d+)/)
@@ -113,6 +118,7 @@ module BxBlockCategories
                         self.update(cost: input_cost.to_f)
                     end
                 end
+                self.inquiry.update(lf_admin_approval_required: lf_admin_approval_required) unless self.inquiry.is_bespoke
             end
         end
         

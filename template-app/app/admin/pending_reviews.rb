@@ -3,7 +3,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
     permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry
     actions :all, except: [:new]
     STATUS = "Inquiry Status"
-    scope("Pending Reviews", default: true) { |scope| scope.where("status not in (?)", [0,1]) }
+    scope("Pending Reviews", default: true) { |scope| scope.where("status in (?) and lf_admin_approval_required = true and is_bespoke = false", [2, 3]).order(:status) }
   
     index do
       selectable_column

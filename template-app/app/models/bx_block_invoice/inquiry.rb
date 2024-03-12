@@ -8,7 +8,11 @@ module BxBlockInvoice
         after_create :create_additional_service
         after_update :send_email_from_lf
         before_update :notify_user_after_approval, if: :status_changed?
+        before_update :update_status_timestamp, if: :status_changed?
 
+        belongs_to :user, class_name: "AccountBlock::Account"
+        belongs_to :rejected_by_lf, class_name: "AdminUser", optional: true
+        belongs_to :rejected_by_ca, class_name: "AccountBlock::Account", optional: true
         belongs_to :user, class_name: "AccountBlock::Account"
         belongs_to :approved_by_client_admin, class_name: "AccountBlock::Account", optional: true
         belongs_to :approved_by_lf_admin, class_name: "AdminUser", optional: true
@@ -22,7 +26,7 @@ module BxBlockInvoice
         has_one_attached :attachment
         has_many_attached :files
 
-        enum status: %i[unsaved draft pending approved hold rejected]
+        enum status: %i[unsaved draft pending partial_approved approved hold rejected]
 
         accepts_nested_attributes_for :input_values
 
@@ -107,6 +111,23 @@ module BxBlockInvoice
         def check_service_and_sub_category
             unless self.sub_category&.parent == self.service
                 self.errors.add(:sub_category_id, "Selected sub category doesn't belongs to selected service")
+            end
+        end
+
+        def update_status_timestamp
+            case self.status
+            when "draft"
+                self.draft_at = Time.now
+            when "pending"
+                self.submitted_at = Time.now
+            when "partial_approved"
+                self.partial_approved_at = Time.now
+            when "approved"
+                self.approved_at = Time.now
+            when "rejected"
+                self.rejected_at = Time.now
+            when "hold"
+                self.hold_at = Time.now
             end
         end
 
