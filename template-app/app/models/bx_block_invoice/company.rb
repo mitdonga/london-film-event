@@ -63,7 +63,8 @@ module BxBlockInvoice
     end
 
     def company_inquiries
-      Inquiry.where(user_id: accounts.ids)
+      user_dis = accounts.ids
+      Inquiry.where(user_id: user_dis)
     end
 
     private
