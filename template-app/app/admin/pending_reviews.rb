@@ -20,8 +20,9 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       column 'Email', :email do |inq|
         inq.user.email
       end
-      column STATUS, :status do |inq|
-        inq.status
+      column "Current Status" do |inq|
+        inq.status&.humanize
+
       end
       column 'Service Name', :service do |inq|
         inq.service&.name
@@ -46,14 +47,16 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
         row :user_type do |inquiry|
           inquiry.user.type
         end
-        row :status
+        row "Current Status" do |inq|
+          inq.status&.humanize
+        end
         row(:user_email) {|inquiry| inquiry.user.email }
         row(:service) {|inquiry| inquiry.service&.name }
         row(:sub_category) {|inquiry| inquiry.sub_category&.name }
-        row :approved_by_lf_admin
         row(:approved_by_client_admin) {|inquiry| inquiry.approved_by_client_admin&.full_name }
-        # row :updated_at
-        # row :created_at
+        row :status_description
+        row :updated_at
+        row :created_at
       end
   panel "Input Values" do
     table_for resource.input_values do
@@ -97,7 +100,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
         f.input :full_name, input_html: { value: f.object.user.full_name, disabled:true }
         f.input :service_name, input_html: { value: f.object.service.name, disabled:true }
         f.input :sub_categoy_name, input_html: { value: f.object.sub_category.name, disabled:true }
-        f.input :status, label: STATUS, collection: [["Pending", "pending"], ["Approved", "approved"], ["Hold", "hold"], ["Reject", "rejected"]]
+        f.input :status, label: STATUS, collection: [["Pending", "pending"], ["Approved", "partial_approved"], ["Hold", "hold"], ["Rejected", "rejected"]]
         f.input :status_description, as: :string, input_html: { class: 'status-description', id: 'inquiry_status_description' }
       end
       f.actions
@@ -106,7 +109,9 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
     controller do
       def update
         status = params["bx_block_invoice_inquiry"]["status"] rescue ""
-        find_resource.update(approved_by_lf_admin: current_admin_user, lf_admin_approval_required: true) if find_resource.status != status && status == "approved"
+        find_resource.update(approved_by_lf_admin: current_admin_user) if find_resource.status != status && status == "partial_approved"
+        find_resource.update(rejected_by_lf: current_admin_user) if find_resource.status != status && status == "rejected"
+        find_resource.update(hold_by: current_admin_user) if find_resource.status != status && status == "hold"
         super
       end
     end

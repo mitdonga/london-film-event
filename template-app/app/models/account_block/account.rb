@@ -64,6 +64,10 @@ module AccountBlock
       email_enable?
     end
 
+    def is_admin?
+      self.type == "ClientAdmin"
+    end
+
     private
 
     def set_password
