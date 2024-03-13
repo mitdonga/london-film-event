@@ -50,7 +50,7 @@ module BxBlockInvoice
       inquiries = params[:status] == "draft" ? 
                   @current_user.inquiries.where(status: "draft") :
                   params[:status] == "pending" ?
-                  @current_user.inquiries.where(status: "pending") :
+                  @current_user.inquiries.where("status in (?)", [2,3]) :
                   params[:status] == "approved" ?
                   @current_user.inquiries.where(status: "approved") :
                   @current_user.inquiries.where.not(status: "unsaved")

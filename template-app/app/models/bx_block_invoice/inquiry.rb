@@ -31,7 +31,7 @@ module BxBlockInvoice
         accepts_nested_attributes_for :input_values
 
         validates :approved_by_lf_admin, presence: true, if: -> { lf_admin_approval_required == true && status == "approved" }
-        validates :approved_by_client_admin, presence: true, if: -> { status == "approved" && approved_by_lf_admin_id.blank? }
+        validates :approved_by_client_admin, presence: true, if: -> { status == "approved" && approved_by_lf_admin.blank? }
         validates :status_description, presence: true, if: -> { status == "hold" || status == "rejected" }
 
         def send_email_from_lf
