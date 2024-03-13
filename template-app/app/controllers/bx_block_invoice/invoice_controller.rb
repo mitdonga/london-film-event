@@ -204,14 +204,14 @@ module BxBlockInvoice
     end
 
     def reject_inquiry
-      if ["approved", "partial_approved"].include?(@inquiry.status)
+      if ["hold", "pending", "approved", "partial_approved"].include?(@inquiry.status)
         if @inquiry.update(status: "rejected", rejected_by_ca: @current_user, status_description: params[:status_description])
           render json: {inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Success"}, status: :ok
         else
           render json: {message: "Unable to reject inquiry", errors: @inquiry.errors.full_messages}, status: :unprocessable_entity
         end
       else
-        render json: {message: "Inquiry is not in approved state"}, status: :unprocessable_entity
+        render json: {message: "Unable to reject inquiry"}, status: :unprocessable_entity
       end
     end
 
