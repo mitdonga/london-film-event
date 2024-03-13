@@ -217,7 +217,7 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
     it "should raise inquiry not in pending" do
       put "approve_inquiry", params: {token: @token_1, inquiry_id: @inquiry_3.id}
       expect(response).to have_http_status(422)
-      expect(response.body).to include("Inquiry is not in pending state")
+      expect(response.body).to include("Unable to approve inquiry")
     end
 
     it "should return success" do

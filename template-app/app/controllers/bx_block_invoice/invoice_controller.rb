@@ -48,12 +48,12 @@ module BxBlockInvoice
 
     def inquiries
       inquiries = params[:status] == "draft" ? 
-                  @current_user.inquiries.where(status: "draft") :
+                  user_inquiries.where(status: "draft") :
                   params[:status] == "pending" ?
-                  @current_user.inquiries.where("status in (?)", [2,3]) :
+                  user_inquiries.where("status in (?)", [2,3]) :
                   params[:status] == "approved" ?
-                  @current_user.inquiries.where(status: "approved") :
-                  @current_user.inquiries.where.not(status: "unsaved")
+                  user_inquiries.where(status: "approved") :
+                  user_inquiries.where.not(status: "unsaved")
       is_bespoke = params[:is_bespoke] == "true" || params[:is_bespoke] == true ? true : false
       inquiries = params[:filter_by].present? ? inquiries.where("is_bespoke = ? AND created_at >= ?", is_bespoke, filter_by_params.to_time) : inquiries.where(is_bespoke: is_bespoke)
       return render json: { inquiries: [], message: "Inquiry not found"}, status: :ok unless inquiries.present?
@@ -167,8 +167,8 @@ module BxBlockInvoice
 
     def submit_inquiry
       new_status = params[:new_status] == "pending" ? "pending" : "draft"
-      return render json: {message: "Can't draft this inquiry"}, status: :unprocessable_entity if new_status == "draft" && @inquiry.status != "unsaved"
-      return render json: {message: "Can't submit this inquiry"}, status: :unprocessable_entity if new_status == "pending" && @inquiry.status != "draft"
+      return render json: {message: "Can't draft this inquiry"}, status: :unprocessable_entity if new_status == "draft" && !["unsaved", "draft"].include?(@inquiry.status)
+      return render json: {message: "Can't submit this inquiry"}, status: :unprocessable_entity if new_status == "pending" && !["unsaved", "draft"].include?(@inquiry.status)
       all_values, errors = @inquiry.input_values, []
       all_values.each do |input_value|
         input_value.calculate_cost
@@ -192,14 +192,14 @@ module BxBlockInvoice
     end
 
     def approve_inquiry
-      if @inquiry.status == "pending"
+      if ["hold", "rejected", "pending", "partial_approved"].include?(@inquiry.status)
         if @inquiry.update(status: "approved", approved_by_client_admin: @current_user)
           render json: {inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Success"}, status: :ok
         else
           render json: {message: "Unable to approve inquiry", errors: @inquiry.errors.full_messages}, status: :unprocessable_entity
         end
       else
-        render json: {message: "Inquiry is not in pending state"}, status: :unprocessable_entity
+        render json: {message: "Unable to approve inquiry"}, status: :unprocessable_entity
       end
     end
 
@@ -309,7 +309,7 @@ module BxBlockInvoice
 
       return render json: { message: "Please provide valid inquiry id" }, status: :unprocessable_entity unless id.present?
       
-      @inquiry = Inquiry.find_by(id: id, user: @current_user.id)
+      @inquiry = user_inquiries.find_by(id: id)
       return render json: { message: "Inquiry with ID #{id} not found" }, status: :not_found unless @inquiry.present?
     end
 
@@ -330,6 +330,14 @@ module BxBlockInvoice
       params[:filter_by] == "month" ?
         Date.today - 1.month :
         Date.today - 1.day
+    end
+
+    def user_inquiries
+      if @current_user.is_admin?
+        @current_user_company.company_inquiries
+      else
+        Inquiry.where(user_id: @current_user)
+      end
     end
 
   end

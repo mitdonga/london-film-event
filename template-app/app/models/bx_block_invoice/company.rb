@@ -62,6 +62,10 @@ module BxBlockInvoice
       self.email.split("@")[1] rescue nil
     end
 
+    def company_inquiries
+      Inquiry.where(user_id: accounts.ids)
+    end
+
     private
 
     def create_company_input_fields
