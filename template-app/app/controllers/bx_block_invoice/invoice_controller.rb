@@ -14,7 +14,7 @@ module BxBlockInvoice
     end
 
     def inquiry
-      inquiry = @current_user.inquiries.find_by_id params[:id]
+      inquiry = user_inquiries.find_by_id params[:id]
       return render json: { message: "Inquiry not found"}, status: :unprocessable_entity unless inquiry.present?
       
       render json: { inquiry: InquirySerializer.new(inquiry, {params: {extra: true}}).serializable_hash, message: "Success" }, status: :ok
@@ -49,6 +49,10 @@ module BxBlockInvoice
     def inquiries
       inquiries = params[:status] == "draft" ? 
                   user_inquiries.where(status: "draft") :
+                  params[:status] == "rejected" ? 
+                  user_inquiries.where(status: "rejected") :
+                  params[:status] == "hold" ? 
+                  user_inquiries.where(status: "hold") :
                   params[:status] == "pending" ?
                   user_inquiries.where("status in (?)", [2,3]) :
                   params[:status] == "approved" ?
