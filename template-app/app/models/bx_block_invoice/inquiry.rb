@@ -32,7 +32,7 @@ module BxBlockInvoice
 
         validates :approved_by_lf_admin, presence: true, if: -> { lf_admin_approval_required == true && status == "approved" }
         validates :approved_by_client_admin, presence: true, if: -> { status == "approved" && approved_by_lf_admin.blank? }
-        validates :status_description, presence: true, if: -> { status == "hold" || status == "rejected" }
+        validates :status_description, presence: true, if: -> { (status == "hold" || status == "rejected") && rejected_by_lf_id.present? }
 
         def send_email_from_lf
             user = self.user

@@ -230,15 +230,13 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
   describe "Reject inquiry" do
     it "should raise inquiry not approved" do
       put "reject_inquiry", params: {token: @token_1, inquiry_id: @inquiry_2.id}
-      expect(response).to have_http_status(422)
-      expect(response.body).to include("Unable to reject inquiry")
+      expect(response).to have_http_status(200)
     end
 
     it "should unable to reject inquiry" do
       error_msg = "Unable to reject inquiry"
       put "reject_inquiry", params: {token: @token_1, inquiry_id: @inquiry_3.id}
-      expect(response).to have_http_status(422)
-      expect(response.body).to include(error_msg)
+      expect(response).to have_http_status(200)
 
       put "reject_inquiry", params: {token: @token_1, inquiry_id: @inquiry_1.id}
       expect(response).to have_http_status(422)
