@@ -54,12 +54,11 @@ module BxBlockInvoice
                   params[:status] == "hold" ? 
                   user_inquiries.where(status: "hold") :
                   params[:status] == "pending" ?
-                  user_inquiries.where("status in (?)", [2,3]) :
+                  user_inquiries.where("(status = ? AND lf_admin_approval_required = false) OR (status = ? AND lf_admin_approval_required = true) OR (status = ? AND is_bespoke = true)", 2, 3, 3) :
                   params[:status] == "approved" ?
                   user_inquiries.where(status: "approved") :
                   user_inquiries.where.not(status: "unsaved")
-      is_bespoke = params[:is_bespoke] == "true" || params[:is_bespoke] == true ? true : false
-      inquiries = params[:filter_by].present? ? inquiries.where("is_bespoke = ? AND created_at >= ?", is_bespoke, filter_by_params.to_time) : inquiries.where(is_bespoke: is_bespoke)
+      inquiries = params[:filter_by].present? ? inquiries.where("created_at >= ?", filter_by_params.to_time) : inquiries
       return render json: { inquiries: [], message: "Inquiry not found"}, status: :ok unless inquiries.present?
       render json: { inquiries: InquirySerializer.new(inquiries.order(created_at: :desc), {params: {extra: false}}).serializable_hash, message: "#{inquiries.size} inquiries found" }, status: :ok
     end
