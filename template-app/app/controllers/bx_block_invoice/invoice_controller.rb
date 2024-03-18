@@ -54,7 +54,7 @@ module BxBlockInvoice
                   params[:status] == "hold" ? 
                   user_inquiries.where(status: "hold") :
                   params[:status] == "pending" ?
-                  user_inquiries.where("(status = ? AND lf_admin_approval_required = false) OR (status = ? AND lf_admin_approval_required = true) OR (status = ? AND is_bespoke = true)", 2, 3, 3) :
+                  get_pending_inquiries :
                   params[:status] == "approved" ?
                   user_inquiries.where(status: "approved") :
                   user_inquiries.where.not(status: "unsaved")
@@ -236,12 +236,18 @@ module BxBlockInvoice
       invoice_id = params[:invoice_uid]
       return render json: {message: "Invoice ID required"}, status: :unprocessable_entity unless invoice_id.present?
       pdf = AccountBlock::XeroApiService.new.invoice_pdf(invoice_id)
-      send_file(
-        pdf.path,
-        filename: "#{invoice_id}.pdf",
-        type: "application/pdf",
-        disposition: "attachment"
-      )
+      if params[:preview] == true || params[:preview] == "true"
+        file_name = File.basename(pdf.path)
+        file_url = "#{request.base_url}/invoices/#{file_name}"
+        render json: {url: file_url, message: "Success"}
+      else
+        send_file(
+          pdf.path,
+          filename: "#{invoice_id}.pdf",
+          type: "application/pdf",
+          disposition: "attachment"
+        )
+      end
     rescue Exception => e
       render json: {message: "Failed to download invoice PDF", error: e.message}, status: :unprocessable_entity
     end
@@ -341,6 +347,10 @@ module BxBlockInvoice
       else
         Inquiry.where(user_id: @current_user)
       end
+    end
+
+    def get_pending_inquiries
+      @current_user.is_admin? ? user_inquiries.where("(status = ? AND lf_admin_approval_required = false) OR (status = ? AND lf_admin_approval_required = true) OR (status = ? AND is_bespoke = true)", 2, 3, 3) : user_inquiries.where(status: ["pending", "partial_approved"])
     end
 
   end
