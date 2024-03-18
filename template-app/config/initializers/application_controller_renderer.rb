@@ -6,3 +6,5 @@
 #     https: false
 #   )
 # end
+invoices_directory = Rails.root.join('public', 'invoices')
+FileUtils.mkdir_p(invoices_directory) unless File.directory?(invoices_directory)
