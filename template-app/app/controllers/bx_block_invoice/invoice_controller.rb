@@ -236,12 +236,18 @@ module BxBlockInvoice
       invoice_id = params[:invoice_uid]
       return render json: {message: "Invoice ID required"}, status: :unprocessable_entity unless invoice_id.present?
       pdf = AccountBlock::XeroApiService.new.invoice_pdf(invoice_id)
-      send_file(
-        pdf.path,
-        filename: "#{invoice_id}.pdf",
-        type: "application/pdf",
-        disposition: "attachment"
-      )
+      if params[:preview] == true || params[:preview] == "true"
+        file_name = File.basename(pdf.path)
+        file_url = "#{request.base_url}/invoices/#{file_name}"
+        render json: {url: file_url, message: "Success"}
+      else
+        send_file(
+          pdf.path,
+          filename: "#{invoice_id}.pdf",
+          type: "application/pdf",
+          disposition: "attachment"
+        )
+      end
     rescue Exception => e
       render json: {message: "Failed to download invoice PDF", error: e.message}, status: :unprocessable_entity
     end
