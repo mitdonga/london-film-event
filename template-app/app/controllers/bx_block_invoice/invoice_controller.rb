@@ -54,7 +54,7 @@ module BxBlockInvoice
                   params[:status] == "hold" ? 
                   user_inquiries.where(status: "hold") :
                   params[:status] == "pending" ?
-                  user_inquiries.where("(status = ? AND lf_admin_approval_required = false) OR (status = ? AND lf_admin_approval_required = true) OR (status = ? AND is_bespoke = true)", 2, 3, 3) :
+                  get_pending_inquiries :
                   params[:status] == "approved" ?
                   user_inquiries.where(status: "approved") :
                   user_inquiries.where.not(status: "unsaved")
@@ -341,6 +341,10 @@ module BxBlockInvoice
       else
         Inquiry.where(user_id: @current_user)
       end
+    end
+
+    def get_pending_inquiries
+      @current_user.is_admin? ? user_inquiries.where("(status = ? AND lf_admin_approval_required = false) OR (status = ? AND lf_admin_approval_required = true) OR (status = ? AND is_bespoke = true)", 2, 3, 3) : user_inquiries.where(status: ["pending", "partial_approved"])
     end
 
   end
