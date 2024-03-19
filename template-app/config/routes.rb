@@ -41,6 +41,7 @@ Rails.application.routes.draw do
       collection do
         get :get_service
         get :form_fields
+        get :previous_packages
       end
     end
   end

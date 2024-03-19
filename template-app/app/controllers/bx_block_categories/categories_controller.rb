@@ -48,6 +48,16 @@ module BxBlockCategories
       end
     end
 
+    def previous_packages
+      past_service_ids = BxBlockInvoice::Inquiry.where(user: @current_user).pluck(:service_id).uniq
+      services = @current_user.available_services.where(id: past_service_ids)
+      if services.size > 0
+        render json: BxBlockCategories::CategorySerializer.new(services, {params: {account: @current_user}, meta: { message: "Available previous packages: #{services.size}"}}).serializable_hash, status: :ok
+      else
+        render json: { message: "Previous packages not found" }, status: 204
+      end
+    end
+
     def destroy
       return if @category.nil?
 
