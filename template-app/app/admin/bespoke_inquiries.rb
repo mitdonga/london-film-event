@@ -118,7 +118,9 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
     controller do
       def update
         status = params["bx_block_invoice_inquiry"]["status"] rescue ""
-        find_resource.update(approved_by_lf_admin: current_admin_user, lf_admin_approval_required: true) if find_resource.status != status && status == "approved"
+        find_resource.update(approved_by_lf_admin: current_admin_user) if find_resource.status != status && status == "partial_approved"
+        find_resource.update(rejected_by_lf: current_admin_user) if find_resource.status != status && status == "rejected"
+        find_resource.update(hold_by: current_admin_user) if find_resource.status != status && status == "hold"
         super
         find_resource.calculate_addon_cost
       end
