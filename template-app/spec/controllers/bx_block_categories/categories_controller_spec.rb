@@ -25,6 +25,22 @@ RSpec.describe BxBlockCategories::CategoriesController, type: :controller do
     end
   end
 
+  describe "#previous_packages" do
+
+    it "should return previous packages" do
+      get "previous_packages", params: { token: @token_1 }
+      expect(response).to have_http_status(200)
+      expect(JSON.parse(response.body)["data"].size).to be > 0
+    end
+
+    it "should return not content" do
+
+      get "previous_packages", params: { token: @token_2 }
+      expect(response).to have_http_status(204)
+      expect(response.body).to include("Previous packages not found")
+    end
+  end
+
   describe "#get_service" do
 
     it "should show service" do
