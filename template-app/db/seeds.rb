@@ -5,9 +5,15 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+admins = ["admin@yopmail.com", "builder@yopmail.com", "londonfilmevents@yopmail.com"]
+admins.each do |email|
+    unless AdminUser.find_by(email: email)
+        AdminUser.create(email: email, password: "password", password_confirmation: "password")
+    end
+end
 
-unless AdminUser.find_by_email("admin@ai.com")
-    AdminUser.create!(email: "admin@ai.com", password: "123456", password_confirmation: "123456")
+unless AdminUser.find_by_email("niranjangowda010@yopmail.com")
+    AdminUser.create!(email: "niranjangowda010@yopmail.com", password: "Rajesh@123", password_confirmation: "Rajesh@123")
 end
 
 BxBlockRolesPermissions::Role.find_or_create_by(id: 1, name: "Client Admin")
