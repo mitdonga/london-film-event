@@ -40,7 +40,8 @@ module BxBlockInvoice
 
       attributes :extra_services_detail do |inquiry, params|
         additional_service = inquiry.extra_services
-        BxBlockCategories::AdditionalServiceSerializer.new(additional_service, { params: {extra: params[:extra] || false }}).serializable_hash
+        mng_ad_service = ManageAdditionalService.new(inquiry)
+        BxBlockCategories::AdditionalServiceSerializer.new(additional_service, { params: {extra: params[:extra] || false, manage_additional_service: mng_ad_service}}).serializable_hash
       end
 
       attributes :default_coverages, if: proc { |inquiry, params| params[:extra]} do |inquiry|
