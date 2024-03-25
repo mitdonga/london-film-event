@@ -29,7 +29,7 @@ module BxBlockInvoice
         company.meeting_link
       end
 
-      attributes :total_price do |inquiry| 
+      attributes :total_price do |inquiry|  # Old
         inquiry.package_sub_total.to_f + inquiry.addon_sub_total.to_f rescue 0
       end
 
@@ -40,8 +40,7 @@ module BxBlockInvoice
 
       attributes :extra_services_detail do |inquiry, params|
         additional_service = inquiry.extra_services
-        mng_ad_service = ManageAdditionalService.new(inquiry)
-        BxBlockCategories::AdditionalServiceSerializer.new(additional_service, { params: {extra: params[:extra] || false, manage_additional_service: mng_ad_service}}).serializable_hash
+        BxBlockCategories::AdditionalServiceSerializer.new(additional_service, { params: {extra: params[:extra] || false}}).serializable_hash
       end
 
       attributes :default_coverages, if: proc { |inquiry, params| params[:extra]} do |inquiry|
@@ -59,6 +58,10 @@ module BxBlockInvoice
           result << {name: file.filename, url: Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(file, only_path: true), id: file.id} rescue ""
         end
         result
+      end
+
+      attributes :cost_summery do |iq|
+        iq.get_prices
       end
   
     end

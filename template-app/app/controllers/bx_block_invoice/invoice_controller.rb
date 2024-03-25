@@ -97,8 +97,8 @@ module BxBlockInvoice
       end
 
       @inquiry.all_extra_services.where(service_id: deleted_services_ids).update_all(is_valid: false)
-
-      render json: { extra_services_detail: BxBlockCategories::AdditionalServiceSerializer.new(@inquiry.extra_services, {params: {extra: true, manage_additional_service: ManageAdditionalService.new(@inquiry)}}) }, status: :ok
+      @inquiry.update_additional_service_cost
+      render json: { extra_services_detail: BxBlockCategories::AdditionalServiceSerializer.new(@inquiry.extra_services, {params: {extra: true}}) }, status: :ok
     end
 
     def save_inquiry

@@ -1,7 +1,7 @@
 module BxBlockCategories
     class AdditionalServiceSerializer < BuilderBase::BaseSerializer
 
-        attributes :id, :service_id, :inquiry_id, :is_valid
+        attributes :id, :service_id, :inquiry_id, :is_valid, :sub_category_price, :addon_price
 
         attributes :service_name do |as|
             as.service&.name
@@ -13,7 +13,7 @@ module BxBlockCategories
         end
 
         attributes :default_coverages, if: proc { |as, params| params[:extra]} do |as, params|
-            params[:manage_additional_service].present? ? params[:manage_additional_service].get_default_coverage(as)&.serializable_hash : nil
+            as.get_default_coverage
         end
     end
 end
