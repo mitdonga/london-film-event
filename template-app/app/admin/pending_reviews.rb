@@ -9,16 +9,16 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       selectable_column
       id_column
       column 'User Id', :id do |inq|
-        inq.user.id
+        inq.user&.id
       end
       column 'First Name', :first_name do |inq|
-        inq.user.first_name
+        inq.user&.first_name
       end
       column 'Last Name', :last_name do |inq|
-        inq.user.last_name
+        inq.user&.last_name
       end
       column 'Email', :email do |inq|
-        inq.user.email
+        inq.user&.email
       end
       column "Current Status" do |inq|
         inq.status&.humanize
@@ -34,27 +34,35 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
     end
   
     show do
+      price_data = resource.get_prices
       attributes_table do
         row 'User Id',:user_id do |inquiry|
-          inquiry.user.id
+          inquiry.user&.id
         end
         row :fist_name do |inquiry|
-          inquiry.user.first_name
+          inquiry.user&.first_name
         end
         row :last_name do |inquiry|
-          inquiry.user.last_name
+          inquiry.user&.last_name
         end
         row :user_type do |inquiry|
-          inquiry.user.type
+          inquiry.user&.type
         end
         row "Current Status" do |inq|
           inq.status&.humanize
         end
-        row(:user_email) {|inquiry| inquiry.user.email }
-        row(:service) {|inquiry| inquiry.service&.name }
-        row(:sub_category) {|inquiry| inquiry.sub_category&.name }
-        row(:approved_by_client_admin) {|inquiry| inquiry.approved_by_client_admin&.full_name }
+        row(:user_email) {resource.user.email }
+        row(:service) {resource.service&.name }
+        row(:sub_category) {resource.sub_category&.name }
+        row(:approved_by_client_admin) {resource.approved_by_client_admin&.full_name }
         row :status_description
+        row(:provisional_cost) {price_data[:provisional_cost] }
+        row(:provisional_addon_cost) {price_data[:provisional_addon_cost] }
+        row(:additional_services_cost) {price_data[:additional_services_cost] }
+        row(:additional_addons_cost) {price_data[:additional_addons_cost] }
+        row(:extra_cost) {price_data[:extra_cost] }
+        row(:sub_total) {price_data[:sub_total] }
+        row(:total_addon_cost) {price_data[:total_addon_cost] }
         row :updated_at
         row :created_at
       end
