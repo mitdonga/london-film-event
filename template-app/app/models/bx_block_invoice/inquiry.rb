@@ -64,6 +64,11 @@ module BxBlockInvoice
         def calculate_addon_cost
             addon_cost = self.input_values.pluck(:cost).map(&:to_f).inject(0.0, :+)
             self.update(addon_sub_total: addon_cost)
+            update_additional_service_cost
+        end
+
+        def update_additional_service_cost
+            additional_services.map(&:set_prices)
         end
 
         def event_date
@@ -100,6 +105,25 @@ module BxBlockInvoice
 
         def total_price
             package_sub_total.to_f + addon_sub_total.to_f + extra_cost.to_f
+        end
+
+        def get_prices
+            additional_services = self.extra_services
+            additional_addons_cost, additional_services_cost = 0.0, 0.0
+            additional_services.each do |as|
+                additional_addons_cost = as.addon_price.to_f
+                additional_services_cost += as.sub_category_price.to_f
+            end
+            provisional_addon_cost = self.base_service.input_values.pluck(:cost).map(&:to_f).inject(0.0, :+)
+            data = {}
+            data[:provisional_cost] = self.package_sub_total.to_f
+            data[:provisional_addon_cost] = provisional_addon_cost
+            data[:extra_cost] = self.extra_cost.to_f
+            data[:additional_services_cost] = additional_services_cost
+            data[:additional_addons_cost] = additional_addons_cost
+            data[:sub_total] = data.values.map(&:to_f).sum
+            data[:total_addon_cost] = self.addon_sub_total.to_f
+            data
         end
 
         private 
