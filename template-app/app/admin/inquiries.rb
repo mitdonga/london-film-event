@@ -3,22 +3,22 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
     permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry
     actions :all, except: [:new]
     STATUS = "Inquiry Status"
-    scope("Inquiry", default: true) { |inquiry| inquiry.includes(:input_values).where("status not in (?) and is_bespoke = false", [0, 1]).order(created_at: :desc, status: :asc) }
+    scope("Inquiry", default: true) { |inquiry| inquiry.includes(:input_values).where("status not in (?)", [0]).order(created_at: :desc, status: :asc) }
   
     index do
       selectable_column
       id_column
       column 'User Id', :id do |inq|
-        inq.user.id
+        inq.user&.id
       end
       column 'First Name', :first_name do |inq|
-        inq.user.first_name
+        inq.user&.first_name
       end
       column 'Last Name', :last_name do |inq|
-        inq.user.last_name
+        inq.user&.last_name
       end
       column 'Email', :email do |inq|
-        inq.user.email
+        inq.user&.email
       end
       column STATUS, :status do |inq|
         inq.status
@@ -34,31 +34,33 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
     end
   
     show do
+      price_data = resource.get_prices
       attributes_table do
         row 'User Id',:user_id do |inquiry|
-          inquiry.user.id
+          inquiry.user&.id
         end
         row :fist_name do |inquiry|
-          inquiry.user.first_name
+          inquiry.user&.first_name
         end
         row :last_name do |inquiry|
-          inquiry.user.last_name
+          inquiry.user&.last_name
         end
         row :user_type do |inquiry|
-          inquiry.user.type
+          inquiry.user&.type
         end
         row :status
-        row(:user_email) {|inquiry| inquiry.user.email }
+        row(:user_email) {|inquiry| inquiry.user&.email }
         row(:service) {|inquiry| inquiry.service&.name }
         row(:sub_category) {|inquiry| inquiry.sub_category&.name }
         row :approved_by_lf_admin
         row(:approved_by_client_admin) {|inquiry| inquiry.approved_by_client_admin&.full_name }
-        row :package_sub_total
-        row :addon_sub_total
-        row :extra_cost
-        row "Total Cost" do |inq|
-          inq.package_sub_total + inq.addon_sub_total + inq.extra_cost
-        end
+        row(:provisional_cost) {price_data[:provisional_cost] }
+        row(:provisional_addon_cost) {price_data[:provisional_addon_cost] }
+        row(:additional_services_cost) {price_data[:additional_services_cost] }
+        row(:additional_addons_cost) {price_data[:additional_addons_cost] }
+        row(:extra_cost) {price_data[:extra_cost] }
+        row(:sub_total) {price_data[:sub_total] }
+        row(:total_addon_cost) {price_data[:total_addon_cost] }
         row :created_at
         row :updated_at
         row :files do |inq|
@@ -112,8 +114,8 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
         f.input :full_name, input_html: { value: f.object.user.full_name, disabled:true }
         f.input :service_name, input_html: { value: f.object.service.name, disabled:true }
         f.input :sub_categoy_name, input_html: { value: f.object.sub_category.name, disabled:true }
-        f.input :status, label: STATUS, collection: [["Pending", "pending"], ["Approved", "approved"], ["Hold", "hold"], ["Reject", "rejected"]]
-        f.input :status_description, as: :string, input_html: { class: 'status-description', id: 'inquiry_status_description' }
+        # f.input :status, label: STATUS, collection: [["Pending", "pending"], ["Approved", "approved"], ["Hold", "hold"], ["Reject", "rejected"]]
+        # f.input :status_description, as: :string, input_html: { class: 'status-description', id: 'inquiry_status_description' }
       end
       f.actions
     end
