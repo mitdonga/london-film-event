@@ -112,9 +112,9 @@ Rails.application.configure do
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
   config.xero_credentials = {
-    client_id: "0DA6DB96168C4C93A0CEF804C78BD250",
-    client_secret: "mfO6jFuuk7gNukQfFu9Zj-HFeL3NHYhfwQioOXuL3tLcTImI",
+    client_id: "CC2862F20A5D47D0A5C48FBF6B376BF5",
+    client_secret: "QIW2eg7Jl9wtN4jG5Am0N0tIlMyP8eFKGXNM-Z1_R7s-SQXz",
     grant_type: 'client_credentials'
   }
-  config.xero_tenant_id = "de1d72b2-5768-48a6-912b-19567c303065"
+  config.xero_tenant_id = "c4bc847a-6735-45e5-927c-1b1be728df0b"
 end
