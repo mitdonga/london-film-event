@@ -51,7 +51,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
         row "Current Status" do |inq|
           inq.status&.humanize
         end
-        row(:user_email) {resource.user.email }
+        row(:user_email) {resource.user&.email }
         row(:service) {resource.service&.name }
         row(:sub_category) {resource.sub_category&.name }
         row(:approved_by_client_admin) {resource.approved_by_client_admin&.full_name }
