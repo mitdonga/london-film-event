@@ -9,13 +9,13 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
       id_column
       column :user_id
       column :first_name do |inq|
-        inq.user.first_name
+        inq.user&.first_name
       end
       column 'Last Name' do |inq|
-        inq.user.last_name
+        inq.user&.last_name
       end
       column 'Email' do |inq|
-        inq.user.email
+        inq.user&.email
       end
       column :status
       column 'Service Name' do |inq|
@@ -29,27 +29,31 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
     end
   
     show do
+      price_data = resource.get_prices
       attributes_table do
         row :user_id
         row :fist_name do |inquiry|
-          inquiry.user.first_name
+          inquiry.user&.first_name
         end
         row :last_name do |inquiry|
-          inquiry.user.last_name
+          inquiry.user&.last_name
         end
         row :user_type do |inquiry|
-          inquiry.user.type
+          inquiry.user&.type
         end
         row :status
-        row(:user_email) {|inquiry| inquiry.user.email }
+        row(:user_email) {|inquiry| inquiry.user&.email }
         row(:service) {|inquiry| inquiry.service&.name }
         row(:sub_category) {|inquiry| inquiry.sub_category&.name }
         row :approved_by_lf_admin
         row(:approved_by_client_admin) {|inquiry| inquiry.approved_by_client_admin&.full_name }
-        row :package_sub_total
-        row :addon_sub_total
-        row :extra_cost
-        row :total_cost
+        row(:provisional_cost) {price_data[:provisional_cost] }
+        row(:provisional_addon_cost) {price_data[:provisional_addon_cost] }
+        row(:additional_services_cost) {price_data[:additional_services_cost] }
+        row(:additional_addons_cost) {price_data[:additional_addons_cost] }
+        row(:extra_cost) {price_data[:extra_cost] }
+        row(:sub_total) {price_data[:sub_total] }
+        row(:total_addon_cost) {price_data[:total_addon_cost] }
         row :created_at
         row :updated_at
         row :files do |inq|

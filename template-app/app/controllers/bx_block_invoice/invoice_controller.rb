@@ -57,7 +57,7 @@ module BxBlockInvoice
                   get_pending_inquiries :
                   params[:status] == "approved" ?
                   user_inquiries.where(status: "approved") :
-                  user_inquiries.where.not(status: "unsaved")
+                  get_all_inquiries
       inquiries = params[:filter_by].present? ? inquiries.where("created_at >= ?", filter_by_params.to_time) : inquiries
       return render json: { inquiries: [], message: "Inquiry not found"}, status: :ok unless inquiries.present?
       render json: { inquiries: InquirySerializer.new(inquiries.order(created_at: :desc), {params: {extra: false}}).serializable_hash, message: "#{inquiries.size} inquiries found" }, status: :ok
@@ -346,6 +346,14 @@ module BxBlockInvoice
         @current_user_company.company_inquiries
       else
         Inquiry.where(user_id: @current_user)
+      end
+    end
+
+    def get_all_inquiries
+      if @current_user.is_admin?
+        user_inquiries.where("status in (?) OR (status = ? and lf_admin_approval_required = false)", [1,3,4,5,6], 2)
+      else
+        user_inquiries.where.not(status: "unsaved")
       end
     end
 
