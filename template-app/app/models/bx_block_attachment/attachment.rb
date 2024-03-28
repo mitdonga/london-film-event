@@ -4,9 +4,8 @@ module BxBlockAttachment
     include Wisper::Publisher
 
     has_one_attached :attachment
-    belongs_to :account, class_name: 'AccountBlock::Account'
-    after_create :default_values
-    scope :not_expired, -> {where('is_expired = ?',false)}
+    # after_create :default_values
+    # scope :not_expired, -> {where('is_expired = ?',false)}
 
     def default_values
       self.colour = "Greyscale"

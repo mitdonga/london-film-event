@@ -233,16 +233,21 @@ module BxBlockInvoice
     end
 
     def invoice_pdf
-      invoice_id = params[:invoice_uid]
+      invoice_id = params[:invoice_uid]&.strip
       return render json: {message: "Invoice ID required"}, status: :unprocessable_entity unless invoice_id.present?
-      pdf = AccountBlock::XeroApiService.new.invoice_pdf(invoice_id)
+      tmp_inv_pdf = AccountBlock::XeroApiService.new.invoice_pdf(invoice_id)
       if params[:preview] == true || params[:preview] == "true"
-        file_name = File.basename(pdf.path)
-        file_url = "#{request.base_url}/invoices/#{file_name}"
+        inv_file_name = File.basename(tmp_inv_pdf.path)
+        inv_attachment = BxBlockAttachment::Attachment.find_or_create_by(reference_no: invoice_id)
+
+        blob = ActiveStorage::Blob.create_and_upload!(io: tmp_inv_pdf, filename: inv_file_name)
+        inv_attachment.attachment.attach(blob)
+
+        file_url = Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(inv_attachment.attachment, only_path: true)
         render json: {url: file_url, message: "Success"}
       else
         send_file(
-          pdf.path,
+          tmp_inv_pdf.path,
           filename: "#{invoice_id}.pdf",
           type: "application/pdf",
           disposition: "attachment"

@@ -37,7 +37,7 @@ module AccountBlock
         }
       )
       raise "Invoice with ID #{invoice_id} not found" unless response.code == 200
-      file_path = Rails.root.join("public", "invoices", "#{invoice_id}.pdf")
+      file_path = Rails.root.join("tmp", "#{invoice_id}.pdf")
       File.open(file_path, 'wb') do |file|
         file.write(response.parsed_response)
       end
