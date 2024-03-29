@@ -202,7 +202,11 @@ module BxBlockInvoice
 
     def approve_inquiry
       if ["hold", "rejected", "pending", "partial_approved"].include?(@inquiry.status)
-        if @inquiry.update(status: "approved", approved_by_client_admin: @current_user)
+        if @inquiry.status == "pending" && @inquiry.lf_admin_approval_required == true
+          render json: {message: "This inquiry can't be approved, it requires LF admin approval"}, status: :unprocessable_entity
+        elsif @inquiry.update(status: "approved", approved_by_client_admin: @current_user)
+          InquiryMailer.inquiry_approved(@inquiry.id).deliver
+          InquiryMailer.inquiry_approved_mail_to_admins(@inquiry.id).deliver
           render json: {inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Success"}, status: :ok
         else
           render json: {message: "Unable to approve inquiry", errors: @inquiry.errors.full_messages}, status: :unprocessable_entity
@@ -215,6 +219,7 @@ module BxBlockInvoice
     def reject_inquiry
       if ["hold", "pending", "approved", "partial_approved"].include?(@inquiry.status)
         if @inquiry.update(status: "rejected", rejected_by_ca: @current_user, status_description: params[:status_description])
+          InquiryMailer.inquiry_rejected(@inquiry.id).deliver
           render json: {inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Success"}, status: :ok
         else
           render json: {message: "Unable to reject inquiry", errors: @inquiry.errors.full_messages}, status: :unprocessable_entity
