@@ -173,6 +173,12 @@ module BxBlockInvoice
       return render json: {message: "Can't draft this inquiry"}, status: :unprocessable_entity if new_status == "draft" && !["unsaved", "draft"].include?(@inquiry.status)
       return render json: {message: "Can't submit this inquiry"}, status: :unprocessable_entity if new_status == "pending" && !["unsaved", "draft"].include?(@inquiry.status)
       all_values, errors = @inquiry.input_values, []
+      if new_status == "pending"
+        required_information_missing_error = validate_required_input_fields 
+        return render json: {message: required_information_missing_error, error: required_information_missing_error}, status: :unprocessable_entity if required_information_missing_error.present?
+        # event_duration_error = validate_event_duration 
+        # return render json: {message: event_duration_error, error: event_duration_error}, status: :unprocessable_entity if event_duration_error.present?
+      end
       all_values.each do |input_value|
         input_value.calculate_cost
         if input_value.errors.full_messages.present?
@@ -233,16 +239,21 @@ module BxBlockInvoice
     end
 
     def invoice_pdf
-      invoice_id = params[:invoice_uid]
+      invoice_id = params[:invoice_uid]&.strip
       return render json: {message: "Invoice ID required"}, status: :unprocessable_entity unless invoice_id.present?
-      pdf = AccountBlock::XeroApiService.new.invoice_pdf(invoice_id)
+      tmp_inv_pdf = AccountBlock::XeroApiService.new.invoice_pdf(invoice_id)
       if params[:preview] == true || params[:preview] == "true"
-        file_name = File.basename(pdf.path)
-        file_url = "#{request.base_url}/invoices/#{file_name}"
+        inv_file_name = File.basename(tmp_inv_pdf.path)
+        inv_attachment = BxBlockAttachment::Attachment.find_or_create_by(reference_no: invoice_id)
+
+        blob = ActiveStorage::Blob.create_and_upload!(io: tmp_inv_pdf, filename: inv_file_name)
+        inv_attachment.attachment.attach(blob)
+
+        file_url = Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(inv_attachment.attachment, only_path: true)
         render json: {url: file_url, message: "Success"}
       else
         send_file(
-          pdf.path,
+          tmp_inv_pdf.path,
           filename: "#{invoice_id}.pdf",
           type: "application/pdf",
           disposition: "attachment"
@@ -292,6 +303,23 @@ module BxBlockInvoice
     end
 
     private
+
+    def validate_required_input_fields
+      error = nil
+      required_input_values = @inquiry.input_values.joins(:input_field).includes(:input_field).where("input_fields.section = ?", 0) #required_information
+      required_input_values.each do |input_value|
+        unless input_value.user_input.present?
+          error = "Please enter required information"
+          break
+        end
+      end
+      error
+    end
+
+    # def validate_event_duration
+    #   evt_srt_time = @inquiry.input_values.joins(:input_field).includes(:input_field).where("input_fields.name ilike ?", "%event start time%").first
+    #   evt_end_time = @inquiry.input_values.joins(:input_field).includes(:input_field).where("input_fields.name ilike ?", "%event end time%").first
+    # end
 
     def set_invoice_filter(start_date: nil, end_date: nil)
       arr, st_dt, ed_dt = [], start_date&.to_date, end_date&.to_date

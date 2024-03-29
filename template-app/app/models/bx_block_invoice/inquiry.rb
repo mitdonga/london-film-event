@@ -6,6 +6,7 @@ module BxBlockInvoice
         before_validation :check_service_and_sub_category, on: :create
         
         after_create :create_additional_service
+        after_create :set_default_input_values
         after_update :send_email_from_lf
         before_update :notify_user_after_approval, if: :status_changed?
         before_update :update_status_timestamp, if: :status_changed?
@@ -43,6 +44,10 @@ module BxBlockInvoice
             else
                 BxBlockContactUs::ContactMailer.email_from_lf(user.email, @lf_mail).deliver_now
             end
+        end
+
+        def required_input_values
+            input_values.joins(:input_field).includes(:input_field).where("input_fields.section = ?", 0) #required_information
         end
 
         def base_service
@@ -124,6 +129,17 @@ module BxBlockInvoice
             data[:sub_total] = data.values.map(&:to_f).sum
             data[:total_addon_cost] = self.addon_sub_total.to_f
             data
+        end
+
+        def set_default_input_values
+            camp_iv =  input_values.joins(:input_field).where("input_fields.name ilike ?", "%company name%").first
+            if camp_iv.present?
+                camp_iv.update(user_input: user.company.name)
+            end
+            clt_iv = input_values.joins(:input_field).where("input_fields.name ilike ?", "%client name%").first
+            if clt_iv.present?
+                clt_iv.update(user_input: user.full_name)
+            end
         end
 
         private 

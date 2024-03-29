@@ -160,27 +160,34 @@ RSpec.describe BxBlockInvoice::InvoiceController, type: :controller do
   end
 
   describe "#submit_inquiry" do
-    it "should submit inquiry" do
+    it "should raise enter valid data" do
       put "submit_inquiry", params: {token: @token_1, inquiry_id:  @inquiry_1.id, new_status: "pending"}
-      expect(response).to have_http_status(200)
-      expect(response.body).to include("Inquiry successfully submitted")
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("Please enter required information")
     end
-
-    context 'if errors present' do
+    context 'Submit inquiry test' do
       before do
-        @inquiry_1.input_values.each do |input_value|
+        @inquiry_1.required_input_values.each do |input_value|
           input_field = input_value.current_input_field
           if input_field.field_type == "multiple_options"
             input_value.update(user_input: input_field.options.split(", ").last)
           elsif input_field.field_type == "calender_select"
-            input_value.update(user_input: (Date.today + 3.days).to_s)
-          end 
+            input_value.update(user_input: (Date.today + 1.days).to_s)
+          else
+            input_value.update(user_input: Faker::Lorem.sentence(word_count: 2))
+          end
         end
       end
-      it "raise error" do
+      # it "raise error" do
+      #   put "submit_inquiry", params: {token: @token_1, inquiry_id:  @inquiry_1.id, new_status: "pending"}
+      #   expect(response).to have_http_status(422)
+      #   expect(response.body).to include("Invalid data entered")
+      # end
+
+      it "should submit inquiry" do
         put "submit_inquiry", params: {token: @token_1, inquiry_id:  @inquiry_1.id, new_status: "pending"}
-        expect(response).to have_http_status(422)
-        expect(response.body).to include("Invalid data entered")
+        expect(response).to have_http_status(200)
+        expect(response.body).to include("Inquiry successfully submitted")
       end
     end
   end

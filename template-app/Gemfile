@@ -45,7 +45,7 @@ gem 'bx_block_forgot_password-4de8968b', '0.0.6', require: 'bx_block_forgot_pass
 gem 'bx_block_dashboard_lite', '0.1.0', require: 'bx_block_dashboard'
 gem 'bx_block_dashboard-9a14cb77', '0.0.3', require: 'bx_block_dashboard'
 gem 'bx_block_privacy_setting', '0.1.0', require: 'bx_block_privacy_setting'
-gem 'bx_block_bulk_uploading', '0.0.17', require: 'bx_block_bulk_uploading'
+# gem 'bx_block_bulk_uploading', '0.0.17', require: 'bx_block_bulk_uploading'
 gem 'bx_block_contact_us-6e0a750f', '0.0.3', require: 'bx_block_contact_us'
 gem 'bx_block_profile', '0.0.17'
 gem 'bx_block_email_notifications', '0.0.3'
