@@ -2,8 +2,16 @@
 
 module BxBlockInvoice
     class InquirySerializer < BuilderBase::BaseSerializer
-      attributes :id, :user_id, :service_id, :sub_category_id, :status, :package_sub_total, :addon_sub_total, :extra_cost, :note, :is_bespoke, :updated_at, :created_at, :rejected_by_lf_id, :rejected_by_ca_id, :draft_at, :submitted_at, :partial_approved_at, :approved_at, :hold_at, :rejected_at, :lf_admin_approval_required 
+      attributes :id, :user_id, :service_id, :sub_category_id, :package_sub_total, :addon_sub_total, :extra_cost, :note, :is_bespoke, :updated_at, :created_at, :rejected_by_lf_id, :rejected_by_ca_id, :draft_at, :submitted_at, :partial_approved_at, :approved_at, :hold_at, :rejected_at, :lf_admin_approval_required 
   
+      attributes :status do |inquiry|
+        inquiry.status == "partial_approved" ? "pending" : inquiry.status
+      end
+
+      attributes :actual_status do |inquiry|
+        inquiry.status
+      end
+
       attributes :sub_category_name do |inquiry| 
         inquiry.sub_category&.name
       end

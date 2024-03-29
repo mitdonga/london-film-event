@@ -173,6 +173,12 @@ module BxBlockInvoice
       return render json: {message: "Can't draft this inquiry"}, status: :unprocessable_entity if new_status == "draft" && !["unsaved", "draft"].include?(@inquiry.status)
       return render json: {message: "Can't submit this inquiry"}, status: :unprocessable_entity if new_status == "pending" && !["unsaved", "draft"].include?(@inquiry.status)
       all_values, errors = @inquiry.input_values, []
+      if new_status == "pending"
+        required_information_missing_error = validate_required_input_fields 
+        return render json: {message: required_information_missing_error, error: required_information_missing_error}, status: :unprocessable_entity if required_information_missing_error.present?
+        # event_duration_error = validate_event_duration 
+        # return render json: {message: event_duration_error, error: event_duration_error}, status: :unprocessable_entity if event_duration_error.present?
+      end
       all_values.each do |input_value|
         input_value.calculate_cost
         if input_value.errors.full_messages.present?
@@ -297,6 +303,23 @@ module BxBlockInvoice
     end
 
     private
+
+    def validate_required_input_fields
+      error = nil
+      required_input_values = @inquiry.input_values.joins(:input_field).includes(:input_field).where("input_fields.section = ?", 0) #required_information
+      required_input_values.each do |input_value|
+        unless input_value.user_input.present?
+          error = "Please enter required information"
+          break
+        end
+      end
+      error
+    end
+
+    # def validate_event_duration
+    #   evt_srt_time = @inquiry.input_values.joins(:input_field).includes(:input_field).where("input_fields.name ilike ?", "%event start time%").first
+    #   evt_end_time = @inquiry.input_values.joins(:input_field).includes(:input_field).where("input_fields.name ilike ?", "%event end time%").first
+    # end
 
     def set_invoice_filter(start_date: nil, end_date: nil)
       arr, st_dt, ed_dt = [], start_date&.to_date, end_date&.to_date
