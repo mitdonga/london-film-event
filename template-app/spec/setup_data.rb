@@ -13,10 +13,24 @@ RSpec.shared_context "setup data" do
 		)
 
 		FactoryBot.create(:email_template, 
-			name: "Client Admin Approving a Package", 
+			name: "Client Admin Approving a Package (Mail to user)", 
 			dynamic_words: "user_name, service_name",
 			body: "Hi {user_name}
 					Your request for {service_name} package is approved by the admin."
+		)
+
+		FactoryBot.create(:email_template, 
+			name: "Client Admin Approving a Package (Mail to admin)", 
+			dynamic_words: "approved_by_admin_name, service_name",
+			body: "Hi Admin,
+				{service_name} package request is approved by {approved_by_admin_name}"
+		)
+
+		FactoryBot.create(:email_template, 
+			name: "Inquiry Rejected By Admin (Mail to User)", 
+			dynamic_words: "rejected_by_admin_name, service_name, first_name",
+			body: "Hi {first_name},
+				{service_name} package request is rejected by {rejected_by_admin_name}"
 		)
 
 		FactoryBot.create(:email_template, 
