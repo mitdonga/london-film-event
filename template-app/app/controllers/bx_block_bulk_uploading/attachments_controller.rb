@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require "open-uri"
-require "tmpdir"
-require "libreconv"
-require "aws-sdk"
-require "aws-sdk-s3"
-require "base64"
+# require "open-uri"
+# require "tmpdir"
+# require "libreconv"
+# require "aws-sdk"
+# require "aws-sdk-s3"
+# require "base64"
 
 module BxBlockBulkUploading
   class AttachmentsController < ApplicationController
