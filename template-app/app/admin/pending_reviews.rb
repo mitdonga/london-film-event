@@ -20,9 +20,8 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
       column 'Email', :email do |inq|
         inq.user&.email
       end
-      column "Current Status" do |inq|
-        inq.status&.humanize
-
+      column "Current Status" do |iq|
+        iq.status == "partial_approved" ? "Pending" : iq.status&.humanize
       end
       column 'Service Name', :service do |inq|
         inq.service&.name
@@ -48,8 +47,8 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
         row :user_type do |inquiry|
           inquiry.user&.type
         end
-        row "Current Status" do |inq|
-          inq.status&.humanize
+        row "Current Status" do |inqy|
+          inqy.status == "partial_approved" ? "Pending" : inqy.status&.humanize
         end
         row(:user_email) {resource.user&.email }
         row(:service) {resource.service&.name }

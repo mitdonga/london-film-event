@@ -4,6 +4,10 @@ module BxBlockInvoice
             
             inquiry = BxBlockInvoice::Inquiry.find inquiry_id
             user = inquiry.user
+            event_name = inquiry.event_name
+            company_name = user.company.name
+            meeting_link = user.company.meeting_link
+            quote_link = Rails.application.config.frontend_host + "/request-quote/#{inquiry.id}"
 
             template = is_bespoke ?
                       BxBlockEmailNotifications::EmailTemplate.find_by_name("Client User/Admin Submitted Bespoke Request") :
@@ -16,8 +20,12 @@ module BxBlockInvoice
                           .gsub('{service_name}', inquiry.service.name)
                           .gsub('{sub_category_name}', inquiry.sub_category.name)
                           .gsub('{event_date}', inquiry.event_date.to_s)
+                          .gsub('{event_name}', event_name.to_s)
+                          .gsub('{company_name}', company_name.to_s)
+                          .gsub('{meeting_link}', meeting_link.to_s)
+                          .gsub('{quote_link}', quote_link.to_s)
 
-            to_emails = user.company.company_admins.pluck(:email)
+            to_emails = is_bespoke ? AdminUser.all.pluck(:email) : user.company.company_admins.pluck(:email)
 
             mail(
               to: to_emails,

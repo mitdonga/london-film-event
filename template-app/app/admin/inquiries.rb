@@ -20,8 +20,8 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
       column 'Email', :email do |inq|
         inq.user&.email
       end
-      column STATUS, :status do |inq|
-        inq.status
+      column STATUS do |i|
+        i.status == "partial_approved" ? "Pending" : i.status&.humanize
       end
       column 'Service Name', :service do |inq|
         inq.service&.name
@@ -48,7 +48,7 @@ ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
         row :user_type do |inquiry|
           inquiry.user&.type
         end
-        row :status
+        row (:status) {|inq| inq.status == "partial_approved" ? "Pending" : inq.status&.humanize}
         row(:user_email) {|inquiry| inquiry.user&.email }
         row(:service) {|inquiry| inquiry.service&.name }
         row(:sub_category) {|inquiry| inquiry.sub_category&.name }

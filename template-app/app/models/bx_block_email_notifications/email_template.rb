@@ -21,7 +21,7 @@ module BxBlockEmailNotifications
             words = dynamic_words.split(',').select(&:present?).map {|w| "{#{w.strip}}"}
             matches = body.scan(/\{([^}]+)\}/)
             matches.each do |word|
-                errors.add(:body, "must not contain {#{word[0]}} because it's not a dynamic word") and return unless dynamic_words.include?(word[0])
+                errors.add(:body, "must not contain {#{word[0]}} because it's not a dynamic word") and return if !dynamic_words.include?(word[0]) && word[0].size < 20
             end
         end
 
