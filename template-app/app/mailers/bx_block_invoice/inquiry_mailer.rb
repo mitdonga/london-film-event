@@ -8,6 +8,7 @@ module BxBlockInvoice
             company_name = user.company.name
             meeting_link = user.company.meeting_link
             quote_link = Rails.application.config.frontend_host + "/request-quote/#{inquiry.id}"
+            ac_quote_link = Rails.application.config.base_url + "/admin/bespoke_inquiries/#{inquiry.id}"
 
             template = is_bespoke ?
                       BxBlockEmailNotifications::EmailTemplate.find_by_name("Client User/Admin Submitted Bespoke Request") :
@@ -23,8 +24,8 @@ module BxBlockInvoice
                           .gsub('{event_name}', event_name.to_s)
                           .gsub('{company_name}', company_name.to_s)
                           .gsub('{meeting_link}', meeting_link.to_s)
-                          .gsub('{quote_link}', quote_link.to_s)
-
+                          .gsub('{ac_quote_link}', quote_link.to_s)
+            email_body = remove_water_mark(email_body)
             to_emails = is_bespoke ? AdminUser.all.pluck(:email) : user.company.company_admins.pluck(:email)
 
             mail(
@@ -40,7 +41,10 @@ module BxBlockInvoice
             
             inquiry = BxBlockInvoice::Inquiry.find inquiry_id
             user = inquiry.user
+            return if user.is_admin?
+            account_manager_name = inquiry.user.client_admin.full_name rescue ""
             approved_by_admin_name = inquiry.approved_by_client_admin.full_name rescue ""
+            meeting_link = user.company.meeting_link rescue ""
 
             template = BxBlockEmailNotifications::EmailTemplate.find_by_name("Client Admin Approving a Package (Mail to user)")
             return unless template.present? && inquiry.present?
@@ -51,6 +55,9 @@ module BxBlockInvoice
                           .gsub('{service_name}', inquiry.service.name)
                           .gsub('{sub_category_name}', inquiry.sub_category.name)
                           .gsub('{event_date}', inquiry.event_date.to_s)
+                          .gsub('{event_name}', inquiry.event_name.to_s)
+                          .gsub('{meeting_link}', meeting_link.to_s)
+                          .gsub('{account_manager_name}', account_manager_name.to_s)
                           .gsub('{approved_by_admin_name}', approved_by_admin_name)
 
             mail(
