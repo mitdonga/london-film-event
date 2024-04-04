@@ -48,6 +48,7 @@ module App
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore, 
     config.session_options
+    config.active_job.queue_adapter = :sidekiq
     config.middleware.use Rack::MethodOverride
     config.active_storage.service_urls_expire_in = 3.days
     config.action_mailer.default_url_options = { :host => ENV['BASE_URL'] || "http://localhost:3000" }

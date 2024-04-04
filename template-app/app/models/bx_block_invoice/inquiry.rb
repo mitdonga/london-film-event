@@ -145,7 +145,7 @@ module BxBlockInvoice
         private 
 
         # def notify_user_after_approval
-        #     InquiryMailer.inquiry_approved(self.id).deliver if self.status == "approved"
+        #     InquiryMailer.inquiry_approved(self.id).deliver_later if self.status == "approved"
         # end
 
         def check_service_and_sub_category
