@@ -196,7 +196,7 @@ module BxBlockInvoice
         return render json: {message: "Invalid data entered",errors: errors}, status: :unprocessable_entity
       end
       @inquiry.update(status: new_status)
-      InquiryMailer.send_inquiry_details_to(@inquiry.id, @inquiry.is_bespoke).deliver if new_status == "pending"
+      InquiryMailer.send_inquiry_details_to(@inquiry.id, @inquiry.is_bespoke).deliver_later if new_status == "pending"
       render json: { inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Inquiry successfully #{new_status == "pending" ? 'submitted' : 'draft'}" }, status: :ok
     end
 
@@ -205,8 +205,8 @@ module BxBlockInvoice
         if @inquiry.status == "pending" && @inquiry.lf_admin_approval_required == true
           render json: {message: "This inquiry can't be approved, it requires LF admin approval"}, status: :unprocessable_entity
         elsif @inquiry.update(status: "approved", approved_by_client_admin: @current_user)
-          InquiryMailer.inquiry_approved(@inquiry.id).deliver
-          InquiryMailer.inquiry_approved_mail_to_admins(@inquiry.id).deliver
+          InquiryMailer.inquiry_approved(@inquiry.id).deliver_later
+          InquiryMailer.inquiry_approved_mail_to_admins(@inquiry.id).deliver_later
           render json: {inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Success"}, status: :ok
         else
           render json: {message: "Unable to approve inquiry", errors: @inquiry.errors.full_messages}, status: :unprocessable_entity
@@ -219,7 +219,7 @@ module BxBlockInvoice
     def reject_inquiry
       if ["hold", "pending", "approved", "partial_approved"].include?(@inquiry.status)
         if @inquiry.update(status: "rejected", rejected_by_ca: @current_user, status_description: params[:status_description])
-          InquiryMailer.inquiry_rejected(@inquiry.id).deliver
+          InquiryMailer.inquiry_rejected(@inquiry.id).deliver_later
           render json: {inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Success"}, status: :ok
         else
           render json: {message: "Unable to reject inquiry", errors: @inquiry.errors.full_messages}, status: :unprocessable_entity
