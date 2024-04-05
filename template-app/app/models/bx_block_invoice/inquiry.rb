@@ -113,13 +113,14 @@ module BxBlockInvoice
         end
 
         def get_prices
+            puts "================ INQUIRY ID: #{self.id}, Base Service: #{self.base_service&.id}, #{self.base_service&.input_values&.size} ================="
             additional_services = self.extra_services
             additional_addons_cost, additional_services_cost = 0.0, 0.0
             additional_services.each do |as|
                 additional_addons_cost = as.addon_price.to_f
                 additional_services_cost += as.sub_category_price.to_f
             end
-            provisional_addon_cost = self.base_service.input_values.pluck(:cost).map(&:to_f).inject(0.0, :+)
+            provisional_addon_cost = self.base_service.input_values.pluck(:cost).map(&:to_f).inject(0.0, :+) rescue 0.0
             data = {}
             data[:provisional_cost] = self.package_sub_total.to_f
             data[:provisional_addon_cost] = provisional_addon_cost
