@@ -62,7 +62,7 @@ module AccountBlock
         if @account.save
           EmailValidationMailer
             .with(account: @account, host: request.base_url)
-            .activation_email.deliver
+            .activation_email.deliver_later
           render json: EmailAccountSerializer.new(@account, meta: {
             token: encode(@account.id)
           }).serializable_hash, status: :created
@@ -173,7 +173,7 @@ module AccountBlock
       return render json: { message: "Account not found" }, status: :unprocessable_entity unless account.present?
       
       frontend_host = request.headers['Origin'] || ENV['FRONTEND_URL'] || 'http://localhost:3001'
-      EmailValidationMailer.with(account: account, frontend_host: frontend_host).reset_password_email.deliver
+      EmailValidationMailer.with(account: account, frontend_host: frontend_host).reset_password_email.deliver_later
       render json: { message: "Password reset link has been sent. Kindly check your email inbox for further instructions" }, status: :ok
     end
 
@@ -272,7 +272,7 @@ module AccountBlock
     def send_account_activation_email
       client_user = @account.company.accounts.find_by_id(params[:user_id]) rescue nil
       return render json: {message: "User not present or you're not authorized"}, status: :unauthorized unless client_user.present?
-      EmailValidationMailer.with(account: client_user, host: request.base_url).activation_email.deliver
+      EmailValidationMailer.with(account: client_user, host: request.base_url).activation_email.deliver_later
       render json: {message: "Success"}, status: :ok
     end
 
