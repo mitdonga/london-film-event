@@ -85,6 +85,8 @@ end
 gem "letter_opener"
 gem 'sidekiq_alive'
 gem 'sidekiq', '~> 6.1.0'
+gem 'sidekiq-cron'
+gem 'redis', '~> 4.2.0'
 
 gem "yabeda-prometheus"    # Base
 gem "yabeda-rails"         #API endpoint monitoring

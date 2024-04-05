@@ -462,6 +462,8 @@ GEM
     docile (1.4.0)
     dry-initializer (3.0.4)
     erubi (1.12.0)
+    et-orbi (1.2.11)
+      tzinfo
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.2.0)
@@ -485,6 +487,9 @@ GEM
     formtastic (4.0.0)
       actionpack (>= 5.2.0)
     formtastic_i18n (0.7.0)
+    fugit (1.10.1)
+      et-orbi (~> 1, >= 1.2.7)
+      raabro (~> 1.4)
     geocoder (1.8.2)
     globalid (1.1.0)
       activesupport (>= 5.0)
@@ -599,6 +604,7 @@ GEM
       nio4r (~> 2.0)
     pundit (2.3.1)
       activesupport (>= 3.0.0)
+    raabro (1.4.0)
     racc (1.7.1)
     rack (2.2.8)
     rack-cors (2.0.1)
@@ -638,10 +644,7 @@ GEM
       activesupport (>= 5.2.4)
       i18n
     redcarpet (3.6.0)
-    redis (5.0.7)
-      redis-client (>= 0.9.0)
-    redis-client (0.17.0)
-      connection_pool
+    redis (4.2.5)
     regexp_parser (2.8.2)
     request_store (1.5.1)
       rack (>= 1.4)
@@ -723,6 +726,9 @@ GEM
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
+    sidekiq-cron (1.9.1)
+      fugit (~> 1.8)
+      sidekiq (>= 4.2.1)
     sidekiq_alive (2.1.7)
       sidekiq
       webrick
@@ -871,6 +877,7 @@ DEPENDENCIES
   pg (>= 0.18, < 2.0)
   puma (~> 4.1)
   rack-cors
+  redis (~> 4.2.0)
   rspec-rails (= 5.1.2)
   rspec-sidekiq
   rspec-sonarqube-formatter (= 1.5.0)
@@ -879,6 +886,7 @@ DEPENDENCIES
   shoulda-callback-matchers
   shoulda-matchers
   sidekiq (~> 6.1.0)
+  sidekiq-cron
   sidekiq_alive
   simplecov (= 0.17.0)
   tzinfo-data
