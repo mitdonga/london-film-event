@@ -4,7 +4,7 @@ require 'factory_bot'
 
 include Warden::Test::Helpers
 
-RSpec.describe Admin::BespokeInquiriesController, type: :controller do
+RSpec.describe Admin::BespokeEnquiriesController, type: :controller do
   include_context "setup data"
   render_views
   before(:each) do

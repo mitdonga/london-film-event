@@ -1,4 +1,4 @@
-ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Inquiry' do
+ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Enquiry' do
 
     permit_params :id, :first_name, :status, :extra_cost, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry, input_values_attributes: [:id, :cost]
     actions :all, except: [:new]
