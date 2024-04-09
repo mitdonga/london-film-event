@@ -4,8 +4,8 @@ module AccountBlock
         def send_welcome_mail_to_user(user_id)
             account = Account.find user_id
 
-            template = BxBlockEmailNotifications::EmailTemplate.find_by_name("User Account Creation (Mail To User)")
-            return unless template.present? && account.present? && !account.is_admin?
+            # template = BxBlockEmailNotifications::EmailTemplate.find_by_name("User Account Creation (Mail To User)")
+            return unless account.present? && !account.is_admin?
             @user = account
             @manager = account.client_admin
             @booking_link = account.company.meeting_link
