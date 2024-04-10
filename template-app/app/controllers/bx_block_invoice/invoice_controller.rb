@@ -195,6 +195,9 @@ module BxBlockInvoice
         # end
         return render json: {message: "Invalid data entered",errors: errors}, status: :unprocessable_entity
       end
+      if params[:review] == "true" || params[:review] == true
+        return render json: { message: "Success, No Error" }, status: :ok
+      end
       @inquiry.update(status: new_status)
       InquiryMailer.send_inquiry_details_to(@inquiry.id, @inquiry.is_bespoke).deliver_later if new_status == "pending"
       render json: { inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Inquiry successfully #{new_status == "pending" ? 'submitted' : 'draft'}" }, status: :ok

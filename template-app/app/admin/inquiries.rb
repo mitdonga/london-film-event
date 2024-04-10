@@ -1,8 +1,8 @@
-ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Inquiry' do
+ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Enquiry' do
 
     permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry
     actions :all, except: [:new]
-    STATUS = "Inquiry Status"
+    STATUS = "Enquiry Status"
     scope("Inquiry", default: true) { |inquiry| inquiry.includes(:input_values).where("status not in (?)", [0]).order(created_at: :desc, status: :asc) }
   
     index do
