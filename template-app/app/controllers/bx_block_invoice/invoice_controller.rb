@@ -321,6 +321,13 @@ module BxBlockInvoice
           break
         end
       end
+      return error if error.present?
+      start_time = @inquiry.input_values.joins(:input_field).where("input_fields.name ilike ?", "%event start time%").first.user_input.to_time rescue nil
+      end_time = @inquiry.input_values.joins(:input_field).where("input_fields.name ilike ?", "%event end time%").first.user_input.to_time rescue nil
+      duration = @inquiry.sub_category.duration rescue nil
+      if start_time.present? && end_time.present? && duration.present? && duration > 0 && ((end_time - start_time)/3600 > duration)
+        error = "Event duration must be less than #{duration} hours"
+      end
       error
     end
 
