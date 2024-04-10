@@ -59,8 +59,12 @@
     </div>
     <div style="border-top: 3px solid black; padding: 20px; background-color: #d9d9d9; text-align: center;">
       <div style="display: inline-block;">
-        <%= image_tag attachments["linkedicon.png"].url, style: "height: 20px; border: 2px solid black;" %>
-        <%= image_tag attachments["instagramicon.png"].url, style: "height: 20px; border: 2px solid black;" %>
+        <a href="https://www.linkedin.com" style="text-decoration: none">
+          <%= image_tag attachments["linkedicon.png"].url, style: "height: 20px; border: 2px solid black;" %>
+        </a>
+        <a href="https://www.instagram.com" style="text-decoration: none">
+          <%= image_tag attachments["instagramicon.png"].url, style: "height: 20px; border: 2px solid black;" %>
+        </a>
       </div>
     </div>
   </div>
