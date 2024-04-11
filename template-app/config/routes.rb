@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     post "login", to: "logins#create"
     delete "logout", to: "logins#destroy"
   end
-
+  root to: redirect("/admin")
   namespace :account_block do
     resources :accounts do
       collection do

@@ -17,6 +17,7 @@ module BxBlockCategories
     has_many :accounts, class_name: "AccountBlock::Account", through: :user_sub_categories,
       join_table: "user_sub_categoeries"
 
+    has_many :inquiries, class_name: "BxBlockInvoice::Inquiry", foreign_key: "sub_category_id", dependent: :destroy
     has_many :company_sub_categories, class_name: "BxBlockInvoice::CompanySubCategory", foreign_key: "sub_category_id", dependent: :destroy
     has_many :companies, through: :company_sub_categories
     
