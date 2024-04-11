@@ -1,13 +1,57 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <style>
-      /* Email styles need to be inline */
-    </style>
-  </head>
 
-  <body>
-  <%= yield %>
-  </body>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Template</title>
+<style>
+  .main-wrapper {
+    width: 90%;
+    height: auto;
+    border: 3px solid black;
+    margin: auto;
+  }
+  @media (max-width: 350px) {
+    .main-wrapper {
+      width: 98%;
+      height: auto;
+      border: 3px solid black;
+    }
+  }
+  .tag1 {
+    @media (max-width: 350px) {
+      text-align: center;
+    }
+  }
+  .tag2 {
+    @media (max-width: 350px) {
+      text-align: center;
+      font-size: 15px;
+    }
+  }
+</style>
+</head>
+<body>
+  <div style= "width : 100%;">
+  <div class="main-wrapper">
+    <div style="background-color: #594FF5; width: 100%; border-bottom: 3px solid black; box-sizing: border-box; padding: 10px;">
+      <%= image_tag attachments["logo.png"].url, style: "height: 52px;" %>
+    </div>
+    <div style="padding: 20px; align-items: center;">
+      <%= yield %>
+    </div>
+    <div style="border-top: 3px solid black; padding: 20px; background-color: #d9d9d9; text-align: center;">
+      <div style="display: inline-block;">
+        <a href="https://www.linkedin.com" style="text-decoration: none">
+          <%= image_tag attachments["linkedicon.png"].url, style: "height: 20px; border: 2px solid black;" %>
+        </a>
+        <a href="https://www.instagram.com" style="text-decoration: none">
+          <%= image_tag attachments["instagramicon.png"].url, style: "height: 20px; border: 2px solid black;" %>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
 </html>

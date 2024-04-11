@@ -1,29 +1,32 @@
 module AccountBlock
     class ManageAccountMailer < ApplicationMailer
+        before_action :attach_logos
 
         def send_welcome_mail_to_user(user_id)
             account = Account.find user_id
 
-            template = BxBlockEmailNotifications::EmailTemplate.find_by_name("User Account Creation (Mail To User)")
+            template = BxBlockEmailNotifications::EmailTemplate.where("name ilike ?", "%User Account Creation (Mail To User)%").first
             return unless template.present? && account.present? && !account.is_admin?
-            @user = account
-            @manager = account.client_admin
-            @booking_link = account.company.meeting_link
-            # account_manager_first_name = account.client_admin.full_name rescue ""
-            # account_manager_email = account.client_admin.email rescue ""
-            # meeting_link = account.company.meeting_link
-            # website_url = Rails.application.config.frontend_host + "/LandingPage"
+            # @user = account
+            # @manager = account.client_admin
+            # @booking_link = account.company.meeting_link
+            account_manager_first_name = account.client_admin.full_name rescue ""
+            account_manager_email = account.client_admin.email rescue ""
+            meeting_link = account.company.meeting_link
+            website_url = Rails.application.config.frontend_host + "/LandingPage"
+            book_call_button = "<div class='call-to-action'><div class='overlay'></div><a class='button' href='#{meeting_link}'>Book a call</div></div>"
 
-            # email_body = template.body
-            #               .gsub('{first_name}', account.first_name.to_s)
-            #               .gsub('{last_name}', account.last_name.to_s)
-            #               .gsub('{account_manager_first_name}', account_manager_first_name.to_s)
-            #               .gsub('{account_manager_email}', account_manager_email.to_s)
-            #               .gsub('{email}', account.email.to_s)
-            #               .gsub('{meeting_link}', meeting_link.to_s)
-            #               .gsub('{website_url}', website_url.to_s)
-            #               .gsub('{user_name}', account.full_name.to_s)
-            # email_body = remove_water_mark(email_body)
+            email_body = template.body
+                          .gsub('{first_name}', account.first_name.to_s)
+                          .gsub('{last_name}', account.last_name.to_s)
+                          .gsub('{account_manager_first_name}', account_manager_first_name.to_s)
+                          .gsub('{account_manager_email}', account_manager_email.to_s)
+                          .gsub('{email}', account.email.to_s)
+                          .gsub('{meeting_link}', meeting_link.to_s)
+                          .gsub('{website_url}', website_url.to_s)
+                          .gsub('{user_name}', account.full_name.to_s)
+                          .gsub('{book_call_button}', book_call_button)
+            @email_body = remove_water_mark(email_body)
             to_emails = account.email
             # mail(
             #   to: to_emails,
@@ -32,11 +35,8 @@ module AccountBlock
             #   body: email_body,
             #   content_type: "text/html"
             # )
-            attachments.inline['logo.png'] = File.read(Rails.root.join("public", "logo.png"))
-            attachments.inline['linkedicon.png'] = File.read(Rails.root.join("public", "linkedicon.png"))
-            attachments.inline['instagramicon.png'] = File.read(Rails.root.join("public", "instagramicon.png"))
-            mail(to: to_emails, from: "builder.bx_dev@engineer.ai", subject: "Welcome To London Filmed") do |format|
-              format.html { render "account_block/email_validation_mailer/welcome_user" }
+            mail(to: to_emails, subject: "Welcome To London Filmed") do |format|
+              format.html { render "account_block/email_template" }
             end
         end
 
