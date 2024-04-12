@@ -39,7 +39,6 @@ module AccountBlock
             #   content_type: "text/html"
             # )
             mail(to: to_emails, subject: "Welcome To London Filmed") do |format|
-              # format.html { render "account_block/welcome_user" }
               format.html { render "account_block/email_template" }
             end
         end
