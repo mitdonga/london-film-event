@@ -14,7 +14,10 @@ module AccountBlock
             account_manager_email = account.client_admin.email rescue ""
             meeting_link = account.company.meeting_link
             website_url = Rails.application.config.frontend_host + "/LandingPage"
-            book_call_button = "<div class='call-to-action'><div class='overlay'></div><a class='button' href='#{meeting_link}'>Book a call</div></div>"
+            book_call_button = "<div style=\"position: relative; text-align: center;\">
+                <div style=\"position: absolute; top: 0.5px; left: 5px; width: 100%; height: 200%; background-color: black; z-index: 0;\"></div>
+                <a href=\"#{meeting_link}\" style=\"width: 170px; border: 3px solid black; padding: 10px; text-align: center; background-color: #ffc34d; position: relative; z-index: 1; text-decoration: none;\">Book a call</a>
+              </div>"
 
             email_body = template.body
                           .gsub('{first_name}', account.first_name.to_s)
@@ -36,6 +39,7 @@ module AccountBlock
             #   content_type: "text/html"
             # )
             mail(to: to_emails, subject: "Welcome To London Filmed") do |format|
+              # format.html { render "account_block/welcome_user" }
               format.html { render "account_block/email_template" }
             end
         end
@@ -46,15 +50,18 @@ module AccountBlock
             template = BxBlockEmailNotifications::EmailTemplate.find_by_name("User Account Creation (Mail To LF Admin)")
             return unless template.present? && account.present?
             email_body = template.body.gsub('{first_name}', account.first_name).gsub('{last_name}', account.last_name).gsub('{email}', account.email).gsub('{full_phone_number}', account.full_phone_number)
-            email_body = remove_water_mark(email_body)
+            @email_body = remove_water_mark(email_body)
             to_emails = AdminUser.all.pluck(:email)
-            mail(
-              to: to_emails.presence || "testadmin@yopmail.com",
-              from: "builder.bx_dev@engineer.ai",
-              subject: "New User Added",
-              body: email_body,
-              content_type: "text/html"
-            )
+            # mail(
+            #   to: to_emails.presence || "testadmin@yopmail.com",
+            #   from: "builder.bx_dev@engineer.ai",
+            #   subject: "New User Added",
+            #   body: email_body,
+            #   content_type: "text/html"
+            # )
+            mail(to: to_emails.presence || "testadmin@yopmail.com", subject: "New User Added") do |format|
+              format.html { render "account_block/email_template" }
+            end
         end
     end
 end
