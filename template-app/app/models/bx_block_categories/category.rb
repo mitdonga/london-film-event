@@ -22,7 +22,7 @@ module BxBlockCategories
 
     # has_many :contents, class_name: "BxBlockContentmanagement::Content", dependent: :destroy
     has_many :ctas, class_name: "BxBlockCategories::Cta", dependent: :nullify
-
+    has_many :inquiries, class_name: "BxBlockInvoice::Inquiry", foreign_key: "service_id", dependent: :destroy
     has_many :user_categories, class_name: "BxBlockCategories::UserCategory",
       join_table: "user_categoeries", dependent: :destroy
     has_many :accounts, class_name: "AccountBlock::Account", through: :user_categories,

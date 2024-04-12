@@ -18,6 +18,7 @@ module AccountBlock
     has_one :blacklist_user, class_name: "AccountBlock::BlackListUser", dependent: :destroy
     belongs_to :company, class_name: "BxBlockInvoice::Company"
     after_save :set_black_listed_user
+    before_save :send_welcome_user_email, if: :activated_changed?
 
     has_many :notifications, class_name: "BxBlockNotifications::Notification"
     has_many :email_notifications, through: :notifications
@@ -84,9 +85,12 @@ module AccountBlock
       EmailValidationMailer
             .with(account: self, host: "#{Rails.application.config.base_url}")
             .activation_email.deliver_later
-      ManageAccountMailer.send_welcome_mail_to_user(self.id).deliver_later
       ManageAccountMailer.send_welcome_mail_to_admins(self.id).deliver_later
     end 
+
+    def send_welcome_user_email
+      ManageAccountMailer.send_welcome_mail_to_user(self.id).deliver_later if activated
+    end
 
     def parse_full_phone_number
       # phone = Phonelib.parse("#{self.full_phone_number}")

@@ -11,13 +11,11 @@ module BxBlockInvoice
         # before_update :notify_user_after_approval, if: :status_changed?
         before_update :update_status_timestamp, if: :status_changed?
 
-        belongs_to :user, class_name: "AccountBlock::Account"
         belongs_to :rejected_by_lf, class_name: "AdminUser", optional: true
         belongs_to :rejected_by_ca, class_name: "AccountBlock::Account", optional: true
         belongs_to :user, class_name: "AccountBlock::Account"
         belongs_to :approved_by_client_admin, class_name: "AccountBlock::Account", optional: true
         belongs_to :approved_by_lf_admin, class_name: "AdminUser", optional: true
-        belongs_to :user, class_name: "AccountBlock::Account"
         belongs_to :service, class_name: "BxBlockCategories::Service"
         belongs_to :sub_category, class_name: "BxBlockCategories::SubCategory"
         
@@ -113,7 +111,6 @@ module BxBlockInvoice
         end
 
         def get_prices
-            puts "================ INQUIRY ID: #{self.id}, Base Service: #{self.base_service&.id}, #{self.base_service&.input_values&.size} ================="
             additional_services = self.extra_services
             additional_addons_cost, additional_services_cost = 0.0, 0.0
             additional_services.each do |as|
