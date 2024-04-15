@@ -1,5 +1,6 @@
 module BxBlockInvoice
     class InquiryMailer < ApplicationMailer
+        before_action :attach_logos
         def send_inquiry_details_to(inquiry_id, is_bespoke = false)
             
             inquiry = BxBlockInvoice::Inquiry.find inquiry_id
@@ -25,16 +26,19 @@ module BxBlockInvoice
                           .gsub('{company_name}', company_name.to_s)
                           .gsub('{meeting_link}', meeting_link.to_s)
                           .gsub('{ac_quote_link}', quote_link.to_s)
-            email_body = remove_water_mark(email_body)
+            @email_body = remove_water_mark(email_body)
             to_emails = is_bespoke ? AdminUser.all.pluck(:email) : user.company.company_admins.pluck(:email)
 
-            mail(
-              to: to_emails,
-              from: "builder.bx_dev@engineer.ai",
-              subject: email_subject,
-              body: email_body,
-              content_type: "text/html"
-            )
+            # mail(
+            #   to: to_emails,
+            #   from: "builder.bx_dev@engineer.ai",
+            #   subject: email_subject,
+            #   body: email_body,
+            #   content_type: "text/html"
+            # )
+            mail(to: to_emails, subject: email_subject) do |format|
+              format.html { render "account_block/email_template" }
+            end
         end
         
         def inquiry_approved(inquiry_id)
@@ -59,14 +63,17 @@ module BxBlockInvoice
                           .gsub('{meeting_link}', meeting_link.to_s)
                           .gsub('{account_manager_name}', account_manager_name.to_s)
                           .gsub('{approved_by_admin_name}', approved_by_admin_name)
-
-            mail(
-              to: user.email,
-              from: "builder.bx_dev@engineer.ai",
-              subject: "Admin Approved Your Enquiry",
-              body: email_body,
-              content_type: "text/html"
-            )
+            @email_body = remove_water_mark(email_body)
+            # mail(
+            #   to: user.email,
+            #   from: "builder.bx_dev@engineer.ai",
+            #   subject: "Admin Approved Your Enquiry",
+            #   body: email_body,
+            #   content_type: "text/html"
+            # )
+            mail(to: user.email, subject: "Admin Approved Your Enquiry") do |format|
+              format.html { render "account_block/email_template" }
+            end
         end
 
         def inquiry_approved_mail_to_admins(inquiry_id)
@@ -85,15 +92,18 @@ module BxBlockInvoice
                         .gsub('{sub_category_name}', inquiry.sub_category.name)
                         .gsub('{event_date}', inquiry.event_date.to_s)
                         .gsub('{approved_by_admin_name}', approved_by_admin_name)
-
+          @email_body = remove_water_mark(email_body)
           to_emails = AdminUser.all.pluck(:email) + user.company.company_admins.pluck(:email)
-          mail(
-            to: to_emails,
-            from: "builder.bx_dev@engineer.ai",
-            subject: "Enquiry Approved",
-            body: email_body,
-            content_type: "text/html"
-          )
+          # mail(
+          #   to: to_emails,
+          #   from: "builder.bx_dev@engineer.ai",
+          #   subject: "Enquiry Approved",
+          #   body: email_body,
+          #   content_type: "text/html"
+          # )
+          mail(to: to_emails, subject: "Enquiry Approved") do |format|
+            format.html { render "account_block/email_template" }
+          end
         end
 
         def inquiry_rejected(inquiry_id)
@@ -111,14 +121,17 @@ module BxBlockInvoice
                         .gsub('{sub_category_name}', inquiry.sub_category.name)
                         .gsub('{event_date}', inquiry.event_date.to_s)
                         .gsub('{rejected_by_admin_name}', rejected_by_admin || "")
-
-          mail(
-            to: user.email,
-            from: "builder.bx_dev@engineer.ai",
-            subject: "Enquiry Rejected By Admin",
-            body: email_body,
-            content_type: "text/html"
-          )
+          @email_body = remove_water_mark(email_body)
+          # mail(
+          #   to: user.email,
+          #   from: "builder.bx_dev@engineer.ai",
+          #   subject: "Enquiry Rejected By Admin",
+          #   body: email_body,
+          #   content_type: "text/html"
+          # )
+          mail(to: user.email, subject: "Enquiry Rejected By Admin") do |format|
+            format.html { render "account_block/email_template" }
+          end
         end
     end
 end

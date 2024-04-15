@@ -1,5 +1,6 @@
 module AccountBlock
   class EmailValidationMailer < ApplicationMailer
+    before_action :attach_logos
     def activation_email
       @account = params[:account]
       @host = Rails.env.development? ? "http://localhost:3000" : params[:host]
@@ -11,7 +12,6 @@ module AccountBlock
 
       mail(
         to: @account.email,
-        from: "builder.bx_dev@engineer.ai",
         subject: "Account activation"
       ) do |format|
         format.html { render "activation_email" }
@@ -36,14 +36,17 @@ module AccountBlock
                     .gsub('{password_reset_button}', button_html)
                     .gsub('{password_reset_url}', @url)
 
-      email_body = remove_water_mark(email_body)
-      mail(
-        to: @account.email,
-        from: "builder.bx_dev@engineer.ai",
-        subject: "Reset Password",
-        body: email_body,
-        content_type: "text/html"
-      )
+      @email_body = remove_water_mark(email_body)
+      # mail(
+      #   to: @account.email,
+      #   from: "builder.bx_dev@engineer.ai",
+      #   subject: "Reset Password",
+      #   body: email_body,
+      #   content_type: "text/html"
+      # )
+      mail(to: @account.email, subject: "Reset Password") do |format|
+        format.html { render "account_block/email_template" }
+      end
     end
 
     private
