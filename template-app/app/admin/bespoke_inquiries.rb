@@ -1,5 +1,5 @@
 ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Bespoke Enquiry' do
-
+    menu parent: "Enquiry Management"
     permit_params :id, :first_name, :status, :extra_cost, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry, input_values_attributes: [:id, :cost]
     actions :all, except: [:new]
     scope("Inquiry", default: true) { |inquiry| inquiry.includes(:user, input_values: [additional_service: :service]).where("status not in (?) and is_bespoke = true", [0]).order(created_at: :desc, status: :asc) }

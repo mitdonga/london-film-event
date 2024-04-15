@@ -7,6 +7,7 @@ module AccountBlock
     validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: "Please enter valid email" }, uniqueness: { case_sensitive: false, message: "Account already exist with this email" }
     validates :account_type, :first_name, :last_name, :full_phone_number, :phone_number, :company_id, presence: true
     validates :phone_number, :country_code, presence: true, on: [:create]
+    validates :phone_number, length: {is: 10, message: "Must be 10 digits"}
 
     has_secure_password
     has_one_attached :profile_picture

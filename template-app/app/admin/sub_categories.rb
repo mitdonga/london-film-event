@@ -1,7 +1,7 @@
 ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
     NO_IMAGE = "No Image"
     permit_params :name, :parent_id, :start_from, :description, :duration, :image, :color_theme, features_attributes: [:id, :name, :_destroy], default_coverages_attributes: [:id, :title, :category, :rank, :_destroy]
-
+    menu parent: "Content Management"
     index do
       selectable_column
       id_column

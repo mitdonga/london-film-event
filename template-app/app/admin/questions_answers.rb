@@ -1,5 +1,5 @@
 ActiveAdmin.register BxBlockHelpCentre::QuestionAnswer, as: 'Faq' do
-    menu label: "Manage Faqs"
+    menu label: "Manage Faqs", parent: "Content Management"
     permit_params :id, :question, :answer, :question_sub_type_id
 
     index do
