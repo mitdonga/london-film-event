@@ -10,9 +10,13 @@ module BxBlockCategories
         has_many :additional_services, class_name: "BxBlockCategories::AdditionalService"
 
         def add_company_categories
-            company_ids = BxBlockInvoice::Company.ids
-            data = company_ids.map {|id| {company_id: id, category_id: self.id}}
-            BxBlockInvoice::CompanyCategory.create!(data)
+            if self.company_id.present?
+                BxBlockInvoice::CompanyCategory.create!({company_id: self.company_id, category_id: self.id})
+            else
+                company_ids = BxBlockInvoice::Company.ids
+                data = company_ids.map {|id| {company_id: id, category_id: self.id}}
+                BxBlockInvoice::CompanyCategory.create!(data)
+            end
         end
 
     end

@@ -35,9 +35,13 @@ module BxBlockCategories
     private
 
     def add_company_sub_categories
-      company_ids = BxBlockInvoice::Company.ids
-      data = company_ids.map {|c_id| { company_id: c_id, sub_category_id: self.id, price: self.start_from }}
-      BxBlockInvoice::CompanySubCategory.create!(data)
+      if self.parent.company_id.present?
+        BxBlockInvoice::CompanySubCategory.create!({ company_id: self.parent.company_id, sub_category_id: self.id, price: self.start_from })
+      else
+        company_ids = BxBlockInvoice::Company.ids
+        data = company_ids.map {|c_id| { company_id: c_id, sub_category_id: self.id, price: self.start_from }}
+        BxBlockInvoice::CompanySubCategory.create!(data)
+      end
     end
 
     def check_parent_categories

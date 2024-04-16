@@ -5,7 +5,9 @@ ActiveAdmin.register BxBlockCategories::SubCategory, as: "Sub Category" do
     index do
       selectable_column
       id_column
-      column :name
+      column :name do |sc|
+        "#{sc.name} (#{sc.parent&.name})"
+      end
       column :start_from
       column :duration
       column :parent

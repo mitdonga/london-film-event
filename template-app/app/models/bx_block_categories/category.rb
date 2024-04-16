@@ -31,6 +31,8 @@ module BxBlockCategories
     has_many :company_categories, class_name: "BxBlockInvoice::CompanyCategory", foreign_key: "category_id", dependent: :destroy
     has_many :companies, through: :company_categories
 
+    belongs_to :company, class_name: "BxBlockInvoice::Company", foreign_key: "company_id", optional: true
+
     has_many :input_fields, as: :inputable
     accepts_nested_attributes_for :input_fields, allow_destroy: true
 
