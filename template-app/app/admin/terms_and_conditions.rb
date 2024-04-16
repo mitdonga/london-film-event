@@ -1,5 +1,5 @@
 ActiveAdmin.register BxBlockTermsAndConditions::TermsAndCondition, as: "Terms And Conditions" do
-  
+    menu parent: "Content Management"
     permit_params :description, :for_whom
     
       form do |f|

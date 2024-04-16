@@ -21,7 +21,8 @@ module BxBlockInvoice
         
         has_many :additional_services, class_name: "BxBlockCategories::AdditionalService", dependent: :destroy
         has_many :input_values, through: :additional_services, class_name: "BxBlockCategories::InputValue"
-        
+        # has_many :non_required_input_values, -> {joins(:input_field).includes(:input_field).where("input_fields.section != ?", 0)}, through: :additional_services, class_name: "BxBlockCategories::InputValue"
+
         has_one_attached :attachment
         has_many_attached :files
 
@@ -47,6 +48,10 @@ module BxBlockInvoice
         def required_input_values
             input_values.joins(:input_field).includes(:input_field).where("input_fields.section = ?", 0) #required_information
         end
+
+        # def non_required_input_values
+        #     input_values.joins(:input_field).includes(:input_field).where("input_fields.section != ?", 0) #required_information
+        # end
 
         def base_service
             additional_services.find_by(service_id: service.id)

@@ -1,5 +1,5 @@
 ActiveAdmin.register BxBlockInvoice::Inquiry, as: 'Pending Reviews' do
-
+    menu parent: "Enquiry Management"
     permit_params :id, :first_name, :status, :status_description, :last_name, :user_type, :email, :service_id, :sub_category, :inquiry
     actions :all, except: [:new]
     STATUS = "Enquiry Status"

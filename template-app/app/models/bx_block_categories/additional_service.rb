@@ -9,6 +9,7 @@ module BxBlockCategories
         belongs_to :inquiry, class_name: "BxBlockInvoice::Inquiry"
 
         has_many :input_values, class_name: "BxBlockCategories::InputValue", dependent: :destroy
+        # has_many :non_required_input_values, class_name: "BxBlockCategories::InputValue"
 
         validates :service_id, uniqueness: { scope: :inquiry_id, message: "This service is already attached with this inquiry"}
 

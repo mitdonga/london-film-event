@@ -1,5 +1,5 @@
 ActiveAdmin.register BxBlockEmailNotifications::EmailTemplate, as: 'Email Template' do
-
+    menu parent: "Content Management"
     member_action :upload, method: :post do
         success = resource.images.attach(params[:file_upload])
         result = success ? { link: url_for(resource.images.last) } : {}

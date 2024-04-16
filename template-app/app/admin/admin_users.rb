@@ -19,7 +19,7 @@ end
 unless AdminUsers::Load.is_loaded_from_gem
   ActiveAdmin.register AdminUser, as: "LF Admin" do
     permit_params :email, :password, :password_confirmation
-    menu priority: 1, label: "LF Admins"
+    menu priority: 2, label: "LF Admins", parent: "User Management"
     index title: "LF Admins"
     show title: "LF Admin Details"
 

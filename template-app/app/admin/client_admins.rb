@@ -1,5 +1,5 @@
 ActiveAdmin.register AccountBlock::ClientAdmin, as: "Client Admin" do
-  menu priority: 3
+  menu priority: 3, parent: "User Management"
 
   filter :first_name
   filter :last_name
