@@ -43,6 +43,10 @@ module BxBlockCategories
     enum catalogue_type: %w[all_packages bespoke_packages]
     enum status: %w[unarchived archived]
 
+    def is_custom_service?
+      company.present?
+    end
+
     private
 
     def add_basic_input_fields

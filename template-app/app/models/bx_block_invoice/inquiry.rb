@@ -176,7 +176,7 @@ module BxBlockInvoice
 
         def check_for_bespoke
             subc = sub_category.name.downcase.include?("bespoke") rescue nil
-            if subc.present?
+            if subc.present? || self.service.is_custom_service?
                 self.is_bespoke, self.lf_admin_approval_required = true, true
             elsif service.name.downcase.include?("bespoke") && subc.nil?
                 subc = service.sub_categories.find_by('name ilike ?', '%bespoke%') rescue nil

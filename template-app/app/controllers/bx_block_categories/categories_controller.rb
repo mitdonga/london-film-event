@@ -40,7 +40,13 @@ module BxBlockCategories
     end
 
     def index
-      services = params[:no_bespoke] == "true" || params[:no_bespoke] == true ? @current_user.available_services.where.not("categories.name ilike ?", "%bespoke%") : params[:only_bespoke] == "true" || params[:only_bespoke] == true ? @current_user.available_services.where("categories.name ilike ?", "%bespoke%") : @current_user.available_services
+      if params[:no_bespoke] == "true" || params[:no_bespoke] == true 
+        services = @current_user.available_services.where("categories.name not ilike ? OR categories.company_id IS NULL", "%bespoke%") 
+      elsif params[:only_bespoke] == "true" || params[:only_bespoke] == true
+        services = @current_user.available_services.where("categories.name ilike ? OR categories.company_id = ?", "%bespoke%", @current_user.company_id)
+      else
+        services = @current_user.available_services
+      end
       if services.size > 0
         render json: BxBlockCategories::CategorySerializer.new(services, {params: {account: @current_user}, meta: { message: "Available services: #{services.size}"}}).serializable_hash, status: :ok
       else

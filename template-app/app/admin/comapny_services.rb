@@ -10,6 +10,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Company Service" do
       selectable_column
       id_column
       column :name
+      column :company
       column :image do |c|
         c.image.present? ?
         image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : NO_IMAGE
@@ -70,6 +71,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Company Service" do
       attributes_table do
         row :name
         row :description
+        row :company
         row :image do |c|
           c.image.present? ?
           image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.image, only_path: true), width: 100, controls: true) : NO_IMAGE
