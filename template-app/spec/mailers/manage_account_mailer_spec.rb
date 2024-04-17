@@ -10,7 +10,7 @@ RSpec.describe AccountBlock::ManageAccountMailer, type: :mailer do
     describe '#send_welcome_mail_to_user' do
         let(:mail) { described_class.send_welcome_mail_to_user(@client_user_1.id).deliver_now }
         it SUBJECT do
-            expect(mail.subject).to eq('Welcome To London Filmed')
+            expect(mail.subject).to eq('Welcome to the London Filmed Booking Platform')
         end
         
         it RENDER_R_EMAIL do
@@ -25,7 +25,7 @@ RSpec.describe AccountBlock::ManageAccountMailer, type: :mailer do
     describe '#send_welcome_mail_to_admins' do
         let(:mail) { described_class.send_welcome_mail_to_admins(@client_admin_1.id).deliver_now }
         it SUBJECT do
-            expect(mail.subject).to eq('New User Added')
+            expect(mail.subject).to eq('LF Platform: New Account Created')
         end
         
         it RENDER_R_EMAIL do
