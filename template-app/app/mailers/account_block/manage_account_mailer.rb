@@ -38,17 +38,17 @@ module AccountBlock
             #   body: email_body,
             #   content_type: "text/html"
             # )
-            mail(to: to_emails, subject: "Welcome To London Filmed") do |format|
+            mail(to: to_emails, subject: "Welcome to the London Filmed Booking Platform") do |format|
               format.html { render "account_block/email_template" }
             end
         end
 
         def send_welcome_mail_to_admins(user_id)
             account = Account.find user_id
-
+            company = account.company
             template = BxBlockEmailNotifications::EmailTemplate.find_by_name("User Account Creation (Mail To LF Admin)")
             return unless template.present? && account.present?
-            email_body = template.body.gsub('{first_name}', account.first_name).gsub('{last_name}', account.last_name).gsub('{email}', account.email).gsub('{full_phone_number}', account.full_phone_number)
+            email_body = template.body.gsub('{first_name}', account.first_name).gsub('{last_name}', account.last_name).gsub('{email}', account.email).gsub('{full_phone_number}', account.full_phone_number).gsub('{company_name}', company.name)
             @email_body = remove_water_mark(email_body)
             to_emails = AdminUser.all.pluck(:email)
             # mail(
@@ -58,7 +58,7 @@ module AccountBlock
             #   body: email_body,
             #   content_type: "text/html"
             # )
-            mail(to: to_emails.presence || "testadmin@yopmail.com", subject: "New User Added") do |format|
+            mail(to: to_emails.presence || "testadmin@yopmail.com", subject: "LF Platform: New Account Created") do |format|
               format.html { render "account_block/email_template" }
             end
         end
