@@ -1,4 +1,4 @@
-ActiveAdmin.register BxBlockCategories::Service, as: "Company Service" do
+ActiveAdmin.register BxBlockCategories::Service, as: "Bespoke Service" do
     NO_IMAGE = "No Image"
     NO_FILE  = "No File"
     scope("Service", default: true) { |service| service.where.not(company_id: nil).order(created_at: :desc) }
@@ -23,8 +23,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Company Service" do
   
     form do |f|
       f.inputs do
-        f.input :name
-        f.input :description, as: :text, input_html: { rows: 10 }
+        f.input :name; f.input :description, as: :text, input_html: { rows: 10 }
         f.input :image, as: :file, hint: f.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(f.object.image, only_path: true), width: 200, controls: true) : NO_IMAGE
         f.input :company_id, as: :select, collection: BxBlockInvoice::Company.all.map {|a| [a.name, a.id]}
         if f.object.persisted?
@@ -36,14 +35,11 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Company Service" do
                     allow_destroy: true,
                     new_record: true,
                     class: 'input_fields_container' do |s|       
-                  s.input :name
-                  s.input :field_type
-                  s.input :section
+                  s.input :name; s.input :field_type; s.input :section
                   s.input :options, placeholder: "Enter comma (,) separated options"
                   s.input :values, placeholder: "Enter comma (,) separated values"
                   s.input :multiplier, placeholder: "Enter comma (,) separated multiplier"
-                  s.input :default_value
-                  s.input :note
+                  s.input :default_value; s.input :note
                 end
               end
             end
@@ -54,9 +50,7 @@ ActiveAdmin.register BxBlockCategories::Service, as: "Company Service" do
                     allow_destroy: true,
                     new_record: true,
                     class: 'sub_categories_container' do |s|       
-                  s.input :name
-                  s.input :start_from, label: "Default Price"
-                  s.input :duration
+                  s.input :name; s.input :start_from, label: "Default Price"; s.input :duration
                   s.input :image, as: :file, hint: s.object.image.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(s.object.image, only_path: true), width: 100, controls: true) : NO_IMAGE
                 end
               end
