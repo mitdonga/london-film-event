@@ -1,11 +1,13 @@
 module BxBlockInvoice
     class InquiryMailer < ApplicationMailer
         before_action :attach_logos
-        def send_inquiry_details_to(inquiry_id, is_bespoke = false)
-            
+        def send_inquiry_details_to(inquiry_id, client_admin_id=nil)
             inquiry = BxBlockInvoice::Inquiry.find inquiry_id
+            is_bespoke = inquiry.is_bespoke
+            client_admin = client_admin_id.present? ? AccountBlock::ClientAdmin.find(client_admin_id) : nil
             user = inquiry.user
-            event_name = inquiry.event_name
+            event_name = inquiry.event_name.to_s rescue ""
+            event_date = inquiry.event_date.to_s rescue ""
             company_name = user.company.name
             meeting_link = user.company.meeting_link
             quote_link = Rails.application.config.frontend_host + "/request-quote/#{inquiry.id}"
@@ -15,19 +17,27 @@ module BxBlockInvoice
                       BxBlockEmailNotifications::EmailTemplate.find_by_name("Client User/Admin Submitted Bespoke Request") :
                       BxBlockEmailNotifications::EmailTemplate.find_by_name("Client User Request for Quote (All Packages or Previous Packages)")
             return unless template.present? && inquiry.present?
-            email_subject = is_bespoke ? "User Requested For Bespoke Request" : "User Requested For Quote"
+            email_subject = is_bespoke ? "LF Platform - New Bespoke Package Submission" : "New London Filmed Package Approval Request"
             email_body = template.body
-                          .gsub('{first_name}', user.first_name)
+                          .gsub('{first_name}', user.first_name.to_s)
+                          .gsub('{client_admin_first_name}', client_admin&.first_name.to_s)
                           .gsub('{user_name}', user.full_name)
-                          .gsub('{service_name}', inquiry.service.name)
-                          .gsub('{sub_category_name}', inquiry.sub_category.name)
-                          .gsub('{event_date}', inquiry.event_date.to_s)
+                          .gsub('{service_name}', inquiry.service.name.to_s)
+                          .gsub('{sub_category_name}', inquiry.sub_category.name.to_s)
+                          .gsub('{event_date}', event_date.to_s)
                           .gsub('{event_name}', event_name.to_s)
                           .gsub('{company_name}', company_name.to_s)
                           .gsub('{meeting_link}', meeting_link.to_s)
-                          .gsub('{ac_quote_link}', quote_link.to_s)
+                          .gsub('{quote_link}', quote_link.to_s)
+                          .gsub('{ac_quote_link}', ac_quote_link.to_s)
+                          .gsub('{event_start_time}', inquiry.event_start_time.to_s)
+                          .gsub('{event_end_time}', inquiry.event_end_time.to_s)
+                          .gsub('{event_location}', inquiry.event_location.to_s)
+                          .gsub('{event_budget}', inquiry.event_budget.to_s)
+                          .gsub('{event_days}', inquiry.event_days.to_s)
+
             @email_body = remove_water_mark(email_body)
-            to_emails = is_bespoke ? AdminUser.all.pluck(:email) : user.company.company_admins.pluck(:email)
+            to_emails = is_bespoke ? AdminUser.all.pluck(:email) : client_admin.present? ? client_admin.email : user.company.company_admins.pluck(:email)
 
             # mail(
             #   to: to_emails,
@@ -71,7 +81,7 @@ module BxBlockInvoice
             #   body: email_body,
             #   content_type: "text/html"
             # )
-            mail(to: user.email, subject: "Admin Approved Your Enquiry") do |format|
+            mail(to: user.email, subject: "Your Package Has Been Approved - London Filmed Booking Platform") do |format|
               format.html { render "account_block/email_template" }
             end
         end
