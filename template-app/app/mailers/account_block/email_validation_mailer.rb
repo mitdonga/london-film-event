@@ -44,7 +44,7 @@ module AccountBlock
       #   body: email_body,
       #   content_type: "text/html"
       # )
-      mail(to: @account.email, subject: "Reset Password") do |format|
+      mail(to: @account.email, subject: "Password Reset - London Filmed Booking Platform") do |format|
         format.html { render "account_block/email_template" }
       end
     end

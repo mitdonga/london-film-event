@@ -11,7 +11,7 @@ RSpec.describe BxBlockInvoice::InquiryMailer, type: :mailer do
     describe '#send_inquiry_details_to' do
         let(:mail) { described_class.send_inquiry_details_to(@inquiry_2.id).deliver_now }
         it SUBJECT do
-            expect(mail.subject).to eq('User Requested For Quote')
+            expect(mail.subject).to eq('New London Filmed Package Approval Request')
         end
         
         it RENDER_R_EMAIL do
@@ -26,7 +26,7 @@ RSpec.describe BxBlockInvoice::InquiryMailer, type: :mailer do
     describe '#inquiry_approved' do
         let(:mail) { described_class.inquiry_approved(@inquiry_4.id).deliver_now }
         it SUBJECT do
-            expect(mail.subject).to eq('Admin Approved Your Enquiry')
+            expect(mail.subject).to eq('Your Package Has Been Approved - London Filmed Booking Platform')
         end
         
         it RENDER_R_EMAIL do

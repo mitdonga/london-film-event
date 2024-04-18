@@ -199,7 +199,9 @@ module BxBlockInvoice
         return render json: { message: "Success, No Error" }, status: :ok
       end
       @inquiry.update(status: new_status)
-      InquiryMailer.send_inquiry_details_to(@inquiry.id, @inquiry.is_bespoke).deliver_later if new_status == "pending"
+      if new_status == "pending"
+        @inquiry.is_bespoke ? InquiryMailer.send_inquiry_details_to(@inquiry.id).deliver_later : @current_user.company.company_admins.each {|ca| InquiryMailer.send_inquiry_details_to(@inquiry.id, ca.id).deliver_later}
+      end
       render json: { inquiry: InquirySerializer.new(@inquiry, {params: {extra: true}}).serializable_hash, message: "Inquiry successfully #{new_status == "pending" ? 'submitted' : 'draft'}" }, status: :ok
     end
 
