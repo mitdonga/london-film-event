@@ -2,6 +2,9 @@ module BxBlockInvoice
   class Company < ApplicationRecord
     self.table_name = :bx_block_invoice_companies
 
+    has_one_attached :logo
+    validates :logo, :content_type => ["jpg", "png", "jpeg", "image/jpg", "image/jpeg", "image/png"]
+
     after_create :add_company_sub_categories
     after_create :add_company_categories
     after_create :create_company_input_fields
