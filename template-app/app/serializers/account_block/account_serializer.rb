@@ -24,6 +24,11 @@ module AccountBlock
       Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(obj.profile_picture, only_path: true) : "No File Attached"
     end
 
+    attribute :company_logo do |obj|
+      obj.company.logo.attached? ?
+      Rails.application.config.base_url + Rails.application.routes.url_helpers.rails_blob_url(obj.company.logo, only_path: true) : nil
+    end
+
     attribute :client_admin do |object|
       ca = object.client_admin_id ? object.client_admin : nil
       ca.present? ? { name: ca.full_name, country_code: ca.country_code, phone_number: ca.phone_number, email: ca.email } : nil
