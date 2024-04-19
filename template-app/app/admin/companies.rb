@@ -1,7 +1,7 @@
 ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
-  permit_params :name, :address, :city, :zip_code, :phone_number, :meeting_link, :email, :company_sub_categories
+  permit_params :name, :address, :city, :zip_code, :phone_number, :logo, :meeting_link, :email, :company_sub_categories
   # permit_params :all
-
+  NO_IMAGE = "No Logo"
   index do
     selectable_column
     id_column
@@ -11,6 +11,10 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
     column :zip_code
     column :phone_number
     column :email
+    column :logo do |c|
+      c.logo.present? ?
+      image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.logo, only_path: true), width: 100, controls: true) : NO_IMAGE
+    end
     actions
   end
 
@@ -23,6 +27,10 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
       row :phone_number
       row :email
       row :meeting_link
+      row :logo do |c|
+        c.logo.present? ?
+        image_tag(Rails.application.routes.url_helpers.rails_blob_url(c.logo, only_path: true), width: 100, controls: true) : NO_IMAGE
+      end
     end
 
     panel "Service Details" do
@@ -69,6 +77,7 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
       f.inputs :phone_number
       f.inputs :email
       f.inputs :meeting_link
+      f.input :logo, as: :file, hint: f.object.logo.present? ? image_tag(Rails.application.routes.url_helpers.rails_blob_url(f.object.logo, only_path: true), width: 200, controls: true) : NO_IMAGE
       if f.object.persisted?
         f.inputs "Manage Sub Category Prices" do
           tabs do
