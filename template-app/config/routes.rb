@@ -103,4 +103,5 @@ Rails.application.routes.draw do
   delete "/delete_inquiry",                 to: "bx_block_invoice/invoice#delete_inquiry"
   delete "/delete_user_inquiries",          to: "bx_block_invoice/invoice#delete_user_inquiries"
   get "/match_company_domain",              to: "account_block/accounts#match_company_domain"
+  post "/create_company_bespoke_service",   to: "bx_block_categories/categories#create_company_bespoke_service", as: "handle_company_bespoke_service"
 end

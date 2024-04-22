@@ -2,6 +2,12 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
   permit_params :name, :address, :city, :zip_code, :phone_number, :meeting_link, :email, :company_sub_categories
   # permit_params :all
 
+  member_action :handle_company_bespoke_service, method: :post do
+    base_service_id = params[:base_service_id]
+    secondary_service_ids = params[secondary_service_ids]
+    return unless base_service_id.present? && secondary_service_ids.present?
+  end
+
   index do
     selectable_column
     id_column
@@ -24,6 +30,8 @@ ActiveAdmin.register BxBlockInvoice::Company, as: "Company" do
       row :email
       row :meeting_link
     end
+
+    render :partial => "admin/bespoke_service", locals: {company: resource}
 
     panel "Service Details" do
       table_for company.company_categories.includes(:category) do
