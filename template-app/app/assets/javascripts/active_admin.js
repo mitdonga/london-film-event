@@ -6,7 +6,7 @@ $(document).ready(function(){function a(a){var c=$("#client_admin_select"),n=$("
 $(document).ready(function() {
   $('#create_bespoke_service_from').on('submit', function(event) {
     event.preventDefault();
-    var formData = $(this).serialize();
+    let formData = $(this).serialize();
     $.ajax({
       url: $(this).attr('action'),
       method: 'POST',
@@ -19,7 +19,7 @@ $(document).ready(function() {
         window.location.href = `/admin/bespoke_services/${response.service_id}`
       },
       error: function(xhr, status, error) {
-        var res = JSON.parse(xhr.responseText)
+        let res = JSON.parse(xhr.responseText)
         console.log(res);
         $("#model-error").html(res.error)
       }
