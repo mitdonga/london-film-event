@@ -7,6 +7,7 @@ module BxBlockCategories
         validates :company_id, uniqueness: { scope: :input_field_id, message: "Input value already attached with this company"}
         validate :check_edge_case
 
+        has_many :input_values, class_name: "BxBlockCategories::InputValue", dependent: :destroy
         belongs_to :company, class_name: "BxBlockInvoice::Company"
         belongs_to :input_field, class_name: "BxBlockCategories::InputField"
 

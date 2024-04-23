@@ -13,13 +13,15 @@ $(document).ready(function() {
       data: formData,
       dataType: 'json', 
       success: function(response) {
-        var res = JSON.parse(response)
-        console.log(res);
-        $(".model-error").html("")
+        console.log("success response", response);
+        $("#model-error").html("")
+        $('#modalDialog').hide()
+        window.location.href = `/admin/bespoke_services/${response.service_id}`
       },
       error: function(xhr, status, error) {
         var res = JSON.parse(xhr.responseText)
-        $(".model-error").html(res.error)
+        console.log(res);
+        $("#model-error").html(res.error)
       }
     });
   })

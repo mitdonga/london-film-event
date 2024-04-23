@@ -1,4 +1,4 @@
-<button id="create_bespoke_service_btn" class:"btn">
+<button id="create_bespoke_service_btn">
     Create Bespoke Service
 </button>
 <div id="modalDialog" class="modal">
@@ -9,7 +9,7 @@
           <span aria-hidden="true">x</span>
         </button>
     </div>
-    <div class="model-error">
+    <div id="model-error">
     </div>
     <%= form_with url: handle_company_bespoke_service_path, method: :get, html: { remote: true, id: "create_bespoke_service_from"} do |f| %>
         <div class="modal-body">
@@ -18,13 +18,13 @@
             <%= f.hidden_field :company_id, value: company.id %>
             <br>
             <%= f.label :base_service_id, "Base Service" %>
-            <%= f.select :base_service_id, BxBlockCategories::Category.all.map{ |p| [p.name, p.id] }, {}, multiple: false, include_blank: false %>
+            <%= f.select :base_service_id, BxBlockCategories::Category.where(company_id: nil).map{ |p| [p.name, p.id] }, {}, multiple: false, include_blank: false %>
             <br>
             <%= f.label :sub_category, "Sub Category" %>
             <%= f.select :sub_category, [["Full Day", "Full day"], ["Half Day", "Half day"], ["Bespoke - Multi Day", "Bespoke"]], {}, multiple: false, include_blank: false %>
             <br>
             <%= f.label :base_service_id, "Secondary Services" %>
-            <%= f.select :secondary_service_ids, BxBlockCategories::Category.all.map{ |p| [p.name, p.id] }, {}, multiple: true %>
+            <%= f.select :secondary_service_ids, BxBlockCategories::Category.where(company_id: nil).map{ |p| [p.name, p.id] }, {}, multiple: true %>
         </div>
         <div class="modal-footer">
             <%= f.submit "Submit", class:"btn btn-primary" %>
@@ -54,7 +54,7 @@
   background-color: rgba(0, 0, 0, 0.275);
 }
 
-.model-error {
+#model-error {
     margin-left: 3%;
     margin-top: 2%;
     color: red;
@@ -175,5 +175,15 @@ input[type="submit"] {
     color: #fff;
     background-color: #6c757d;
     border-color: #6c757d;
+}
+
+#create_bespoke_service_btn {
+    background-color: #5E6469;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 5px 8px;
+    margin-bottom: 20px;
 }
 </style>

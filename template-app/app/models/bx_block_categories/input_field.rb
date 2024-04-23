@@ -22,7 +22,8 @@ module BxBlockCategories
 
         def create_company_input_fields
             if self.section == "addon"
-                BxBlockInvoice::Company.all.each do |company|
+                companies = inputable.is_custom_service? ? [inputable] : BxBlockInvoice::Company.all
+                companies.each do |company|
                     CompanyInputField.create(company_id: company.id, input_field_id: self.id, values: self.values, multiplier: self.multiplier, default_value: self.default_value)
                 end
             end

@@ -33,7 +33,7 @@ module BxBlockCategories
 
     belongs_to :company, class_name: "BxBlockInvoice::Company", foreign_key: "company_id", optional: true
 
-    has_many :input_fields, as: :inputable
+    has_many :input_fields, as: :inputable, dependent: :destroy
     accepts_nested_attributes_for :input_fields, allow_destroy: true
 
     validates :name, uniqueness: true, presence: true
@@ -47,9 +47,30 @@ module BxBlockCategories
       company.present?
     end
 
+    def copy_input_fields(category_id, addons_only=false)
+      return unless company.present?
+      base_category = Category.find(category_id)
+      all_input_fields = base_category.input_fields
+
+      non_addons_input_fields = addons_only ? [] : base_category.input_fields.where.not(section: "addon").order(created_at: :asc)
+      non_addons_input_fields.each do |inf|
+        atr = inf.attributes.slice("name", "field_type", "options", "values", "multiplier", "default_value", "note", "section")
+        self.input_fields.create(atr)
+      end
+
+      cmp_inp_filds = BxBlockCategories::CompanyInputField.includes(:input_field).where(input_field_id: all_input_fields.ids, company_id: company.id).order(created_at: :asc)
+
+      cmp_inp_filds.each do |cif|
+        inf = cif.input_field
+        self.input_fields.create(name: inf.name, field_type: inf.field_type, options: inf.options, note: inf.note, section: inf.section,
+                                values: cif.values, multiplier: cif.multiplier, default_value: cif.default_value) if inf.present?
+      end
+    end
+
     private
 
     def add_basic_input_fields
+      return if self.is_custom_service?
       ["Client Name", "Company Name", "Event Name", "Location / Venue", "Total Event Budget"].each do |name|
         input_fields.create(name: name, field_type: "text", section: "required_information")
       end

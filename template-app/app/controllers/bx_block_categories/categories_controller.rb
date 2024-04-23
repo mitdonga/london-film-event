@@ -149,13 +149,21 @@ module BxBlockCategories
       other_service_ids.delete(base_service_id)
       o_services = Service.where(id: other_service_ids)
       service = Service.new(name: service_name, description: b_service.description, company_id: company_id)
-      if service.save!
+      if service.save
         service.image.attach(b_service.image.blob) if b_service.image.attached?
-        sub_cat = service.sub_categories.new(name: b_sub_cat.name, start_from: b_cmp_sc.price)
+        sub_cat = service.sub_categories.new(name: b_sub_cat.name, duration: b_sub_cat.duration, start_from: b_cmp_sc.price)
         if sub_cat.save
+          sub_cat.image.attach(b_sub_cat.image.blob) if b_sub_cat.image.attached?
           b_sub_cat.features.each {|f| sub_cat.features.create(name: f.name)}
-          b_sub_cat.default_coverages.each {|f| sub_cat.default_coverages.create(title: f.title, category: f.section)}
+          b_sub_cat.default_coverages.each {|f| sub_cat.default_coverages.create(title: f.title, category: f.category)}
         end
+        service.copy_input_fields(b_service.id)
+        o_services.each do |s|
+          service.copy_input_fields(s.id, true)
+        end
+        render json: {message: "Bespoke service successfully created!", service_id: service.id}, status: :ok
+      else
+        return render json: {error: service.errors.full_messages.first}, status: :unprocessable_entity
       end
     end
 
