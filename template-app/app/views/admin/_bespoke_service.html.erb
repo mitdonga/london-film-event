@@ -9,25 +9,27 @@
           <span aria-hidden="true">x</span>
         </button>
     </div>
-    <%= form_tag(handle_company_bespoke_service_path, method: "post") do %>
+    <div class="model-error">
+    </div>
+    <%= form_with url: handle_company_bespoke_service_path, method: :get, html: { remote: true, id: "create_bespoke_service_from"} do |f| %>
         <div class="modal-body">
-            <%= label_tag(:base_service_id, "Service Name") %>
-            <%= text_field_tag :service_name, "", required: true, style: "width: 80%" %>
-            <%#= hidden_field_tag :company_id, '<%= company.id %>' %>
+            <%= f.label :base_service_id, "Service Name" %>
+            <%= f.text_field :service_name, required: true, style: "width: 80%" %>
+            <%= f.hidden_field :company_id, value: company.id %>
             <br>
-            <%= label_tag(:base_service_id, "Base Service") %>
-            <%= select_tag :base_service_id, options_for_select(BxBlockCategories::Category.all.map{ |p| [p.name, p.id] }), multiple: false, include_blank: false %>
+            <%= f.label :base_service_id, "Base Service" %>
+            <%= f.select :base_service_id, BxBlockCategories::Category.all.map{ |p| [p.name, p.id] }, {}, multiple: false, include_blank: false %>
             <br>
-            <%#= label_tag(:sub_category, "Sub Category") %>
-            <%#= select_tag :sub_category, options_for_select([["Half Day, "Full Day, "Multi Day, "bespoke"]]), multiple: false, include_blank: false %>
+            <%= f.label :sub_category, "Sub Category" %>
+            <%= f.select :sub_category, [["Full Day", "Full day"], ["Half Day", "Half day"], ["Bespoke - Multi Day", "Bespoke"]], {}, multiple: false, include_blank: false %>
             <br>
-            <%= label_tag(:base_service_id, "Secondary Services") %>
-            <%= select_tag :secondary_service_ids, options_for_select(BxBlockCategories::Category.all.map{ |p| [p.name, p.id] }), multiple: true, include_blank: false %>
+            <%= f.label :base_service_id, "Secondary Services" %>
+            <%= f.select :secondary_service_ids, BxBlockCategories::Category.all.map{ |p| [p.name, p.id] }, {}, multiple: true %>
         </div>
         <div class="modal-footer">
-            <%= submit_tag("Submit", class:"btn btn-primary") %>
+            <%= f.submit "Submit", class:"btn btn-primary" %>
         </div>
-        <% end %>
+    <% end %>
   </div>
 </div>
 
@@ -43,13 +45,19 @@
 .modal {
   display: none;
   position: fixed;
-  z-index: 1;
+  z-index: 10;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.275);
+}
+
+.model-error {
+    margin-left: 3%;
+    margin-top: 2%;
+    color: red;
 }
 
 .modal .select2-container {

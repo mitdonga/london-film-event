@@ -131,23 +131,25 @@ module BxBlockCategories
       render json: { input_fields: InputFieldSerializer.new(input_fields).serializable_hash, default_coverages: DefaultCoverageSerializer.new(default_coverages).serializable_hash }, status: :ok
     end
 
-    def create_company_bespoke_service
-      service_name = params[:name]
+    def create_company_bespoke_service      
+      service_name = params[:service_name]
       company_id = params[:company_id]
       base_service_id = params[:base_service_id]
-      other_service_ids = params[:other_service_ids] || []
-      unless service_name.present? && other_service_ids.present? && base_service_id.present? && company_id.present?
-        ## Add flash message
+      sub_category = params[:sub_category]
+      other_service_ids = params[:secondary_service_ids].select(&:present?) rescue []
+      unless service_name.present? && base_service_id.present? && company_id.present?
+        return render json: {error: "Please enter valid data"}, status: :unprocessable_entity
       end
       b_service = Service.find(base_service_id)
-      b_sub_cat = b_service.sub_categories.where("name ilike ?", "%full day%").first
-      b_sub_cat = b_service.sub_categories.first unless b_sub_cat.present?
+      b_sub_cat = b_service.sub_categories.where("name ilike ?", "%#{sub_category}%").first
+      unless b_sub_cat.present?
+        return render json: {error: "#{sub_category} sub category does not exist for selected base service"}, status: :unprocessable_entity
+      end
       b_cmp_sc = b_sub_cat.company_sub_categories.find_by(company_id: company_id)
-
       other_service_ids.delete(base_service_id)
       o_services = Service.where(id: other_service_ids)
       service = Service.new(name: service_name, description: b_service.description, company_id: company_id)
-      if service.save
+      if service.save!
         service.image.attach(b_service.image.blob) if b_service.image.attached?
         sub_cat = service.sub_categories.new(name: b_sub_cat.name, start_from: b_cmp_sc.price)
         if sub_cat.save
