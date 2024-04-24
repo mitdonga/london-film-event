@@ -34,12 +34,12 @@ fullnameOverride: ""
 probes:
   livenessProbe:
     path: /healthcheck
-    initialDelaySeconds: 40
-    periodSeconds: 10
+    initialDelaySeconds: 60
+    periodSeconds: 30
   readinessProbe:
     path: /healthcheck
-    initialDelaySeconds: 40
-    periodSeconds: 20
+    initialDelaySeconds: 60
+    periodSeconds: 30
 
 probesSidekiq:
   livenessProbe:
@@ -70,7 +70,7 @@ railsSidekiq:
     enabled: true
     minReplicas: 1
     # maxReplicas must not exceed the max node count
-    maxReplicas: 3
+    maxReplicas: 1
     targetCPU: 50
     targetMemory: 80 
     behavior:
@@ -118,7 +118,7 @@ sidekiqResources:
 autoscaling:
   enabled: true
   minReplicas: 2
-  maxReplicas: 4
+  maxReplicas: 2
   targetCPU: 50
   targetMemory: 80
   behavior:

@@ -91,6 +91,26 @@ module BxBlockInvoice
             input_values.joins(:input_field).where("input_fields.name ilike ?", "%event name%").first&.user_input rescue ""
         end
 
+        def event_start_time
+            input_values.joins(:input_field).where("input_fields.name ilike ?", "%event start time%").first&.user_input rescue ""
+        end
+
+        def event_end_time
+            input_values.joins(:input_field).where("input_fields.name ilike ?", "%event end time%").first&.user_input rescue ""
+        end
+
+        def event_location
+            input_values.joins(:input_field).where("input_fields.name ilike ?", "%location%").first&.user_input rescue ""
+        end
+
+        def event_budget
+            input_values.joins(:input_field).where("input_fields.name ilike ?", "%event budget%").first&.user_input rescue ""
+        end
+
+        def event_days
+            input_values.joins(:input_field).where("input_fields.name ilike ?", "%event days%").first&.user_input rescue ""
+        end
+
         def days_coverage
             input_values.joins(:input_field).where("input_fields.name ilike ? or input_fields.name ilike ?", "%how many days coverage%", "%how many day coverage%").first.user_input.downcase.gsub(/[^0-9.]/, '').strip.to_f rescue nil
         end
@@ -107,9 +127,9 @@ module BxBlockInvoice
             sub_category.name.downcase.include?("multi") rescue false
         end
 
-        def is_bespoke
-            sub_category.name.downcase.include?("bespoke") rescue false
-        end
+        # def is_bespoke
+        #     sub_category.name.downcase.include?("bespoke") rescue false
+        # end
 
         def total_price
             package_sub_total.to_f + addon_sub_total.to_f + extra_cost.to_f

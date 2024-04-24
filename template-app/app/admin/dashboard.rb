@@ -40,7 +40,8 @@ unless Dashboard::Load.is_loaded_from_gem
         table_for [
           ["SMTP Status", @smtp_server_running ? "✅ (Running)" : "❌ (Down)"], 
           ["SMTP Error", @smtp_server_error],
-          ["Backend URL", Rails.application.config.base_url]
+          ["Backend URL", Rails.application.config.base_url],
+          ["Frontend URL", Rails.application.config.frontend_host]
         ] do
           column "Service Name" do |e|
             e[0]
