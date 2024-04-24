@@ -137,7 +137,7 @@ module BxBlockCategories
       base_service_id = params[:base_service_id]
       sub_category = params[:sub_category]
       other_service_ids = params[:secondary_service_ids].select(&:present?) rescue []
-      unless service_name.present? && base_service_id.present? && company_id.present?
+      unless service_name.present? && sub_category.present? && base_service_id.present? && company_id.present?
         return render json: {error: "Please enter valid data"}, status: :unprocessable_entity
       end
       b_service = Service.find(base_service_id)

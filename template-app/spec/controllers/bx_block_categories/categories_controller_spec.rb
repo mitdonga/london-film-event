@@ -76,4 +76,23 @@ RSpec.describe BxBlockCategories::CategoriesController, type: :controller do
       expect(response.body).to include("Service or sub category not found")
     end
   end
+
+  describe "#create_company_bespoke_service" do
+    let(:service_name) { "Builder ai bespoke service"}
+    let(:base_service_id) { @service_1.id }
+    let(:company_id) { @company_1.id }
+    let(:sub_category) { "Full Day" }
+    let(:secondary_service_ids) { [@service_2.id, @service_3.id]}
+
+    it "should create new bespoke service" do
+      post 'create_company_bespoke_service', params: {service_name: service_name, base_service_id: base_service_id, company_id: company_id, sub_category: sub_category, secondary_service_ids: secondary_service_ids}
+      expect(response).to have_http_status(200)
+      expect(response.body).to include("Bespoke service successfully created")
+    end
+    it "should create new bespoke service" do
+      post 'create_company_bespoke_service', params: {service_name: service_name, base_service_id: base_service_id, company_id: company_id}
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("Please enter valid data")
+    end
+  end
 end
